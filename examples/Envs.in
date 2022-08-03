@@ -1,0 +1,4 @@
+### VARs from 'configure.ac'
+export ARTEFACTS := $(if $(realpath @ARTEFACTS@),$(realpath @ARTEFACTS@),$(error srcdir=@ARTEFACTS@ does not exist))
+export DEV_TOOLS := $(if $(realpath @DEV_TOOLS@),$(realpath @DEV_TOOLS@),$(error srcdir=@DEV_TOOLS@ does not exist))
+export MK        := $(DEV_TOOLS)/mk

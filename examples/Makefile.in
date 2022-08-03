@@ -1,0 +1,54 @@
+export srcdir := $(if $(realpath @srcdir@),$(realpath @srcdir@),$(error srcdir=@srcdir@ does not exist))
+
+# Includes
+include $(srcdir)/Envs
+
+### Targets
+.PHONY: default env init build pg-init pg-migrate pg-migrate-revert pg-clear-db pg-clean clean tests-clean distclean
+
+default: env
+
+env:
+	$(MAKE) -f $(MK)/postgresql.mk env
+	$(MAKE) -f $(MK)/cargo.mk env
+	$(MAKE) -f $(MK)/pytest.mk env
+	$(MAKE) -f $(MK)/venv.mk env
+	$(MAKE) -f $(MK)/sqlx.mk env
+
+build: pg-migrate
+	$(MAKE) -f $(MK)/cargo.mk build
+
+start: build
+	$(MAKE) -f $(MK)/cargo.mk run
+
+pg-init:
+	$(MAKE) -f $(MK)/postgresql.mk init
+
+pg-migrate: pg-init
+	$(MAKE) -f $(MK)/sqlx.mk migrate
+
+pg-migrate-revert: pg-init
+	$(MAKE) -f $(MK)/sqlx.mk migrate-revert
+
+pg-clear-db: pg-init
+	$(MAKE) -f $(MK)/postgresql.mk clear-db
+
+pg-clean:
+	$(MAKE) -f $(MK)/postgresql.mk clean
+
+pg-connect:
+	$(MAKE) -f $(MK)/postgresql.mk connect
+
+tests: start
+	$(MAKE) -f $(MK)/pytest.mk run
+
+tests-clean:
+	$(MAKE) -f $(MK)/pytest.mk clean
+
+clean: pg-clean
+	$(MAKE) -f $(MK)/cargo.mk clean
+
+distclean: clean tests-clean
+	$(MAKE) -f $(MK)/autotools.mk clean
+	[ ! -f $(srcdir)/src/config_h.rs ] || rm -fv $(srcdir)/src/config_h.rs
+	[ ! -d $(ARTEFACTS) ] || rm -Rfv $(ARTEFACTS)

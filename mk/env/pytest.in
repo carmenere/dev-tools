@@ -1,0 +1,11 @@
+include $(ARTEFACTS)/.env.venv
+
+###
+export TEST_CASES ?= $(srcdir)/tests
+
+### Derived VARs
+export PYTEST_ARTEFACTS_DIR := $(ARTEFACTS)/pytest
+export TARGET_INIT_DIR      := $(PYTEST_ARTEFACTS_DIR)/.target
+
+ENVs += \
+	TEST_CASES
