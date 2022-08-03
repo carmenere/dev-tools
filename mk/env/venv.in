@@ -1,0 +1,24 @@
+###
+### VARs from 'configure.ac'
+export PYTHONEXECUTABLE     ?= @PYTHONEXECUTABLE@
+export VENV_NAME            ?= @VENV_NAME@
+export VENV_REQUIREMENTS    ?= @VENV_REQUIREMENTS@
+export VENV_PACKAGE_MANAGER ?= @VENV_PACKAGE_MANAGER@
+
+_ = $(if $(realpath $(VENV_REQUIREMENTS)),$(realpath $(VENV_REQUIREMENTS)),$(error VENV_REQUIREMENTS=$(VENV_REQUIREMENTS) does not exist))
+
+### Derived VARs
+export VENV                        := $(ARTEFACTS)/venv-$(VENV_NAME)
+export REQUIREMENTS_DIR            := $(realpath $(dir $(VENV_REQUIREMENTS)))
+export TARGET_CREATE_VENV          := $(VENV)/.target
+export TARGET_UPGRADE_SETUPTOOLS   := $(VENV)/.target-upgrade-setuptools
+export TARGET_INSTALL_POETRY       := $(VENV)/.target-install-poetry
+export TARGET_INSTALL_REQUIREMENTS := $(VENV)/.target-install-requirements
+
+ENVs += \
+	PYTHONEXECUTABLE \
+	REQUIREMENTS_DIR \
+	VENV \
+	VENV_NAME \
+	VENV_PACKAGE_MANAGER \
+	VENV_REQUIREMENTS
