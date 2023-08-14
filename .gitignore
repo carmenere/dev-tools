@@ -14,8 +14,14 @@ configure~
 
 # Dev-tools artefacts
 .artefacts/
-.venv/
+
 .output/
 
 # Pytest artefacts
 .pytest_cache
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
