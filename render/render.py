@@ -19,14 +19,15 @@ class Render:
         self.jenv = Environment(loader=FileSystemLoader(tmpl_dir), undefined=StrictUndefined)
     
     def render(self, out: Path, tmpl, tvars: dict):
-        tmpl = self.jenv.get_template(tmpl.name)
-        content = tmpl.render(**{k.upper():v for k,v in tvars.items()})
+        t = self.jenv.get_template(tmpl.name)
+        content = t.render(**{k.upper():v for k,v in tvars.items()})
 
         create_dir(out.parent)
 
+        LOG.info(f"Template: '{tmpl.absolute()}'.")
         with open(out, mode="w", encoding="utf-8") as message:
             message.write(content)
-            LOG.info(f"'{out.absolute()}' is done.")
+            LOG.info(f"Rendered file: '{out.absolute()}'.")
 
     def extract_vars(self, template: str):
         src = self.jenv.loader.get_source(self.jenv, template)

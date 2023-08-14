@@ -1,12 +1,12 @@
-TOPDIR = {{ TOPDIR | default('$(shell pwd)')}}
-MAJOR ?= {{ MAJOR | default('3.11') }}
-VERSION ?= $(MAJOR).{{ MINOR | default('4') }}
-PYTHON ?= {{ PYTHON | default('python$(MAJOR)') }}
-DOWNLOAD_URL ?= {{DOWNLOAD_URL | default('https://www.python.org/ftp/python/$(VERSION)/Python-$(VERSION).tgz') }} 
-VENV_PROMT = {{ VENV_PROMT | default('[venv]') }}
-VENV_DIR = {{ VENV_DIR | default('$(TOPDIR)/.venv') }}
-VPYTHON = {{ VPYTHON | default('$(VENV_DIR)/bin/python') }}
-REQUIREMENTS = {{ REQUIREMENTS | default('requirements.txt') }}
+TOPDIR = {{ TOPDIR | default('$(shell pwd)', true)}}
+MAJOR ?= {{ MAJOR | default('3.11', true) }}
+VERSION ?= $(MAJOR).{{ MINOR | default('4', true) }}
+PYTHON ?= {{ PYTHON | default('python$(MAJOR)', true) }}
+DOWNLOAD_URL ?= {{ DOWNLOAD_URL | default('https://www.python.org/ftp/python/$(VERSION)/Python-$(VERSION).tgz', true) }} 
+VENV_PROMT ?= {{ VENV_PROMT | default('[venv]', true) }}
+VENV_DIR ?= {{ VENV_DIR | default('$(TOPDIR)/.venv', true) }}
+VPYTHON = {{ VPYTHON | default('$(VENV_DIR)/bin/python', true) }}
+REQUIREMENTS ?= {{ REQUIREMENTS | default('requirements.txt', true) }}
 
 .PHONY: build venv
 
