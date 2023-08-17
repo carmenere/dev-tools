@@ -1,18 +1,20 @@
 import argparse
+from pathlib import Path
 
-from .settings import Settings, args, essential
+from .log import LOG
+from .settings import args, essential
 from .cli import reparse, parse
-from .render import Render
+from .render import Template
 
-essential_settings = parse(essential)
 
-render = Render(essential_settings.get('tmpl_dir'))
+settings = parse(essential)
+tmpl = Template(settings.get('tmpl_dir'), settings.get('tmpl'))
 
-vlist = render.extract_vars(essential_settings.get('tin'))
+LOG.debug(f"tvars = {tmpl.vars}, tmpl={tmpl.path}")
 
-parsed: argparse.Namespace = reparse(args, vlist)
+parsed: argparse.Namespace = reparse(args, tmpl.vars)
+out = Path(parsed.out_dir).joinpath(parsed.out) 
 
-settings = Settings(tmpl=parsed.tin, tmpl_dir=parsed.tmpl_dir, out_dir=parsed.out_dir, out=parsed.out,
-                    tvars={k:v for k,v in vars(parsed).items() if k in vlist})
+LOG.debug(f"out = {out}")
 
-render.render(settings.out, settings.tmpl, settings.tvars)
+tmpl.render(out=Path(parsed.out_dir).joinpath(parsed.out),  tvars={k:v for k,v in vars(parsed).items() if k in tmpl.vars})

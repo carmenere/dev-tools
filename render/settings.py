@@ -22,7 +22,7 @@ essential = [
     CliArg(
         prefix = '--',
         name = 'in',
-        dest = 'tin',
+        dest = 'tmpl',
         required = True
     )
 ]
