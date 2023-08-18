@@ -15,7 +15,7 @@ else
     PREFIX_OPT =
 endif
 
-TGT_ARTEFACTS_DIR ?= $(ARTEFACTS_DIR)/create-artefacts-dir
+TGT_ARTEFACTS_DIR ?= $(ARTEFACTS_DIR)/.create-artefacts-dir
 
 .PHONY: build
 

@@ -3,7 +3,7 @@ RENDER := python3 -m render.main
 SHELL := /bin/bash
 DEVTOOLS_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
-LIB = $(DEVTOOLS_DIR)/templates/lib
+LIB = $(DEVTOOLS_DIR)/lib
 
 # Default vars
 include $(DEVTOOLS_DIR)/vars.mk

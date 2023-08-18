@@ -36,8 +36,8 @@ else
 endif
 
 # Targets
-TGT_ARTEFACTS_DIR ?= $(ARTEFACTS_DIR)/create-artefacts-dir
-TGT_CREATE_USER ?= $(ARTEFACTS_DIR)/$(MODE)-create-user-$(USER_NAME)-$(USER_PASSWORD)
+TGT_ARTEFACTS_DIR ?= $(ARTEFACTS_DIR)/.create-artefacts-dir
+TGT_CREATE_USER ?= $(ARTEFACTS_DIR)/.$(MODE)-create-user-$(USER_NAME)-$(USER_PASSWORD)
 
 .PHONY: init clean force-clean distclean drop force-drop clean-artefacts connect
 

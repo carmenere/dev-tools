@@ -61,12 +61,12 @@ CMD_STOP ?= $(SUDO) $(PG_CTL) -D $(DATADIR) -o '-k $(DATADIR) -c config_file=$(P
 TMP_ARTEFACTS_DIR ?= /tmp/$${USER}-pg-artefacts
 
 # Targets
-TGT_TMP_ARTEFACTS_DIR ?= $(TMP_ARTEFACTS_DIR)/create-tmp-artefacts-dir
-TGT_ARTEFACTS_DIR ?= $(ARTEFACTS_DIR)/create-artefacts-dir
-TGT_DATADIR ?= $(ARTEFACTS_DIR)/create-datadir
-TGT_INITDB ?= $(ARTEFACTS_DIR)/initdb-$(ADMIN)-$(ADMIN_PASSWORD)-$(ADMIN_DB)-$(HOST)-$(PORT)
-TGT_CREATE_ADMIN ?= $(ARTEFACTS_DIR)/create-super-user-$(ADMIN)-$(ADMIN_PASSWORD)
-TGT_START ?= $(TMP_ARTEFACTS_DIR)/start
+TGT_TMP_ARTEFACTS_DIR ?= $(TMP_ARTEFACTS_DIR)/.create-tmp-artefacts-dir
+TGT_ARTEFACTS_DIR ?= $(ARTEFACTS_DIR)/.create-artefacts-dir
+TGT_DATADIR ?= $(ARTEFACTS_DIR)/.create-datadir
+TGT_INITDB ?= $(ARTEFACTS_DIR)/.initdb-$(ADMIN)-$(ADMIN_PASSWORD)-$(ADMIN_DB)-$(HOST)-$(PORT)
+TGT_CREATE_ADMIN ?= $(ARTEFACTS_DIR)/.create-super-user-$(ADMIN)-$(ADMIN_PASSWORD)
+TGT_START ?= $(TMP_ARTEFACTS_DIR)/.start
 
 .PHONY: init initdb check-user check-superuser create-user create-db connect drop clean clear-db clean-user-artefacts start stop distclean migrate migrate-revert
 
