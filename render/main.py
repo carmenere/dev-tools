@@ -8,6 +8,9 @@ from .render import Template
 
 
 settings = parse(essential)
+
+LOG.debug(f"settings = {settings}")
+
 tmpl = Template(settings.get('tmpl_dir'), settings.get('tmpl'))
 
 LOG.debug(f"tvars = {tmpl.vars}, tmpl={tmpl.path}")

@@ -14,14 +14,14 @@ class Settings:
 
 essential = [
     CliArg(
-        prefix = '--',
-        name = 'tmpl_dir',
+        name = '--tmpl_dir',
         default = os.environ.get('TMPL_DIR', os.getcwd()),
-        required = False
+        required = False,
+        dest = 'tmpl_dir',
     ),
     CliArg(
-        prefix = '--',
-        name = 'in',
+        name = '--in',
+        aliases = ['--IN'],
         dest = 'tmpl',
         required = True
     )
@@ -29,14 +29,16 @@ essential = [
 
 args = essential + [
     CliArg(
-        prefix = '--',
-        name = 'out',
-        required = True
+        name = '--out',
+        aliases = ['--OUT'],
+        required = True,
+        dest = 'out',
     ),
     CliArg(
-        prefix = '--',
-        name = 'out_dir',
+        name = '--out_dir',
+        aliases = ['--OUT_DIR'],
         default = os.environ.get('OUT_DIR', os.path.join(os.getcwd(), '.output')),
-        required = False
+        required = False,
+        dest = 'out_dir',
     )
 ]

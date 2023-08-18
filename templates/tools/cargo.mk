@@ -11,10 +11,10 @@ TARGET_ARCH ?= {{ TARGET_ARCH | default('aarch64-apple-darwin', true) }}
 TARGET_DIR ?= {{ TARGET_DIR | default('target', true) }}
 INSTALL_DIR ?= {{ INSTALL_DIR | default('/usr/local/bin', true) }}
 
-BINS ?= {{ BINS }}
-ENVS ?= {{ ENVS }}
-FEATURES ?= {{ FEATURES }}
-LINTS ?= {{ LINTS }}
+BINS ?= {{ BINS | default('', true) }}
+ENVS ?= {{ ENVS | default('', true) }}
+FEATURES ?= {{ FEATURES | default('', true) }}
+LINTS ?= {{ LINTS | default('', true) }}
 
 BINS_DIR ?= $(realpath $(TARGET_DIR))/$(TARGET_ARCH)/$(PROFILE)
 
