@@ -2,15 +2,17 @@ include $(LIB)/common.mk
 
 # COMMON
 LOCALHOST = localhost
-MIGRATIONS_DIR = migrations
 SRV_DB = fizzbuzz
 SRV_PASSWORD = 12345
 SRV_USER = foobar
+PG_PORT = 5432
+PG_HOST = localhost
+
+TMPL_DIR = $(DEVTOOLS_DIR)/templates
 
 PROJECT_DIR = $(shell pwd)
-
-OUT_DIR = $(PWD)/.output
-TMPL_DIR = $(DEVTOOLS_DIR)/templates
+MIGRATIONS_DIR = $(PROJECT_DIR)/migrations
+OUT_DIR = $(PROJECT_DIR)/.output
 
 DATABASE_URL = postgres://$(SRV_USER):$(SRV_PASSWORD)@$(PG_HOST):$(PG_PORT)/$(SRV_DB)
 BUILD_VERSION = $(git describe --tags)
@@ -24,11 +26,16 @@ TMPL_REDIS = $(TMPL_DIR)/tools/redis-cli.mk
 TMPL_VENV = $(TMPL_DIR)/tools/venv.mk
 TMPL_PYTHON = $(TMPL_DIR)/tools/python.mk
 TMPL_RUST = $(TMPL_DIR)/tools/rust.mk
+TMPL_APP = $(TMPL_DIR)/tools/app.mk
+TMPL_MIGRATOR = $(TMPL_DIR)/tools/migrator.mk
+TMPL_PYTEST = $(TMPL_DIR)/tools/pytest.mk
+TMPL_TMUX = $(TMPL_DIR)/tools/tmux.mk
 
 # TEMPLATE: CARGO
 CARGO|IN = $(TMPL_CARGO)
 CARGO|OUT_DIR = $(OUT_DIR)/cargo
 CARGO|OUT = $(CARGO|OUT_DIR)/Makefile
+CARGO|LIB = $(LIB)
 CARGO|ENVS = RUSTFLAGS=-C target-feature=-crt-static \
             BUILD_VERSION=$(BUILD_VERSION) \
             DATABASE_URL=$(DATABASE_URL)
@@ -87,22 +94,57 @@ RUST|IN = $(TMPL_RUST)
 RUST|OUT_DIR = $(OUT_DIR)/rust
 RUST|OUT = $(RUST|OUT_DIR)/Makefile
 
+# TEMPLATE: APP
+SQLX|IN = $(TMPL_APP)
+SQLX|OUT_DIR = $(MIGRATOR|OUT_DIR)/sqlx
+SQLX|OUT = $(SQLX|OUT_DIR)/Makefile
+SQLX|BIN_PATH = sqlx migrate run
+SQLX|ARTEFACTS_DIR = $(SQLX|OUT_DIR)/.artefacts
+SQLX|ENVS = DATABASE_URL=$(DATABASE_URL)
+SQLX|OPTS = --source "$(MIGRATIONS_DIR)/schemas"
+
+# TEMPLATE: PYTEST
+PYTEST|IN = $(TMPL_PYTEST)
+PYTEST|OUT_DIR = $(OUT_DIR)/pytest
+PYTEST|OUT = $(PYTEST|OUT_DIR)/Makefile
+
+# TEMPLATE: TMUX
+TMUX|IN = $(TMPL_TMUX)
+TMUX|OUT_DIR = $(OUT_DIR)/tmux
+TMUX|OUT = $(TMUX|OUT_DIR)/Makefile
+
+# TEMPLATE: MIGRATOR
+MIGRATOR|IN = $(TMPL_MIGRATOR)
+MIGRATOR|OUT_DIR = $(OUT_DIR)/migrator
+MIGRATOR|OUT = $(MIGRATOR|OUT_DIR)/Makefile
+MIGRATOR|S_MIGRATOR = $(SQLX|OUT)
+
 # VARS per CTXES
 CARGO = $(foreach V,$(filter CARGO|%,$(.VARIABLES)),$(V))
+MIGRATOR = $(foreach V,$(filter MIGRATOR|%,$(.VARIABLES)),$(V))
 MY_CARGO = $(foreach V,$(filter MY_CARGO|%,$(.VARIABLES)),$(V))
 PG_CTL = $(foreach V,$(filter PG_CTL|%,$(.VARIABLES)),$(V))
 POSTGRESQL = $(foreach V,$(filter POSTGRESQL|%,$(.VARIABLES)),$(V))
+PSQL = $(foreach V,$(filter PSQL|%,$(.VARIABLES)),$(V))
 PY = $(foreach V,$(filter PY|%,$(.VARIABLES)),$(V))
+PYTEST = $(foreach V,$(filter PYTEST|%,$(.VARIABLES)),$(V))
 REDIS = $(foreach V,$(filter REDIS|%,$(.VARIABLES)),$(V))
-VENV = $(foreach V,$(filter VENV|%,$(.VARIABLES)),$(V))
 RUST = $(foreach V,$(filter RUST|%,$(.VARIABLES)),$(V))
+SQLX = $(foreach V,$(filter SQLX|%,$(.VARIABLES)),$(V))
+TMUX = $(foreach V,$(filter TMUX|%,$(.VARIABLES)),$(V))
+VENV = $(foreach V,$(filter VENV|%,$(.VARIABLES)),$(V))
 
 # CTXES
 CTXES += CARGO
+CTXES += MIGRATOR
 CTXES += MY_CARGO
 CTXES += PG_CTL
 CTXES += POSTGRESQL
+CTXES += PSQL
 CTXES += PY
+CTXES += PYTEST
 CTXES += REDIS
-CTXES += VENV
 CTXES += RUST
+CTXES += SQLX
+CTXES += TMUX
+CTXES += VENV

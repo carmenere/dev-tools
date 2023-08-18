@@ -20,3 +20,6 @@ tools:
 		cargo install --target=$(TARGET_ARCH) --version=$(SQLX_VERSION) --force sqlx-cli
 
 all: rustup default components tools
+
+# create migrations in current dir:
+# sqlx migrate add --source . init

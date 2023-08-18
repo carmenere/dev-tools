@@ -1,5 +1,5 @@
 TOPDIR := {{ TOPDIR | default('$(shell pwd)', true) }}
-LIB ?= {{ LIB | default('$(TOPDIR)/tools/lib', true) }}
+LIB ?= {{ LIB | default('$(TOPDIR)/lib', true) }}
 
 include $(LIB)/common.mk
 

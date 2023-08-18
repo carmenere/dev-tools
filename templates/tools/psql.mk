@@ -54,11 +54,11 @@ else
 endif
 
 # Targets
-TGT_TMP_ARTEFACTS_DIR ?= $(TMP_ARTEFACTS_DIR)/create-tmp-artefacts-dir
-TGT_ARTEFACTS_DIR ?= $(ARTEFACTS_DIR)/create-artefacts-dir
-TGT_CREATE_USER ?= $(ARTEFACTS_DIR)/$(MODE)-create-user-$(USER_NAME)-$(USER_PASSWORD)
-TGT_CREATE_DB ?= $(ARTEFACTS_DIR)/$(MODE)-create-db-$(USER_DB)
-TGT_GRANT ?= $(ARTEFACTS_DIR)/$(MODE)-grant-$(USER_NAME)-$(USER_DB)
+TGT_TMP_ARTEFACTS_DIR ?= $(TMP_ARTEFACTS_DIR)/.create-tmp-artefacts-dir
+TGT_ARTEFACTS_DIR ?= $(ARTEFACTS_DIR)/.create-artefacts-dir
+TGT_CREATE_USER ?= $(ARTEFACTS_DIR)/.$(MODE)-create-user-$(USER_NAME)-$(USER_PASSWORD)
+TGT_CREATE_DB ?= $(ARTEFACTS_DIR)/.$(MODE)-create-db-$(USER_DB)
+TGT_GRANT ?= $(ARTEFACTS_DIR)/.$(MODE)-grant-$(USER_NAME)-$(USER_DB)
 
 .PHONY: init check-user check-superuser create-user create-db connect drop force-drop clean-artefacts clean force-clean clear-db distclean dump
 
