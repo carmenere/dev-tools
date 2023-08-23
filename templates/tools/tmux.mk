@@ -1,10 +1,12 @@
-ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR | default('.artefacts', true) }}
-DEFAULT_CMD ?= {{ DEFAULT_CMD | default('/bin/sh', true) }}
-LOGS_DIR ?= {{ DEFAULT_CMD | default('$(ARTEFACTS_DIR)', true) }}
-SESSION_NAME ?= {{ SESSION_NAME | default('DEV-TOOLS', true) }}
-TERM_SIZE ?= {{ TERM_SIZE | default('240x32', true) }}
-DEFAULT_TERM ?= {{ DEFAULT_TERM | default('xterm-256color', true) }}
-HISTORY_LIMIT ?= {{ HISTORY_LIMIT | default('1000000', true) }}
+TOPDIR := {{ TOPDIR }}
+
+ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR }}
+DEFAULT_CMD ?= {{ DEFAULT_CMD }}
+DEFAULT_TERM ?= {{ DEFAULT_TERM }}
+HISTORY_LIMIT ?= {{ HISTORY_LIMIT }}
+LOGS_DIR ?= {{ LOGS_DIR }}
+SESSION_NAME ?= {{ SESSION_NAME }}
+TERM_SIZE ?= {{ TERM_SIZE }}
 
 CMD ?= 
 WINDOW_NAME ?= 
@@ -12,7 +14,7 @@ WINDOW_NAME ?=
 # Targets
 TGT_ARTEFACTS_DIR ?= $(ARTEFACTS_DIR)/.create-artefacts-dir
 
-.PHONY: init open-window exec close-window close-session kill-server extract-logs connect log
+.PHONY: init open-window exec close-window close-session kill-server connect
 
 $(TGT_ARTEFACTS_DIR):
 	mkdir -p $(ARTEFACTS_DIR)
@@ -44,16 +46,9 @@ close-session:
 kill-server:
 	tmux kill-server || true
 
-extract-logs:
-	mv $(ARTEFACTS_DIR)/apps/*.log $(LOGS_DIR)
-
 connect:
 ifdef WINDOW_NAME
 	tmux a -t $(SESSION_NAME):$(WINDOW_NAME)
 else
 	tmux a -t $(SESSION_NAME)
 endif
-
-log:
-	tmux select-window -t $(SESSION_NAME):$(WINDOW_NAME) && tmux capture-pane -t $(SESSION_NAME):$(WINDOW_NAME) -b $(WINDOW_NAME)_buf -S - || echo "echo 'Window $(WINDOW_NAME) does not exist.'"
-	tmux select-window -t $(SESSION_NAME):$(WINDOW_NAME) && tmux save-buffer -b $(WINDOW_NAME)_buf $(ARTEFACTS_DIR)/$(WINDOW_NAME).log || echo "echo 'Window $(WINDOW_NAME) does not exist.'"

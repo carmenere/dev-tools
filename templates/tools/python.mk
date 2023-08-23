@@ -1,13 +1,13 @@
-TOPDIR := {{ TOPDIR | default('$(shell pwd)', true) }}
+TOPDIR := {{ TOPDIR }}
 
-MAJOR ?= {{ MAJOR | default('3.11', true) }}
-MINOR ?= {{ MINOR | default('4', true) }}
-PYTHON ?= {{ PYTHON | default('$(shell which python$(MAJOR))', true) }}
-DOWNLOAD_URL ?= {{ DOWNLOAD_URL | default('https://www.python.org/ftp/python/$(VERSION)/Python-$(VERSION).tgz', true) }} 
-ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR | default('.artefacts', true) }}
-VERSION = $(MAJOR).$(MINOR)
-PIP = $(PYTHON) -m pip
-PREFIX = {{ PREFIX | default('', true) }}
+ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR }}
+DOWNLOAD_URL ?= {{ DOWNLOAD_URL }}
+MAJOR ?= {{ MAJOR }}
+MINOR ?= {{ MINOR }}
+PIP = {{ PIP }}
+PREFIX = {{ PREFIX }}
+PYTHON ?= {{ PYTHON }}
+VERSION ?= {{ VERSION }}
 
 ifdef PREFIX
     PREFIX_OPT = --prefix=$(PREFIX)

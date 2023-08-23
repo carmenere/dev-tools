@@ -1,0 +1,25 @@
+ARG BUILDER=builders/rust:1.71.1
+ARG BASE_IMAGE=alpine:3.18.3
+
+########################################################################################################################
+FROM ${BUILDER} AS core
+########################################################################################################################
+ARG BASE_IMAGE=${BASE_IMAGE}
+ARG APP=
+ARG BUILD_PROFILE=
+ARG BUILD_VERSION=
+ARG TARGET_ARCH=aarch64-unknown-linux-musl
+
+ARG PROJECT_DIR="/usr/local/src/${APP}"
+
+RUN echo ${BUILD_VERSION} > /etc/version
+
+########################################################################################################################
+FROM ${BASE_IMAGE} AS runtime
+########################################################################################################################
+COPY --from=core /etc/version /etc/version
+COPY --from=core /usr/local/bin /usr/local/bin
+
+ENV RUST_BACKTRACE=full
+
+USER root

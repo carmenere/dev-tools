@@ -1,26 +1,26 @@
-TOPDIR := {{ TOPDIR | default('$(shell pwd)', true) }}
+TOPDIR := {{ TOPDIR }}
 
-ADMIN ?= {{ ADMIN | default('postgres', true)}}
-ADMIN_DB ?= {{ ADMIN_DB | default('postgres', true)}}
-ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default('postgres', true)}}
-ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR | default('.artefacts', true) }}
-DATADIR ?= {{ DATADIR | default('.artefacts/pg_data', true)}}
-HOST ?= {{ HOST | default('localhost', true)}}
-INITDB_AUTH_HOST ?= {{ INITDB_AUTH_HOST | default('md5', true)}}
-INITDB_AUTH_LOCAL ?= {{ INITDB_AUTH_LOCAL | default('peer', true)}}
-INITDB_PWFILE ?= {{ INITDB_PWFILE | default('/tmp/passwd.tmp', true)}}
-OS_USER ?= {{ OS_USER | default('postgres', true)}}
-PG_CONFIG ?= {{ PG_CONFIG | default('$(which pg_config)', true)}}
-PG_CTL_CONF ?= {{ PG_CTL_CONF | default('$(DATADIR)/postgresql.conf', true)}}
-PG_CTL_LOG ?= {{ PG_CTL_LOG | default('$(DATADIR)/pg_ctl.log', true)}}
-PG_CTL_LOGGING_COLLECTOR ?= {{ PG_CTL_LOGGING_COLLECTOR | default('on', true)}}
-PORT ?= {{ PORT | default('5432', true)}}
-SUDO_BIN = {{ SUDO_BIN | default('$(shell which sudo)', true)}}
-SUDO_USER = {{ SUDO_USER | default('postgres', true)}}
+ADMIN ?= {{ ADMIN }}
+ADMIN_DB ?= {{ ADMIN_DB }}
+ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD }}
+ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR }}
+DATADIR ?= {{ DATADIR }}
+HOST ?= {{ HOST }}
+INITDB_AUTH_HOST ?= {{ INITDB_AUTH_HOST }}
+INITDB_AUTH_LOCAL ?= {{ INITDB_AUTH_LOCAL }}
+INITDB_PWFILE ?= {{ INITDB_PWFILE }}
+OS_USER ?= {{ OS_USER }}
+PG_CONFIG ?= {{ PG_CONFIG }}
+PG_CTL_CONF ?= {{ PG_CTL_CONF }}
+PG_CTL_LOG ?= {{ PG_CTL_LOG }}
+PG_CTL_LOGGING_COLLECTOR ?= {{ PG_CTL_LOGGING_COLLECTOR }}
+PORT ?= {{ PORT }}
+SUDO_BIN = {{ SUDO_BIN }}
+SUDO_USER = {{ SUDO_USER }}
 
-export LANG = {{ LANG | default('en_US.UTF-8', true)}}
-export LC_ALL = {{ LC_ALL | default('en_US.UTF-8', true)}}
-export LC_CTYPE = {{ LC_CTYPE | default('en_US.UTF-8', true)}}
+export LANG = {{ LANG }}
+export LC_ALL = {{ LC_ALL }}
+export LC_CTYPE = {{ LC_CTYPE }}
 
 # $(and ..., ..., ...) 
 # - each argument is expanded, in order;

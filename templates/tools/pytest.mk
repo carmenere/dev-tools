@@ -1,21 +1,31 @@
-ALLURE ?= {{ ALLURE | default('', true) }}
-ENVS ?= {{ ENVS | default('', true) }}
-ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR | default('.artefacts', true) }}
-REPORTS_DIR ?= {{ REPORTS_DIR | default('', true) }}
-TEST_CASES ?= {{ TEST_CASES | default('', true) }}
-TEST_CASES_DIR ?= {{ TEST_CASES_DIR | default('', true) }}
-VENV ?= {{ VENV | default('', true) }}
-VENV_DIR ?= {{ VENV_DIR | default('', true) }}
-LOG_FILE ?= {{ LOG_FILE | default('$(ARTEFACTS_DIR)/logs.txt', true) }}
+TOPDIR := {{ TOPDIR }}
 
+ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR }}
+LOG_FILE ?= {{ LOG_FILE }}
+REPORTS_DIR ?= {{ REPORTS_DIR }}
+TEST_CASES ?= {{ TEST_CASES }}
+TEST_CASES_DIR ?= {{ TEST_CASES_DIR }}
+VPYTHON ?= {{ VPYTHON }}
+
+{% set e = [] -%}
+{% if ENVS -%}
+{% for item in ENVS.split(' ') -%}
+{{ item }} = {{ env[item] }}
+{% endfor -%}
+{% for item in ENVS.split(' ') -%}
+{% do e.append("{}=$({})".format(item, item)) -%}
+{% endfor -%}
+{% endif -%}
+
+{% if e %}
+ENVS ?= \
+    {{ e|join(' \\\n    ') }}
+{% endif %}
 ifdef TEST_CASES
     TCASES = $(foreach T,$(TEST_CASES),$(TEST_CASES_DIR)/$(T))
 else
     TCASES = $(TEST_CASES_DIR)
 endif
-
-#
-VPYTHON ?= $(VENV_DIR)/bin/python
 
 # Targets
 TGT_ARTEFACTS_DIR ?= $(ARTEFACTS_DIR)/.create-artefacts-dir
@@ -27,12 +37,6 @@ $(TGT_ARTEFACTS_DIR):
 	touch $@
 
 init: $(TGT_ARTEFACTS_DIR)
-ifdef ALLURE
-	$(MAKE) -f $(ALLURE) init
-endif
-ifdef VENV
-	$(MAKE) -f $(VENV) init
-endif
 
 run: init
 	bash -c '$(ENVS) $(VPYTHON) \
@@ -44,15 +48,7 @@ run: init
 		--timeout=300 \
 	2>&1 | tee $(LOG_FILE); exit $${PIPESTATUS[0]}'
 
-upload:
-ifdef ALLURE
-	$(MAKE) -f $(ALLURE) upload
-endif
-
 clean:
 
 distclean:
-ifdef ALLURE
-	$(MAKE) -f $(ALLURE) clean-reports
-endif
 	[ ! -d $(ARTEFACTS_DIR) ] || rm -Rf $(ARTEFACTS_DIR)

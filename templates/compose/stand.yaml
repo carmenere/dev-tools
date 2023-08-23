@@ -1,0 +1,85 @@
+version: '3'
+
+services:
+  {{ REDIS }}:
+    image: {{ REDIS_IMAGE }}
+    container_name: {{ REDIS }}
+    networks:
+      - {{ BRIDGE }}
+    command: redis-server --requirepass {{ REDIS_ADMIN_PASSWORD }}
+    ports:
+      - "{{ REDIS_PUBLISH }}"
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "2"
+{%- set e = [] -%}
+{% if REDIS_ENVS -%}
+{% for item in REDIS_ENVS.split(' ') -%}
+{% do e.append("{}={}".format(item, env[item])) -%}
+{% endfor -%}
+{% endif -%}
+{% if e %}
+    environment:
+      - {{ e|join('\n      - ') }}
+{% endif %}
+
+  {{ PG }}:
+    image: {{ PG_IMAGE }}
+    container_name: {{ PG }}
+    networks:
+      - {{ BRIDGE }}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - "{{ PG_PUBLISH }}"
+    command: ["postgres", "-c", "log_statement=all"]
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "2"
+    restart: always
+  
+  {{ FOO }}:
+    image: {{ FOO_IMAGE }}
+    container_name: {{ FOO }}
+    networks:
+      - {{ BRIDGE }}
+    ports:
+      - "{{ FOO_PUBLISH }}"
+    command: sh -c '/usr/local/bin/so_api'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "2"
+  
+  {{ BAR }}:
+    image: {{ BAR_IMAGE }}
+    container_name: {{ BAR }}
+    networks:
+      - {{ BRIDGE }}
+    command: python3 respond.py
+    ports:
+      - "{{ BAR_PUBLISH }}"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "2"
+
+networks:
+  {{ BRIDGE }}:
+    name: {{ BRIDGE }}
+    driver: {{ DRIVER }}
+    attachable: true
+    ipam:
+      driver: default
+      config:
+        - subnet: {{ NETWORK }}
+  
+volumes:
+  postgres:

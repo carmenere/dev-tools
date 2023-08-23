@@ -1,17 +1,17 @@
-TOPDIR ?= {{ TOPDIR | default('$(shell pwd)', true) }}
+TOPDIR ?= {{ TOPDIR }}
 
-ADMIN ?= {{ ADMIN | default('default'), true}}
-ADMIN_DB ?= {{ ADMIN_DB | default('0'), true}}
-ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default('""'), true}}
-ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR | default('.artefacts'), true}}
-HOST ?= {{ HOST | default('localhost'), true}}
-PORT ?= {{ PORT | default('6379'), true}}
-REQUIREPASS ?= {{ REQUIREPASS | default('yes'), true}}
-USER_NAME := {{ USER_NAME | default('foo'), true}}
-USER_DB ?= {{ USER_DB | default('0'), true}}
-USER_PASSWORD ?= {{ USER_PASSWORD | default('12345'), true}}
-CONTAINER = {{ CONTAINER | default('', true)}}
-MODE = {{ MODE | default('host', true)}}
+ADMIN ?= {{ ADMIN }}
+ADMIN_DB ?= {{ ADMIN_DB }}
+ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD }}
+ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR }}
+CONTAINER = {{ CONTAINER }}
+HOST ?= {{ HOST }}
+MODE = {{ MODE }}
+PORT ?= {{ PORT }}
+REQUIREPASS ?= {{ REQUIREPASS }}
+USER_DB ?= {{ USER_DB }}
+USER_NAME := {{ USER_NAME }}
+USER_PASSWORD ?= {{ USER_PASSWORD }}
 
 ifeq ($(strip $(MODE)$(CONTAINER)),docker)
     $(error For MODE=docker var CONTAINER must be defined!)

@@ -20,12 +20,15 @@ class Template:
         self.path: Path = self.tmpl_dir.joinpath(tmpl)
         with open(f"{self.path.absolute()}") as f:
             template_str = f.read()
-        self.jenv: Environment = Environment(loader=BaseLoader, undefined=StrictUndefined)
+        self.jenv: Environment = Environment(loader=BaseLoader, undefined=StrictUndefined, extensions=['jinja2.ext.do'])
         self.vars: list = list(meta.find_undeclared_variables(self.jenv.parse(template_str)))
         self.tmpl = self.jenv.from_string(template_str)
     
     def render(self, out: Path, tvars: dict):
-        content = self.tmpl.render(**{k.upper():v for k,v in tvars.items()})
+        LOG.debug(f"out = {out}")
+        LOG.debug("TVARS:\n{}".format("\n".join(f"{k} = {tvars[k]}" for k in sorted(tvars.keys()))))
+        LOG.debug("ENVS:\n{}".format("\n".join(f"{k} = {dict(os.environ)[k]}" for k in sorted(dict(os.environ).keys()))))
+        content = self.tmpl.render(**{k.upper():v for k,v in tvars.items()}, env=dict(os.environ))
 
         create_dir(out.parent)
 

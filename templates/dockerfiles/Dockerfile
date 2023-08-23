@@ -1,0 +1,3 @@
+ARG BASE_IMAGE=alpine:3.18.3
+
+FROM ${BASE_IMAGE}

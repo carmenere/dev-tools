@@ -1,23 +1,23 @@
-TOPDIR := {{ TOPDIR | default('$(shell pwd)', true) }}
+TOPDIR := {{ TOPDIR }}
+
+ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR }}
+AUTH_METHOD ?= {{ AUTH_METHOD }}
+CONTAINER = {{ CONTAINER }}
+HOST ?= {{ HOST }}
+MODE = {{ MODE }}
+PGDATABASE ?= {{ PGDATABASE }}
+PGPASSWORD ?= {{ PGPASSWORD }}
+PGUSER ?= {{ PGUSER }}
+PORT ?= {{ PORT }}
+SUDO_BIN = {{ SUDO_BIN }}
+SUDO_USER = {{ SUDO_USER }}
+USER_ATTRIBUTES ?= {{ USER_ATTRIBUTES }}
+USER_DB ?= {{ USER_DB }}
+USER_NAME ?= {{ USER_NAME }}
+USER_PASSWORD ?= {{ USER_PASSWORD }}
 
 ATTRIBUTE ?= 
 PATH_TO_DUMP ?= 
-
-ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR | default('.artefacts', true) }}
-AUTH_METHOD ?= {{ AUTH_METHOD | default('remote', true) }}
-HOST ?= {{ HOST | default('localhost', true) }}
-PGDATABASE ?= {{ PGDATABASE | default('postgres', true) }}
-PGPASSWORD ?= {{ PGPASSWORD | default('postgres', true) }}
-PGUSER ?= {{ PGUSER | default('postgres', true) }}
-PORT ?= {{ PORT | default('5432', true) }}
-USER_NAME ?= {{ USER_NAME | default('foo', true) }}
-USER_DB ?= {{ USER_DB | default('bar', true) }}
-USER_PASSWORD ?= {{ USER_PASSWORD | default('12345', true) }}
-USER_ATTRIBUTES ?= {{ USER_ATTRIBUTES | default('SUPERUSER CREATEDB', true) }}
-CONTAINER = {{ CONTAINER | default('', true)}}
-MODE = {{ MODE | default('host', true)}}
-SUDO_BIN = {{ SUDO_BIN | default('$(shell which sudo)', true)}}
-SUDO_USER = {{ SUDO_USER | default('', true)}}
 
 ifeq ($(AUTH_METHOD),remote)
     PSQL_ADMIN ?= $(DOCKER_EXEC) psql postgresql://$(PGUSER):$(PGPASSWORD)@$(HOST):$(PORT)/$(PGDATABASE)

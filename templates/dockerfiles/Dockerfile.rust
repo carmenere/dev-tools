@@ -1,0 +1,48 @@
+ARG BASE_IMAGE=alpine:3.18.3
+
+FROM ${BASE_IMAGE}
+
+ARG RUST_VERSION=1.71.1
+ARG TARGET_ARCH=aarch64-unknown-linux-musl
+ARG SQLX_VERSION=
+
+RUN apk update --no-cache && apk add \
+    make \
+    bash \
+    bsd-compat-headers \
+    build-base \
+    curl \
+    findutils \
+    git \
+    jq \
+    libev \
+    libssh \
+    libssh-dev \
+    libtool \
+    linux-headers \
+    lsof \
+    m4 \
+    make \
+    moreutils \
+    musl-dev \
+    patch \
+    perl \
+    python3 \
+    py3-pip \
+    pkgconfig \
+    postgresql12 \
+    postgresql12-contrib \
+    postgresql12-dev \
+    protoc \
+    openssl-dev \
+    libffi-dev \
+    redis \
+    sudo \
+    texinfo \
+    tzdata
+
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain ${RUST_VERSION}-${TARGET_ARCH}
+
+RUN source "$HOME/.cargo/env" && \
+    RUSTFLAGS="-C target-feature=-crt-static" rustup component add clippy rustfmt && \
+    RUSTFLAGS="-C target-feature=-crt-static" cargo install --target=${TARGET_ARCH} --version=${SQLX_VERSION} sqlx-cli

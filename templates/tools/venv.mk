@@ -1,15 +1,15 @@
-TOPDIR := {{ TOPDIR | default('$(shell pwd)', true) }}
+TOPDIR := {{ TOPDIR }}
 
-PYTHON ?= {{ PYTHON | default('$(shell which python3.11)', true) }}
-VENV_PROMT ?= {{ VENV_PROMT | default('[VENV]', true) }}
-VENV_DIR ?= {{ VENV_DIR | default('$(PWD)/.venv', true) }}
-VPYTHON = {{ VPYTHON | default('$(VENV_DIR)/bin/python', true) }}
+PYTHON ?= {{ PYTHON }}
 REQUIREMENTS ?= {{ REQUIREMENTS }}
+VENV_DIR ?= {{ VENV_DIR }}
+VENV_PROMT ?= {{ VENV_PROMT }}
+VPYTHON = {{ VPYTHON }}
 
-export CPPFLAGS ?= {{ CPPFLAGS | default('$(shell echo $${CPPFLAGS})', true) }}
-export LDFLAGS ?= {{ LDFLAGS | default('$(shell echo $${LDFLAGS})', true) }}
-export CC ?= {{ CC | default('$(shell echo $${CC})', true) }}
-export CXX ?= {{ CXX | default('$(shell echo $${CXX})', true) }}
+export CC ?= {{ CC }}
+export CPPFLAGS ?= {{ CPPFLAGS }}
+export CXX ?= {{ CXX }}
+export LDFLAGS ?= {{ LDFLAGS }}
 
 TGT_INSTALL_REQUIREMENTS ?= $(VENV_DIR)/.install-requirements
 TGT_UPGRADE_SETUPTOOLS ?= $(VENV_DIR)/.upgrade

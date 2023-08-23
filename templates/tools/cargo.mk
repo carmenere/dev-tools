@@ -1,23 +1,35 @@
-TOPDIR := {{ TOPDIR | default('$(shell pwd)', true) }}
-LIB ?= {{ LIB | default('$(TOPDIR)/lib', true) }}
+TOPDIR := {{ TOPDIR }}
+LIB := {{ LIB }}
 
 include $(LIB)/common.mk
 
-PROFILE ?= {{ PROFILE | default('dev', true) }}
-CARGO_TOML ?= {{ CARGO_TOML | default('Cargo.toml', true) }}
-CLIPPY_FORMAT ?= {{ CLIPPY_FORMAT | default('human', true) }}
-CLIPPY_REPORT ?= {{ CLIPPY_REPORT | default('&1', true) }}
-TARGET_ARCH ?= {{ TARGET_ARCH | default('aarch64-apple-darwin', true) }}
-TARGET_DIR ?= {{ TARGET_DIR | default('target', true) }}
-INSTALL_DIR ?= {{ INSTALL_DIR | default('/usr/local/bin', true) }}
+BINS ?= {{ BINS }}
+BINS_DIR ?= {{ BINS_DIR }}
+CARGO_TOML ?= {{ TOML }}
+CLIPPY_FORMAT ?= {{ CLIPPY_FORMAT }}
+CLIPPY_REPORT ?= {{ CLIPPY_REPORT }}
+FEATURES ?= {{ FEATURES }}
+INSTALL_DIR ?= {{ INSTALL_DIR }}
+LINTS ?= {{ LINTS }}
+PROFILE ?= {{ PROFILE }}
+PROFILE_DIR ?= {{ PROFILE_DIR }}
+TARGET_ARCH ?= {{ TARGET_ARCH }}
+TARGET_DIR ?= {{ TARGET_DIR }}
 
-BINS ?= {{ BINS | default('', true) }}
-ENVS ?= {{ ENVS | default('', true) }}
-FEATURES ?= {{ FEATURES | default('', true) }}
-LINTS ?= {{ LINTS | default('', true) }}
+{% set e = [] -%}
+{% if ENVS -%}
+{% for item in ENVS.split(' ') -%}
+{{ item }} = {{ env[item] }}
+{% endfor -%}
+{% for item in ENVS.split(' ') -%}
+{% do e.append("{}=$({})".format(item, item)) -%}
+{% endfor -%}
+{% endif -%}
 
-BINS_DIR ?= $(realpath $(TARGET_DIR))/$(TARGET_ARCH)/$(PROFILE)
-
+{% if e %}
+ENVS ?= \
+    {{ e|join(' \\\n    ') }}
+{% endif %}
 # OPT_BINS
 ifdef BINS
     OPT_BINS = $(foreach BIN,$(BINS), --bin $(BIN))
