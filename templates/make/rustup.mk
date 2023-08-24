@@ -9,6 +9,7 @@ rustup:
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain $(RUST_VERSION)-$(TARGET_ARCH)
 
 default:
+	source "$${HOME}/.cargo/env" && \
 	rustup default $(RUST_VERSION)-$(TARGET_ARCH)
 
 components:

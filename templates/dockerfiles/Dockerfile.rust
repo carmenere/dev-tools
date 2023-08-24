@@ -6,16 +6,27 @@ ARG RUST_VERSION=1.71.1
 ARG TARGET_ARCH=aarch64-unknown-linux-musl
 ARG SQLX_VERSION=
 
+ARG SETTINGS=~/.dev-tools/vars.mk
+
+WORKDIR /opt/dev-tools
+
+COPY ./lib ./lib
+COPY ./render ./render
+COPY ./templates ./templates
+COPY ./configure.mk ./configure.mk
+COPY ./defaults.mk ./defaults.mk
+COPY ./Makefile ./Makefile
+COPY ./vars.mk ./vars.mk
+
 RUN apk update --no-cache && apk add \
-    make \
     bash \
     bsd-compat-headers \
     build-base \
     curl \
     findutils \
-    git \
     jq \
     libev \
+    libffi-dev \
     libssh \
     libssh-dev \
     libtool \
@@ -25,24 +36,18 @@ RUN apk update --no-cache && apk add \
     make \
     moreutils \
     musl-dev \
-    patch \
-    perl \
-    python3 \
-    py3-pip \
-    pkgconfig \
-    postgresql12 \
-    postgresql12-contrib \
-    postgresql12-dev \
-    protoc \
     openssl-dev \
-    libffi-dev \
-    redis \
+    patch \
+    pkgconfig \
     sudo \
     texinfo \
     tzdata
 
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain ${RUST_VERSION}-${TARGET_ARCH}
+RUN make download build install upgrade
 
-RUN source "$HOME/.cargo/env" && \
-    RUSTFLAGS="-C target-feature=-crt-static" rustup component add clippy rustfmt && \
-    RUSTFLAGS="-C target-feature=-crt-static" cargo install --target=${TARGET_ARCH} --version=${SQLX_VERSION} sqlx-cli
+RUN make configure \
+        RUST_VERSION=${RUST_VERSION} \
+        TARGET_ARCH=${TARGET_ARCH} \
+        SQLX_VERSION=${SQLX_VERSION} && \
+    make -f .output/rustup/Makefile all && \
+    make -f .output/postgresql/Makefile install OS=alpine MAJOR=12

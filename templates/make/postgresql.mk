@@ -33,6 +33,15 @@ install-ubuntu install-debian:
 		postgresql-server-dev-$(MAJOR) \
 		libpq-dev
 
+install-alpine:
+	apk update --no-cache && apk add \
+		postgresql$(MAJOR) \
+		postgresql$(MAJOR)-contrib \
+		postgresql$(MAJOR)-dev
+
+install-macos:
+	brew install postgresql@$(MAJOR)
+
 install: install-$(OS)
 
 add-auth-policy:

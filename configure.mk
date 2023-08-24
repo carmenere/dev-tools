@@ -1,9 +1,5 @@
 DEVTOOLS_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
-# TOPDIR := $(shell pwd)
-RENDER := python3 -m render.main
-SHELL := /bin/bash
-
 TOPDIR := $(shell pwd)
 LIB := $(DEVTOOLS_DIR)/lib
 
@@ -18,6 +14,9 @@ ifdef VARS
 	include $(shell realpath $(VARS))
 endif
 
+RENDER ?= $(PYTHON) -m render.main
+SHELL ?= $(which bash)
+
 export OUT_DIR
 export TMPL_DIR
 
@@ -26,9 +25,6 @@ export TMPL_DIR
 # 1. Put CTX's envs to Render's envs.
 # 2. Put CTX's vars to Render's cli args.
 all:
-	@echo cargo_foo__IN = $(cargo_foo__IN)
-	@echo CTXES = $(CTXES)
-	@echo VARIABLES = "$(.VARIABLES)"
 	$(foreach CTX,$(CTXES),cd $(DEVTOOLS_DIR) && \
 		$(foreach VAR,$(filter envs_$(CTX)__%,$(.VARIABLES)),$(lastword $(subst envs_$(CTX)__,,$(VAR)))=$$'$(call escape,$($(VAR)))')\
 		$(RENDER) \

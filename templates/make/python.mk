@@ -17,7 +17,7 @@ endif
 
 TGT_ARTEFACTS_DIR ?= $(ARTEFACTS_DIR)/.create-artefacts-dir
 
-.PHONY: build
+.PHONY: build install upgrade
 
 $(TGT_ARTEFACTS_DIR):
 	mkdir -p $(ARTEFACTS_DIR)
