@@ -1,4 +1,4 @@
-TOPDIR := {{ TOPDIR }}
+TOPDIR := $(shell pwd)
 
 ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR }}
 BIN_PATH ?= {{ BIN_PATH }}

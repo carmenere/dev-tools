@@ -1,4 +1,4 @@
-TOPDIR := {{ TOPDIR }}
+TOPDIR := $(shell pwd)
 
 TARGET_ARCH ?= {{ TARGET_ARCH }}
 RUST_VERSION ?= {{ RUST_VERSION }}

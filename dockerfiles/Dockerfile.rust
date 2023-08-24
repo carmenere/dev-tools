@@ -6,17 +6,14 @@ ARG RUST_VERSION=1.71.1
 ARG TARGET_ARCH=aarch64-unknown-linux-musl
 ARG SQLX_VERSION=
 
-ARG SETTINGS=~/.dev-tools/vars.mk
-
 WORKDIR /opt/dev-tools
 
 COPY ./lib ./lib
 COPY ./render ./render
 COPY ./templates ./templates
-COPY ./configure.mk ./configure.mk
-COPY ./defaults.mk ./defaults.mk
+COPY ./vars ./vars
+COPY ./configure.mk ./configure.mk 
 COPY ./Makefile ./Makefile
-COPY ./vars.mk ./vars.mk
 
 RUN apk update --no-cache && apk add \
     bash \
@@ -43,9 +40,7 @@ RUN apk update --no-cache && apk add \
     texinfo \
     tzdata
 
-RUN make download build install upgrade
-
-RUN make configure \
+RUN make all \
         RUST_VERSION=${RUST_VERSION} \
         TARGET_ARCH=${TARGET_ARCH} \
         SQLX_VERSION=${SQLX_VERSION} && \

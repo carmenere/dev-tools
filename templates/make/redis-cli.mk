@@ -1,4 +1,4 @@
-TOPDIR ?= {{ TOPDIR }}
+TOPDIR := $(shell pwd)
 
 ADMIN ?= {{ ADMIN }}
 ADMIN_DB ?= {{ ADMIN_DB }}

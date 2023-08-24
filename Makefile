@@ -2,73 +2,101 @@ TOPDIR := $(shell pwd)
 
 ARTEFACTS_DIR = $(abspath .artefacts)
 DOWNLOAD_URL = https://www.python.org/ftp/python/$(VERSION)/Python-$(VERSION).tgz 
-INSTALL_SCHEMA = --user
 MAJOR = 3.11
 MINOR = 4
-OWNER = 
-PIP = $(PYTHON) -m pip
+OWNER = $(USER)
 PREFIX = $(shell echo ~/.py3/$(VERSION))
 PYTHON = $(PREFIX)/bin/python$(MAJOR)
 SEVERITY = info
 SUDO = $(shell which sudo)
 VERSION = $(MAJOR).$(MINOR)
 
-ifdef VARS
-    VARS_OPT = VARS=$(realpath $(shell realpath $(VARS)))
-else
-    VARS_OPT =
-endif
+VENV_DIR = $(ARTEFACTS_DIR)/.venv
+VPYTHON = $(VENV_DIR)/bin/python
+REQUIREMENTS = $(TOPDIR)/render/requirements.txt
 
-ifdef PREFIX
-    PREFIX_OPT = --prefix=$(PREFIX)
-else
-    PREFIX_OPT =
-endif
+export VARS := $(shell realpath $(VARS))
 
-BUILD_OPTS += $(PREFIX_OPT)
-BUILD_OPTS += --enable-optimizations
+.PHONY: all python vpython requirements rm-vpython configure
 
-PIP_OPTS += $(INSTALL_SCHEMA)
-PIP_OPTS += --break-system-packages
-PIP_OPTS += --prefer-binary
+all: python vpython requirements configure
 
-TGT_ARTEFACTS_DIR = $(ARTEFACTS_DIR)/.create-dir-$(shell echo $(ARTEFACTS_DIR) | tr '/' '-')
-TGT_PREFIX_DIR = $(ARTEFACTS_DIR)/.create-dir-$(shell echo $(PREFIX) | tr '/' '-')
-
-.PHONY: all download build install upgrade configure
-
-all: download build install upgrade configure
-
-$(TGT_ARTEFACTS_DIR):
-	mkdir -p $(ARTEFACTS_DIR)
+$(PYTHON):
+	make -f ./templates/make/py.mk install \
+		ARTEFACTS_DIR='$(ARTEFACTS_DIR)' \
+		DOWNLOAD_URL='$(DOWNLOAD_URL)' \
+		MAJOR='$(MAJOR)' \
+		MINOR='$(MINOR)' \
+		OWNER='$(OWNER)' \
+		PREFIX='$(PREFIX)' \
+		SUDO='$(SUDO)' \
+		VERSION='$(VERSION)'
 	touch $@
 
-$(TGT_PREFIX_DIR):
-	mkdir -p $(PREFIX)
+python: $(PYTHON)
+
+$(VPYTHON): python
+	make -f ./templates/make/venv.mk init \
+		PYTHON='$(PYTHON)' \
+		VENV_DIR='$(VENV_DIR)' \
+		VENV_PROMT='[toolchain]'
 	touch $@
 
-$(ARTEFACTS_DIR)/Python-$(VERSION).tgz: $(TGT_ARTEFACTS_DIR)
-	cd $(ARTEFACTS_DIR) && wget $(DOWNLOAD_URL) && tar -xf Python-$(VERSION).tgz
-	touch $@
+vpython: $(VPYTHON)
 
-download: $(ARTEFACTS_DIR)/Python-$(VERSION).tgz
+requirements: vpython
+	make -f ./templates/make/pip.mk requirements \
+		ARTEFACTS_DIR='$(VENV_DIR)' \
+		INSTALL_SCHEMA='' \
+		USERBASE='' \
+		PYTHON='$(VPYTHON)' \
+		REQUIREMENTS='$(REQUIREMENTS)' \
+		CC='' \
+		CPPFLAGS='' \
+		CXX='' \
+		LDFLAGS='' \
 
-build: $(TGT_PREFIX_DIR)
-	cd $(ARTEFACTS_DIR)/Python-$(VERSION) && \
-		./configure $(BUILD_OPTS) && \
-		make -j $(nproc)
+rm-vpython:
+	make -f ./templates/make/venv.mk clean \
+		PYTHON='$(PYTHON)' \
+		VENV_DIR='$(VENV_DIR)' \
+		VENV_PROMT='[toolchain]'
 
-install: $(TGT_PREFIX_DIR)
-	cd $(ARTEFACTS_DIR)/Python-$(VERSION) && sudo make altinstall
-ifdef OWNER
-	$(SUDO) chown -R $(OWNER) $(PREFIX)
-endif
-
-upgrade:
-	PYTHONUSERBASE=$(PREFIX) $(PIP) install $(PIP_OPTS) --upgrade pip wheel setuptools
-
-configure:
-	$(PYTHON) -m pip install -r $(TOPDIR)/render/requirements.txt
-	make -f ./configure.mk $(VARS_OPT) all \
+configure: requirements
+	make -f ./configure.mk all \
 		PYTHON=$(PYTHON) \
+		RENDER_PYTHON=$(VPYTHON) \
 		SEVERITY=$(SEVERITY)
+
+run: configure
+	make -f ./configure.mk run
+
+build:
+	make -f ./configure.mk build
+
+venv:
+	make -f ./configure.mk venv
+
+pip:
+	make -f ./configure.mk pip
+
+apps:
+	make -f ./configure.mk apps
+
+schemas:
+	make -f ./configure.mk schemas
+
+sysctl:
+	make -f ./configure.mk sysctl
+
+tests:
+	make -f ./configure.mk tests
+
+tmux:
+	make -f ./configure.mk tmux
+
+build:
+	make -f ./configure.mk build
+
+docker:
+	make -f ./configure.mk docker

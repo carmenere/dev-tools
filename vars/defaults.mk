@@ -32,6 +32,10 @@ LDFLAGS ?= $$(shell echo $${LDFLAGS})
 CC ?= $$(shell echo $${CC})
 CXX ?= $$(shell echo $${CXX})
 
+SERVICE_CMD_PREFIX = brew services
+SERVICE_START_CMD = $(SERVICE_CMD_PREFIX) start
+SERVICE_STOP_CMD = $(SERVICE_CMD_PREFIX) stop
+
 SERVICE_DB ?= fizzbuzz
 SERVICE_PASSWORD ?= 12345
 SERVICE_USER ?= foobar

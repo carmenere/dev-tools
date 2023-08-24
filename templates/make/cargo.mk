@@ -1,6 +1,5 @@
-TOPDIR := {{ TOPDIR }}
+TOPDIR := $(shell pwd)
 LIB := {{ LIB }}
-
 include $(LIB)/common.mk
 
 BINS ?= {{ BINS }}

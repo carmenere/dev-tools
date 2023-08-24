@@ -11,6 +11,10 @@ define lowercase
 $(shell echo $1 | tr '[:upper:]' '[:lower:]')
 endef
 
+define lowercase
+$(shell echo $1 | tr '[:upper:]' '[:lower:]')
+endef
+
 define escape
 $(subst ",\",$(subst ',\',$1))
 endef

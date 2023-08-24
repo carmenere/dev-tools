@@ -1,4 +1,4 @@
-TOPDIR := {{ TOPDIR }}
+TOPDIR := $(shell pwd)
 
 AUTH_POLICY ?= {{ AUTH_POLICY }}
 MAJOR ?= {{ MAJOR }}

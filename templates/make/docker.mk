@@ -1,4 +1,4 @@
-TOPDIR := {{ TOPDIR }}
+TOPDIR := $(shell pwd)
 
 BRIDGE ?= {{ BRIDGE }}
 CONTAINER ?= {{ CONTAINER }}
