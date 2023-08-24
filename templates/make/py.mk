@@ -1,13 +1,13 @@
 TOPDIR := $(shell pwd)
 
-ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR }}
-DOWNLOAD_URL ?= {{ DOWNLOAD_URL }}
+DL ?= {{ DL }}
 MAJOR ?= {{ MAJOR }}
 MINOR ?= {{ MINOR }}
 OWNER ?= {{ OWNER }}
 PREFIX ?= {{ PREFIX }}
 SUDO ?= {{ SUDO }}
 
+DOWNLOAD_URL = https://www.python.org/ftp/python/$(VERSION)/Python-$(VERSION).tgz 
 VERSION ?= $(MAJOR).$(MINOR)
 PYTHON ?= $(PREFIX)/bin/python$(MAJOR)
 
@@ -28,30 +28,25 @@ ifeq ($(ENABLE_OPTIMIZATIONS),yes)
 BUILD_OPTS += --enable-optimizations
 endif
 
-.PHONY: all artefacts-dir prefix download build install
+.PHONY: all prefix download build install
 
 all: download build install
 
-artefacts-dir:
-	[ -d $(PREFIX) ] || mkdir -p $(ARTEFACTS_DIR)
-
-prefix:
-	[ -d $(PREFIX) ] || mkdir -p $(PREFIX)
-
-$(ARTEFACTS_DIR)/Python-$(VERSION).tgz: artefacts-dir
-	cd $(ARTEFACTS_DIR) && wget $(DOWNLOAD_URL) && tar -xf Python-$(VERSION).tgz
+$(DL)/Python-$(VERSION).tgz:
+	[ -d $(DL) ] || mkdir -p $(DL)
+	cd $(DL) && wget $(DOWNLOAD_URL) && tar -xf Python-$(VERSION).tgz
 	touch $@
 
-download: $(ARTEFACTS_DIR)/Python-$(VERSION).tgz
+download: $(DL)/Python-$(VERSION).tgz
 
-build: download prefix
-	cd $(ARTEFACTS_DIR)/Python-$(VERSION) && \
+build: download
+	[ -d $(PREFIX) ] || mkdir -p $(PREFIX)
+	cd $(DL)/Python-$(VERSION) && \
 		./configure $(BUILD_OPTS) && \
 		make -j $(nproc)
 
-install: build prefix
-	cd $(ARTEFACTS_DIR)/Python-$(VERSION) && sudo make altinstall
+install: build
+	cd $(DL)/Python-$(VERSION) && sudo make altinstall
 ifdef OWNER
 	$(SUDO) chown -R $(OWNER) $(PREFIX)
 endif
-	touch $@

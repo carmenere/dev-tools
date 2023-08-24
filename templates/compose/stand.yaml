@@ -9,12 +9,12 @@ services:
     command: redis-server --requirepass {{ REDIS_ADMIN_PASSWORD }}
     ports:
       - "{{ REDIS_PUBLISH }}"
-    restart: always
     logging:
       driver: "json-file"
       options:
         max-size: "100m"
         max-file: "2"
+    restart: always
 {%- set e = [] -%}
 {% if REDIS_ENVS -%}
 {% for item in REDIS_ENVS.split(' ') -%}
@@ -25,7 +25,6 @@ services:
     environment:
       - {{ e|join('\n      - ') }}
 {% endif %}
-
   {{ PG }}:
     image: {{ PG_IMAGE }}
     container_name: {{ PG }}
@@ -42,7 +41,16 @@ services:
         max-size: "100m"
         max-file: "2"
     restart: always
-  
+{%- set e = [] -%}
+{% if PG_ENVS -%}
+{% for item in PG_ENVS.split(' ') -%}
+{% do e.append("{}={}".format(item, env[item])) -%}
+{% endfor -%}
+{% endif -%}
+{% if e %}
+    environment:
+      - {{ e|join('\n      - ') }}
+{% endif %}
   {{ FOO }}:
     image: {{ FOO_IMAGE }}
     container_name: {{ FOO }}
@@ -56,7 +64,17 @@ services:
       options:
         max-size: "100m"
         max-file: "2"
-  
+    restart: always
+{%- set e = [] -%}
+{% if FOO_ENVS -%}
+{% for item in FOO_ENVS.split(' ') -%}
+{% do e.append("{}={}".format(item, env[item])) -%}
+{% endfor -%}
+{% endif -%}
+{% if e %}
+    environment:
+      - {{ e|join('\n      - ') }}
+{% endif %}
   {{ BAR }}:
     image: {{ BAR_IMAGE }}
     container_name: {{ BAR }}
@@ -70,7 +88,17 @@ services:
       options:
         max-size: "100m"
         max-file: "2"
-
+    restart: always
+{%- set e = [] -%}
+{% if BAR_ENVS -%}
+{% for item in BAR_ENVS.split(' ') -%}
+{% do e.append("{}={}".format(item, env[item])) -%}
+{% endfor -%}
+{% endif -%}
+{% if e %}
+    environment:
+      - {{ e|join('\n      - ') }}
+{% endif %}
 networks:
   {{ BRIDGE }}:
     name: {{ BRIDGE }}

@@ -38,7 +38,7 @@ cargo_foo__BINS_DIR = $(abspath $(cargo_foo__TARGET_DIR))/$(cargo_foo__TARGET_AR
 envs_cargo_foo__RUSTFLAGS = $(RUSTFLAGS)
 envs_cargo_foo__BUILD_VERSION = $(BUILD_VERSION)
 
-cargo_foo__ENVS = $(foreach VAR,$(filter envs_cargo_foo__%,$(.VARIABLES)),$(lastword $(subst envs_cargo_foo__,,$(VAR))))
+cargo_foo__ENVS = $(foreach VAR,$(filter envs_cargo_foo__%,$(.VARIABLES)),$(subst envs_cargo_foo__,,$(VAR)))
 
 CTXES := $(CTXES) cargo_foo
 
@@ -75,15 +75,16 @@ cargo_bar__BINS_DIR = $(abspath $(cargo_bar__TARGET_DIR))/$(cargo_bar__TARGET_AR
 
 # cargo envs
 
-$(foreach VAR,$(filter envs_cargo_foo__%,$(.VARIABLES)),\
-	$(eval envs_cargo_bar__$(lastword $(subst envs_cargo_foo__,,$(VAR))) = $($(VAR))) \
+# inherit envs from CTX envs_cargo_foo__
+$(foreach VAR,$(filter envs_cargo_foo__%,$(.VARIABLES)), \
+    $(eval envs_cargo_bar__$(subst envs_cargo_foo__,,$(VAR)) = $($(VAR))) \
 )
 
-envs_cargo_bar__RUSTFLAGS = $(RUSTFLAGS)
-envs_cargo_bar__BUILD_VERSION = $(BUILD_VERSION)
+# envs_cargo_bar__RUSTFLAGS = $(RUSTFLAGS)
+# envs_cargo_bar__BUILD_VERSION = $(BUILD_VERSION)
 envs_cargo_bar__DATABASE_URL = $(DATABASE_URL)
 
-cargo_bar__ENVS = $(foreach VAR,$(filter envs_cargo_bar__%,$(.VARIABLES)),$(lastword $(subst envs_cargo_bar__,,$(VAR))))
+cargo_bar__ENVS = $(foreach VAR,$(filter envs_cargo_bar__%,$(.VARIABLES)),$(subst envs_cargo_bar__,,$(VAR)))
 
 CTXES := $(CTXES) cargo_bar
 
@@ -277,12 +278,11 @@ python__IN = $(MK)/py.mk
 python__OUT_DIR = $(OUT_DIR)/python
 python__OUT = $(python__OUT_DIR)/Makefile
 
-python__ARTEFACTS_DIR = $(python__OUT_DIR)/.artefacts
-python__DOWNLOAD_URL = https://www.python.org/ftp/python/$(python__VERSION)/Python-$(python__VERSION).tgz 
+python__DL = $(python__OUT_DIR)/.dl
 python__MAJOR = 3.11
 python__MINOR = 4
-python__OWNER = 
-python__PREFIX = 
+python__OWNER = $(USER)
+python__PREFIX =
 python__SUDO = $(SUDO)
 
 CTXES := $(CTXES) python
@@ -321,7 +321,7 @@ app_sqlx_bar__PKILL_PATTERN =
 # sqlx envs
 envs_app_sqlx_bar__DATABASE_URL = $(DATABASE_URL)
 
-app_sqlx_bar__ENVS = $(foreach VAR,$(filter envs_app_sqlx_bar__%,$(.VARIABLES)),$(lastword $(subst envs_app_sqlx_bar__,,$(VAR))))
+app_sqlx_bar__ENVS = $(foreach VAR,$(filter envs_app_sqlx_bar__%,$(.VARIABLES)),$(subst envs_app_sqlx_bar__,,$(VAR)))
 
 CTXES := $(CTXES) app_sqlx_bar
 
@@ -466,7 +466,7 @@ endif
 # docker build_args
 envs_docker_pg__BASE_IMAGE = $(DOCKER_PG_IMAGE)
 
-docker_pg__ENVS = $(foreach VAR,$(filter envs_docker_pg__%,$(.VARIABLES)),$(lastword $(subst envs_docker_pg__,,$(VAR))))
+docker_pg__ENVS = $(foreach VAR,$(filter envs_docker_pg__%,$(.VARIABLES)),$(subst envs_docker_pg__,,$(VAR)))
 
 docker_pg__BUILD_ARGS = BASE_IMAGE
 
@@ -501,7 +501,7 @@ endif
 # docker build_args
 envs_docker_redis__BASE_IMAGE = $(DOCKER_REDIS_IMAGE)
 
-docker_redis__ENVS = $(foreach VAR,$(filter envs_docker_redis__%,$(.VARIABLES)),$(lastword $(subst envs_docker_redis__,,$(VAR))))
+docker_redis__ENVS = $(foreach VAR,$(filter envs_docker_redis__%,$(.VARIABLES)),$(subst envs_docker_redis__,,$(VAR)))
 
 docker_redis__BUILD_ARGS = BASE_IMAGE
 
@@ -539,7 +539,7 @@ envs_docker_rust__RUST_VERSION = $(DOCKER_RUST_VERSION)
 envs_docker_rust__TARGET_ARCH = $(DOCKER_RUST_TARGET_ARCH)
 envs_docker_rust__SQLX_VERSION = 0.7.1
 
-docker_rust__ENVS = $(foreach VAR,$(filter envs_docker_rust__%,$(.VARIABLES)),$(lastword $(subst envs_docker_rust__,,$(VAR))))
+docker_rust__ENVS = $(foreach VAR,$(filter envs_docker_rust__%,$(.VARIABLES)),$(subst envs_docker_rust__,,$(VAR)))
 
 docker_rust__BUILD_ARGS = BASE_IMAGE RUST_VERSION TARGET_ARCH SQLX_VERSION
 
@@ -578,7 +578,7 @@ envs_docker_bar__BUILD_PROFILE = $(CARGO_PROFILE)
 envs_docker_bar__BUILD_VERSION = $(BUILD_VERSION)
 envs_docker_bar__TARGET_ARCH = $(DOCKER_RUST_TARGET_ARCH)
 
-docker_bar__ENVS = $(foreach VAR,$(filter envs_docker_bar__%,$(.VARIABLES)),$(lastword $(subst envs_docker_bar__,,$(VAR))))
+docker_bar__ENVS = $(foreach VAR,$(filter envs_docker_bar__%,$(.VARIABLES)),$(subst envs_docker_bar__,,$(VAR)))
 
 docker_bar__BUILD_ARGS = APP BASE_IMAGE BUILD_PROFILE BUILD_VERSION TARGET_ARCH
 
@@ -617,7 +617,7 @@ envs_docker_foo__BUILD_PROFILE = $(CARGO_PROFILE)
 envs_docker_foo__BUILD_VERSION = $(BUILD_VERSION)
 envs_docker_foo__TARGET_ARCH = $(DOCKER_RUST_TARGET_ARCH)
 
-docker_foo__ENVS = $(foreach VAR,$(filter envs_docker_foo__%,$(.VARIABLES)),$(lastword $(subst envs_docker_foo__,,$(VAR))))
+docker_foo__ENVS = $(foreach VAR,$(filter envs_docker_foo__%,$(.VARIABLES)),$(subst envs_docker_foo__,,$(VAR)))
 
 docker_foo__BUILD_ARGS = APP BASE_IMAGE BUILD_PROFILE BUILD_VERSION TARGET_ARCH
 
@@ -632,34 +632,61 @@ stand_yaml__OUT = $(stand_yaml__OUT_DIR)/stand.yaml
 
 stand_yaml__BAR = bar
 stand_yaml__BAR_IMAGE = $(docker_bar__IMAGE)
-stand_yaml__BAR_PUBLISH = $(docker_bar__PUBLISH)
+stand_yaml__BAR_PUBLISH = 20001
 stand_yaml__BRIDGE = stand
+
 stand_yaml__FOO = foo
 stand_yaml__FOO_IMAGE = $(docker_foo__IMAGE)
-stand_yaml__FOO_PUBLISH = $(docker_foo__PUBLISH)
+stand_yaml__FOO_PUBLISH = 20002
+
 stand_yaml__PG = pg
 stand_yaml__PG_IMAGE = $(DOCKER_PG_IMAGE)
-stand_yaml__PG_PUBLISH = $(docker_pg__PUBLISH)
+stand_yaml__PG_PUBLISH = 10001
+
 stand_yaml__REDIS = redis
 stand_yaml__REDIS_ADMIN_PASSWORD = $(REDIS_ADMIN_PASSWORD)
 stand_yaml__REDIS_IMAGE = $(DOCKER_REDIS_IMAGE)
-stand_yaml__REDIS_PUBLISH = $(docker_redis__PUBLISH)
+stand_yaml__REDIS_PUBLISH = 10002
 
 stand_yaml__BRIDGE = stand
 stand_yaml__DRIVER = $(DOCKER_NETWORK_DRIVER)
 stand_yaml__NETWORK = 192.168.200.0/24
 
-# ENVS
-envs_stand_yaml__XXX = redis
+# REDIS_ENVS
+envs_redis_stand_yaml__XXX = 12345
+envs_redis_stand_yaml__YYY = abcd
+stand_yaml__REDIS_ENVS = $(foreach VAR,$(filter envs_redis_stand_yaml__%,$(.VARIABLES)),$(subst envs_redis_stand_yaml__,,$(VAR)))
 
-# stand_yaml__ENVS = $(foreach VAR,$(filter envs_stand_yaml__%,$(.VARIABLES)),$(lastword $(subst envs_stand_yaml__,,$(VAR))))
+# PG_ENVS
+envs_pg_stand_yaml__QQQ = 98765
+envs_pg_stand_yaml__RRR = qwerty
+stand_yaml__PG_ENVS = $(foreach VAR,$(filter envs_pg_stand_yaml__%,$(.VARIABLES)),$(subst envs_pg_stand_yaml__,,$(VAR)))
 
-stand_yaml__REDIS_ENVS = XXX
+# BAR_ENVS
+envs_bar_stand_yaml__XX = 98765
+envs_bar_stand_yaml__YYY = qwerty
+stand_yaml__BAR_ENVS = $(foreach VAR,$(filter envs_bar_stand_yaml__%,$(.VARIABLES)),$(subst envs_bar_stand_yaml__,,$(VAR)))
 
-# stand_yaml__BAR_ENVS =
-# stand_yaml__FOO_ENVS = 
-# stand_yaml__PG_ENVS =
+# FOO_ENVS
+envs_foo_stand_yaml__WWW = 98765
+envs_foo_stand_yaml__YY = qwerty
+stand_yaml__FOO_ENVS = $(foreach VAR,$(filter envs_foo_stand_yaml__%,$(.VARIABLES)),$(subst envs_foo_stand_yaml__,,$(VAR)))
 
+$(foreach VAR,$(filter envs_redis_stand_yaml__%,$(.VARIABLES)), \
+    $(eval envs_stand_yaml__$(subst envs_redis_stand_yaml__,,$(VAR)) = $($(VAR))) \
+)
+
+$(foreach VAR,$(filter envs_pg_stand_yaml__%,$(.VARIABLES)), \
+    $(eval envs_stand_yaml__$(subst envs_pg_stand_yaml__,,$(VAR)) = $($(VAR))) \
+)
+
+$(foreach VAR,$(filter envs_foo_stand_yaml__%,$(.VARIABLES)), \
+    $(eval envs_stand_yaml__$(subst envs_foo_stand_yaml__,,$(VAR)) = $($(VAR))) \
+)
+
+$(foreach VAR,$(filter envs_bar_stand_yaml__%,$(.VARIABLES)), \
+    $(eval envs_stand_yaml__$(subst envs_bar_stand_yaml__,,$(VAR)) = $($(VAR))) \
+)
 
 CTXES := $(CTXES) stand_yaml
 

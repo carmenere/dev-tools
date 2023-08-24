@@ -44,16 +44,15 @@ endif
 
 .PHONY: clean distclean upgrade install requirements
 
-$(TGT_ARTEFACTS_DIR):
-	mkdir -p $(ARTEFACTS_DIR)
-	touch $@
+artefacts-dir:
+	[ -d $(ARTEFACTS_DIR) ] || mkdir -p $(ARTEFACTS_DIR)
 
-$(TGT_UPGRADE): $(TGT_ARTEFACTS_DIR)
+$(TGT_UPGRADE): artefacts-dir
 	@echo PYTHONUSERBASE = $(PYTHONUSERBASE)
 	$(PYTHONUSERBASE) $(PIP) install $(PIP_OPTS) --upgrade $(UPGRADE)
 	touch $@
 
-$(TGT_INSTALL_REQUIREMENTS): $(REQUIREMENTS) $(TGT_ARTEFACTS_DIR)
+$(TGT_INSTALL_REQUIREMENTS): $(REQUIREMENTS) artefacts-dir
 ifdef REQUIREMENTS
 	$(PYTHONUSERBASE) $(PIP) install $(PIP_OPTS) -r $(REQUIREMENTS)
 endif

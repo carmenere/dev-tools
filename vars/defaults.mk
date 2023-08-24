@@ -1,4 +1,4 @@
-ARTEFACTS_DIR ?= .artefacts
+ARTEFACTS_DIR ?= $(abspath .artefacts)
 LOCALHOST ?= localhost
 SCHEMAS_DIR ?= migrations/schemas
 FIXTURES_DIR ?= migrations/fixtures
@@ -23,7 +23,6 @@ LOCALE_LC_CTYPE ?= en_US.UTF-8
 SH ?= $(shell which sh)
 BASH ?= $(shell which bash)
 SUDO ?= $(shell which sudo)
-PYTHON ?= $(shell which python3)
 
 PWD ?= $$(shell pwd)
 
@@ -76,3 +75,11 @@ VENV ?= ''
 LOG_FILE ?= $(ARTEFACTS_DIR)/logs.txt
 PID_FILE ?= $(ARTEFACTS_DIR)/.pid
 
+# templates/makefiles/py.mk + pip.mk + venv.mk
+PY_MAJOR = 3.11
+PY_MINOR = 4
+PY_OWNER = $(USER)
+PY_PREFIX = $(shell echo ~/.py/$(PY_MAJOR).$(PY_MINOR))
+
+# python
+PYTHON = $(PY_PREFIX)/bin/python$(PY_MAJOR)
