@@ -88,10 +88,9 @@ PY_PREFIX ?= $(shell echo ~/.py/$(PY_MAJOR).$(PY_MINOR))
 PYTHON ?= $(PY_PREFIX)/bin/python$(PY_MAJOR)
 
 # templates/makefiles/compose.mk 
-COMPOSE_DAEMONIZE ?= no
+COMPOSE_DAEMONIZE ?= yes
 COMPOSE_FORCE_RECREATE ?= no
 COMPOSE_NO_CACHE ?= yes
-COMPOSE_PURGE_ON_BUILD = no
 COMPOSE_RM_ALL ?= no
 COMPOSE_RM_FORCE ?= yes
 COMPOSE_RM_ON_UP ?= no

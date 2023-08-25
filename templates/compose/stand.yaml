@@ -70,7 +70,7 @@ services:
       - {{ FOO_BRIDGE }}
     ports:
       - "{{ FOO_PUBLISH }}"
-    command: sh -c '/usr/local/bin/so_api'
+    command: /bin/sh -c 'echo "OK"'
     logging:
       driver: "json-file"
       options:
@@ -104,7 +104,7 @@ services:
     container_name: {{ BAR }}
     networks:
       - {{ BAR_BRIDGE }}
-    command: python3 respond.py
+    command: /bin/sh -c 'echo "OK"'
     ports:
       - "{{ BAR_PUBLISH }}"
     logging:

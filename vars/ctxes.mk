@@ -176,7 +176,7 @@ psql__IN = $(MK)/psql.mk
 psql__OUT_DIR = $(OUT_DIR)/psql
 psql__OUT = $(psql__OUT_DIR)/Makefile
 
-psql__ADMIN = $(PG_ADMIN)
+psql__ADMIN ?= $(PG_ADMIN)
 psql__ADMIN_DB = $(PG_ADMIN_DB)
 psql__ADMIN_PASSWORD = $(PG_ADMIN_PASSWORD)
 psql__ARTEFACTS_DIR = $(psql__OUT_DIR)/.artefacts
@@ -208,7 +208,7 @@ redis__ADMIN = $(REDIS_ADMIN)
 redis__ADMIN_DB = $(REDIS_ADMIN_DB)
 redis__ADMIN_PASSWORD = $(REDIS_ADMIN_PASSWORD)
 redis__ARTEFACTS_DIR = $(redis__OUT_DIR)/.artefacts
-redis__CONTAINER =
+redis__CNT =
 redis__HOST = $(LOCALHOST)
 redis__MODE = $(MODE)
 redis__PORT = $(REDIS_PORT)
@@ -714,17 +714,7 @@ envs_foo_stand_yaml__WWW = 98765
 envs_foo_stand_yaml__YY = qwerty
 stand_yaml__FOO_ENVS = $(foreach VAR,$(filter envs_foo_stand_yaml__%,$(.VARIABLES)),$(subst envs_foo_stand_yaml__,,$(VAR)))
 
-$(foreach VAR,$(filter envs_pg_stand_yaml__%,$(.VARIABLES)), \
-    $(eval envs_stand_yaml__$(subst envs_pg_stand_yaml__,,$(VAR)) = $($(VAR))) \
-)
 
-$(foreach VAR,$(filter envs_foo_stand_yaml__%,$(.VARIABLES)), \
-    $(eval envs_stand_yaml__$(subst envs_foo_stand_yaml__,,$(VAR)) = $($(VAR))) \
-)
-
-$(foreach VAR,$(filter envs_bar_stand_yaml__%,$(.VARIABLES)), \
-    $(eval envs_stand_yaml__$(subst envs_bar_stand_yaml__,,$(VAR)) = $($(VAR))) \
-)
 
 CTXES := $(CTXES) stand_yaml
 
@@ -739,7 +729,6 @@ compose_stand_yaml__DAEMONIZE ?= $(COMPOSE_DAEMONIZE)
 compose_stand_yaml__FORCE_RECREATE ?= $(COMPOSE_FORCE_RECREATE)
 compose_stand_yaml__NO_CACHE ?= $(COMPOSE_NO_CACHE)
 compose_stand_yaml__PROJECT ?= xxx
-compose_stand_yaml__PURGE_ON_BUILD ?= $(COMPOSE_PURGE_ON_BUILD)
 compose_stand_yaml__RM_ALL ?= $(COMPOSE_RM_ALL)
 compose_stand_yaml__RM_FORCE ?= $(COMPOSE_RM_FORCE)
 compose_stand_yaml__RM_ON_UP ?= $(COMPOSE_RM_ON_UP)

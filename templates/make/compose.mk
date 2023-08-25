@@ -11,11 +11,10 @@ RM_STOP ?= {{ RM_STOP }}
 RM_VOLUMES ?= {{ RM_VOLUMES }}
 TIMEOUT ?= {{ TIMEOUT }}
 YAML ?= {{ YAML }}
-PURGE_ON_BUILD ?= {{ PURGE_ON_BUILD }}
 
-ifdef PROJECT 
-COMPOSE_OPTS += -p $(PROJECT)
-endif
+# ifdef PROJECT 
+# COMPOSE_OPTS += -p $(PROJECT)
+# endif
 
 ifneq ($(RM_FORCE),no)
 RM_OPTS += --force
@@ -27,10 +26,6 @@ endif
 
 ifeq ($(RM_VOLUMES),yes)
 RM_OPTS += --volumes
-endif
-
-ifeq ($(RM_ALL),yes)
-RM_OPTS += --all
 endif
 
 ifeq ($(RM_ALL),yes)
@@ -53,42 +48,44 @@ ifdef TIMEOUT
 DOWN_OPTS += --timeout $(TIMEOUT)
 endif
 
-ifeq ($(RM_ON_UP),yes)
-UP_DEPS += rm 
-endif
+BUILD_DEPS += purge
 
-ifneq ($(PURGE_ON_BUILD),no)
-UP_DEPS += purge 
-endif
-
-UP_DEPS += build
+UP_DEPS += force-rm
+# UP_DEPS += build
 # UP_DEPS += pull
 
-.PHONY: pull build up down start stop rm
+.PHONY: pull build up down start stop rm force-rm prune purge
 
 pull:
-	docker-compose -f $(YAML) $(COMPOSE_OPTS) pull
+	docker-compose -f $(YAML) pull
 
-build: 
-	docker-compose -f $(YAML) $(COMPOSE_OPTS) build $(BUILD_OPTS)
+build: $(BUILD_DEPS)
+	docker-compose -f $(YAML) build $(BUILD_OPTS)
 
 up: $(UP_DEPS)
-	docker-compose -f $(YAML) $(COMPOSE_OPTS) up $(UP_OPTS)
+	docker-compose -f $(YAML) up $(UP_OPTS)
 
 down:
-	docker-compose -f $(YAML) $(COMPOSE_OPTS) down $(DOWN_OPTS)
+	docker-compose -f $(YAML) down $(DOWN_OPTS)
 
 start:
-	docker-compose -f $(YAML) $(COMPOSE_OPTS) start
+	docker-compose -f $(YAML) start
 
 stop:
-	docker-compose -f $(YAML) $(COMPOSE_OPTS) stop
+	docker-compose -f $(YAML) stop
 
 rm:
-	docker-compose -f $(YAML) $(COMPOSE_OPTS) rm $(RM_OPTS)
+	docker-compose -f $(YAML) rm $(RM_OPTS)
 
-purge:
+force-rm:
 	[ -z "$$(docker ps -aq)" ] || docker rm -f $$(docker ps -aq)
+
+prune: force-rm
+	docker system prune -f
+	docker volume prune -f
+	docker network prune -f
+
+purge: force-rm
 	docker system prune -a -f --volumes
 	docker volume prune -f
 	docker network prune -f

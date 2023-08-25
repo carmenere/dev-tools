@@ -72,13 +72,15 @@ rm:
 rm-by-image:
 	[ -z "$$(docker ps -q -f ancestor=$(IMAGE))" ] || docker rm -f "$$(docker ps -q -f ancestor=$(IMAGE))"
 
-prune:
+rm-all:
+	[ -z "$$(docker ps -aq)" ] || docker rm -f $$(docker ps -aq)
+
+prune: rm-all
 	docker system prune -f
 	docker volume prune -f
 	docker network prune -f
 
-purge:
-	[ -z "$$(docker ps -aq)" ] || docker rm -f $$(docker ps -aq)
+purge: rm-all
 	docker system prune -a -f --volumes
 	docker volume prune -f
 	docker network prune -f

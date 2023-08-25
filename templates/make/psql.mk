@@ -52,14 +52,14 @@ endif
 
 #
 ifdef CNT
-    PSQL ?= docker exec $(TI) $(CNT) $(SUDO) -iu $(ADMIN) ADMIN_DB=$(ADMIN_DB) psql
-    PSQL_USER ?= docker exec $(TI) $(CNT) $(SUDO) -iu $(USER_NAME) ADMIN_DB=$(USER_DB) psql
+    PSQL ?= docker exec $(TI) $(CNT) psql -U $(ADMIN) -d $(ADMIN_DB)
+    PSQL_USER ?= docker exec $(TI) $(CNT) psql -U $(USER_NAME) -d $(USER_DB)
 else ifeq ($(AUTH_METHOD),remote)
     PSQL = psql $(CONN_URL)
     PSQL_USER ?= psql $(USER_CONN_URL)
 else ifeq ($(AUTH_METHOD),peer)
-    PSQL ?= $(SUDO) -iu $(ADMIN) ADMIN_DB=$(ADMIN_DB) psql
-    PSQL_USER ?= $(SUDO) -iu $(USER_NAME) ADMIN_DB=$(USER_DB) psql
+    PSQL ?= $(SUDO) -iu $(ADMIN) PGDATABASE=$(ADMIN_DB) psql
+    PSQL_USER ?= $(SUDO) -iu $(USER_NAME) PGDATABASE=$(USER_DB) psql
 else
     $(error Unsupported value '$(AUTH_METHOD)' for 'AUTH_METHOD' variable. SECTION=$(SECTION))
 endif
@@ -90,7 +90,7 @@ connect: override TI = -ti
 connect:
 	$(PSQL_USER)
 
-connect: override TI = -ti
+connect-admin: override TI = -ti
 connect-admin:
 	$(PSQL)
 
@@ -103,7 +103,7 @@ clean:
 	$(PSQL) -c "DROP USER IF EXISTS $(USER_NAME);"
 
 dump:
-	PGUSER=$(USER_PASSWORD) pg_dump -h $(HOST) -p $(PORT) -U $(USER_NAME) -d $(USER_DB) --file=$(PATH_TO_DUMP)
+	PGPASSWORD=$(USER_PASSWORD) pg_dump -h $(HOST) -p $(PORT) -U $(USER_NAME) -d $(USER_DB) --file=$(PATH_TO_DUMP)
 
 distclean: clean
 

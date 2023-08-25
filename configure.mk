@@ -4,13 +4,27 @@ LIB ?= $(DEVTOOLS_DIR)/lib
 PROJECT_ROOT ?= $(TOPDIR)
 
 # Default vars
-include $(DEVTOOLS_DIR)/vars/defaults.mk $(DEVTOOLS_DIR)/vars/ctxes.mk $(LIB)/common.mk
+include $(DEVTOOLS_DIR)/vars/defaults.mk 
+include $(DEVTOOLS_DIR)/vars/ctxes.mk
+include $(LIB)/common.mk
 
 # Customized vars
 ifdef SETTINGS
     # Use '$(shell realpath ...)' because make's $(realpath ...) doesn't expand tilde '~'.
     include $(shell realpath $(SETTINGS))
 endif
+
+$(foreach VAR,$(filter envs_pg_stand_yaml__%,$(.VARIABLES)), \
+    $(eval envs_stand_yaml__$(subst envs_pg_stand_yaml__,,$(VAR)) = $($(VAR))) \
+)
+
+$(foreach VAR,$(filter envs_foo_stand_yaml__%,$(.VARIABLES)), \
+    $(eval envs_stand_yaml__$(subst envs_foo_stand_yaml__,,$(VAR)) = $($(VAR))) \
+)
+
+$(foreach VAR,$(filter envs_bar_stand_yaml__%,$(.VARIABLES)), \
+    $(eval envs_stand_yaml__$(subst envs_bar_stand_yaml__,,$(VAR)) = $($(VAR))) \
+)
 
 VENV_DIR ?= $(abspath .venv)
 RENDER ?= $(VENV_DIR)/bin/python -m render.main
