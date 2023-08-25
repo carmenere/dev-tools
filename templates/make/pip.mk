@@ -46,7 +46,6 @@ endif
 
 $(TGT_UPGRADE):
 	[ -d $(ARTEFACTS_DIR) ] || mkdir -p $(ARTEFACTS_DIR)
-	@echo PYTHONUSERBASE = $(PYTHONUSERBASE)
 	$(PYTHONUSERBASE) $(PIP) install $(PIP_OPTS) --upgrade $(UPGRADE)
 	touch $@
 

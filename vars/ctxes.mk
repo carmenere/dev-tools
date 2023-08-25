@@ -458,6 +458,7 @@ docker_pg__OUT = $(docker_pg__OUT_DIR)/pg.mk
 docker_pg__BRIDGE = $(DOCKER_NETWORK_NAME)
 docker_pg__CONTAINER = db
 docker_pg__CTX = $(PROJECT_ROOT)
+docker_pg__DAEMONIZE = $(DOCKER_DAEMONIZE)
 docker_pg__DOCKERFILE = $(DOCKERFILES)/Dockerfile
 docker_pg__DRIVER = $(DOCKER_NETWORK_DRIVER)
 docker_pg__ERR_IF_BRIDGE_EXISTS = yes
@@ -471,12 +472,20 @@ else
     docker_pg__IMAGE = pg
 endif
 
-# docker build_args
-envs_docker_pg__BASE_IMAGE = $(DOCKER_PG_IMAGE)
+# build args for docker build
+args_docker_pg__BASE_IMAGE = $(DOCKER_PG_IMAGE)
 
-docker_pg__ENVS = $(foreach VAR,$(filter envs_docker_pg__%,$(.VARIABLES)),$(subst envs_docker_pg__,,$(VAR)))
+docker_pg__BUILD_ARGS = $(foreach VAR,$(filter args_docker_pg__%,$(.VARIABLES)),$(subst args_docker_pg__,,$(VAR)))
 
-docker_pg__BUILD_ARGS = BASE_IMAGE
+# envs for docker run
+e_docker_pg__POSTGRES_PASSWORD = $(psql__ADMIN_PASSWORD)
+e_docker_pg__POSTGRES_DB = $(psql__ADMIN_DB)
+e_docker_pg__POSTGRES_USER = $(psql__ADMIN)
+
+docker_pg__ENVS = $(foreach VAR,$(filter e_docker_pg__%,$(.VARIABLES)),$(subst e_docker_pg__,,$(VAR)))
+
+# This will paste args_docker_pg__% to namespace envs_docker_pg__ and pass as ENVs to render.py
+enrich_envs_docker_pg = args_docker_pg e_docker_pg
 
 CTXES := $(CTXES) docker_pg
 
@@ -490,6 +499,7 @@ docker_redis__IN = $(MK)/docker.mk
 docker_redis__OUT_DIR = $(OUT_DIR)/docker
 docker_redis__OUT = $(docker_redis__OUT_DIR)/redis.mk
 
+docker_redis__DAEMONIZE = $(DOCKER_DAEMONIZE)
 docker_redis__BRIDGE = $(DOCKER_NETWORK_NAME)
 docker_redis__CONTAINER = redis
 docker_redis__CTX = $(PROJECT_ROOT)
@@ -525,6 +535,7 @@ docker_rust__IN = $(MK)/docker.mk
 docker_rust__OUT_DIR = $(OUT_DIR)/docker
 docker_rust__OUT = $(docker_rust__OUT_DIR)/rust.mk
 
+docker_rust__DAEMONIZE = $(DOCKER_DAEMONIZE)
 docker_rust__BRIDGE = $(DOCKER_NETWORK_NAME)
 docker_rust__CONTAINER = builder_rust
 docker_rust__CTX = $(PROJECT_ROOT)
@@ -563,6 +574,7 @@ docker_bar__IN = $(MK)/docker.mk
 docker_bar__OUT_DIR = $(OUT_DIR)/docker
 docker_bar__OUT = $(docker_bar__OUT_DIR)/bar.mk
 
+docker_bar__DAEMONIZE = $(DOCKER_DAEMONIZE)
 docker_bar__BRIDGE = $(DOCKER_NETWORK_NAME)
 docker_bar__CONTAINER = builder_rust
 docker_bar__CTX = $(PROJECT_ROOT)
@@ -603,6 +615,7 @@ docker_foo__IN = $(MK)/docker.mk
 docker_foo__OUT_DIR = $(OUT_DIR)/docker
 docker_foo__OUT = $(docker_foo__OUT_DIR)/foo.mk
 
+docker_foo__DAEMONIZE = $(DOCKER_DAEMONIZE)
 docker_foo__BRIDGE = $(DOCKER_NETWORK_NAME)
 docker_foo__CONTAINER = builder_rust
 docker_foo__CTX = $(PROJECT_ROOT)
@@ -701,10 +714,7 @@ stand_yaml__DRIVER = $(DOCKER_NETWORK_DRIVER)
 stand_yaml__NETWORK = 192.168.200.0/24
 
 # PG_ENVS
-envs_pg_stand_yaml__POSTGRES_PASSWORD = $(psql__ADMIN_PASSWORD)
-envs_pg_stand_yaml__POSTGRES_DB = $(psql__ADMIN_DB)
-envs_pg_stand_yaml__POSTGRES_USER = $(psql__ADMIN)
-stand_yaml__PG_ENVS = $(foreach VAR,$(filter envs_pg_stand_yaml__%,$(.VARIABLES)),$(subst envs_pg_stand_yaml__,,$(VAR)))
+stand_yaml__PG_ENVS = $(foreach VAR,$(filter e_docker_pg__%,$(.VARIABLES)),$(subst e_docker_pg__,,$(VAR)))
 
 # BAR_ENVS
 envs_bar_stand_yaml__XX = 98765
@@ -716,7 +726,7 @@ envs_foo_stand_yaml__WWW = 98765
 envs_foo_stand_yaml__YY = qwerty
 stand_yaml__FOO_ENVS = $(foreach VAR,$(filter envs_foo_stand_yaml__%,$(.VARIABLES)),$(subst envs_foo_stand_yaml__,,$(VAR)))
 
-
+enrich_envs_stand_yaml = e_docker_pg envs_bar_stand_yaml envs_foo_stand_yaml
 
 CTXES := $(CTXES) stand_yaml
 

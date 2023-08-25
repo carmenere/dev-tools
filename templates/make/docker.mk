@@ -1,5 +1,6 @@
 TOPDIR := $(shell pwd)
 
+DAEMONIZE ?= {{ DAEMONIZE }}
 BRIDGE ?= {{ BRIDGE }}
 CONTAINER ?= {{ CONTAINER }}
 CTX ?= {{ CTX }}
@@ -11,8 +12,13 @@ SUBNET ?= {{ SUBNET }}
 PUBLISH ?= {{ PUBLISH }}
 TAG ?= {{ TAG }}
 
-{% if ENVS -%}
-{% endif -%}
+ifeq ($(DAEMONIZE),yes)
+RUN_OPTS += -d
+endif
+
+RUN_OPTS += --name $(CONTAINER)
+RUN_OPTS += --network $(BRIDGE)
+RUN_OPTS += $(PUBLISH_OPT)
 
 {% set args = [] -%}
 {% if BUILD_ARGS -%}
@@ -30,6 +36,24 @@ TAG ?= {{ TAG }}
 BUILD_ARGS ?= \
     --build-arg {{ args|join(' \\\n    --build-arg ') }}
 {% endif %}
+
+{% set e = [] -%}
+{% if ENVS -%}
+{% for item in ENVS.split(' ') -%}
+{{ item }} = {{ env[item] }}
+{% endfor -%}
+{% for item in ENVS.split(' ') -%}
+{% if env[item] -%}
+{% do e.append("{}=$({})".format(item, item)) -%}
+{% endif -%}
+{% endfor -%}
+{% endif -%}
+
+{% if e %}
+ENVS ?= \
+    --env {{ e|join(' \\\n    --env ') }}
+{% endif %}
+
 ifdef PUBLISH
     PUBLISH_OPT = --publish $(PUBLISH)
 else
@@ -39,14 +63,13 @@ endif
 .PHONY: network network-rm build run start stop rm rm-by-image rm-all prune purge
 
 network:
-	@echo ERR_IF_BRIDGE_EXISTS = $(ERR_IF_BRIDGE_EXISTS)
 ifeq ($(strip $(ERR_IF_BRIDGE_EXISTS)),yes)
-	[ -z "docker network ls -q -f name=$(BRIDGE)" ] || false
+	[ -z "$$(docker network ls -q -f name=$(BRIDGE))" ] || false
 endif
-	[ -n "docker network ls -q -f name=$(BRIDGE)" ] || docker network create --driver=$(DRIVER) --subnet=$(SUBNET) $(BRIDGE)
+	[ -n "$$(docker network ls -q -f name=$(BRIDGE))" ] || docker network create --driver=$(DRIVER) --subnet=$(SUBNET) $(BRIDGE)
 
 network-rm:
-	[ -z "docker network ls -q -f name=$(BRIDGE)" ] || docker network rm $(BRIDGE)
+	[ -z "$$(docker network ls -q -f name=$(BRIDGE))" ] || docker network rm $(BRIDGE)
 
 build:
 ifdef DOCKERFILE
@@ -58,19 +81,19 @@ else
 endif
 
 run: build network
-	docker run --name $(CONTAINER) --network $(BRIDGE) $(PUBLISH_OPT) $(IMAGE)
+	docker run $(RUN_OPTS) $(ENVS) $(IMAGE)
 
 start: 
-	[ -n "$$(docker ps -q -f status=running -f name=$(CONTAINER))" ] || docker start $(CONTAINER)
+	[ -n "$$(docker ps -aq -f status=running -f name=$(CONTAINER))" ] || docker start $(CONTAINER)
 
 stop:
-	[ -z "$$(docker ps -q -f status=running -f name=$(CONTAINER))" ] || docker stop $(CONTAINER)
+	[ -z "$$(docker ps -aq -f status=running -f name=$(CONTAINER))" ] || docker stop $(CONTAINER)
 
 rm:
-	[ -z "$$(docker ps -q -f name=$(CONTAINER))" ] || docker rm -f $(CONTAINER)
+	[ -z "$$(docker ps -aq -f name=$(CONTAINER))" ] || docker rm -f $(CONTAINER)
 
 rm-by-image:
-	[ -z "$$(docker ps -q -f ancestor=$(IMAGE))" ] || docker rm -f "$$(docker ps -q -f ancestor=$(IMAGE))"
+	[ -z "$$(docker ps -aq -f ancestor=$(IMAGE))" ] || docker rm -f "$$(docker ps -aq -f ancestor=$(IMAGE))"
 
 rm-all:
 	[ -z "$$(docker ps -aq)" ] || docker rm -f $$(docker ps -aq)

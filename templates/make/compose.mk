@@ -12,10 +12,6 @@ RM_VOLUMES ?= {{ RM_VOLUMES }}
 TIMEOUT ?= {{ TIMEOUT }}
 YAML ?= {{ YAML }}
 
-# ifdef PROJECT 
-# COMPOSE_OPTS += -p $(PROJECT)
-# endif
-
 ifneq ($(RM_FORCE),no)
 RM_OPTS += --force
 endif
