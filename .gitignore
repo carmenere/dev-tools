@@ -14,8 +14,8 @@ configure~
 
 # Dev-tools artefacts
 .artefacts/
-
 .output/
+.dl/
 
 # Pytest artefacts
 .pytest_cache

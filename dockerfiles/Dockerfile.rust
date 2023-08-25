@@ -1,0 +1,49 @@
+ARG BASE_IMAGE=alpine:3.18.3
+
+FROM ${BASE_IMAGE}
+
+ARG RUST_VERSION=1.71.1
+ARG TARGET_ARCH=aarch64-unknown-linux-musl
+ARG SQLX_VERSION=
+
+WORKDIR /opt/dev-tools
+
+COPY ./lib ./lib
+COPY ./render ./render
+COPY ./templates ./templates
+COPY ./vars ./vars
+COPY ./configure.mk ./configure.mk 
+COPY ./python.mk ./python.mk
+COPY ./Makefile ./Makefile
+
+RUN apk update --no-cache && apk add \
+    bash \
+    bsd-compat-headers \
+    build-base \
+    curl \
+    findutils \
+    jq \
+    libev \
+    libffi-dev \
+    libssh \
+    libssh-dev \
+    libtool \
+    linux-headers \
+    lsof \
+    m4 \
+    make \
+    moreutils \
+    musl-dev \
+    openssl-dev \
+    patch \
+    pkgconfig \
+    sudo \
+    texinfo \
+    tzdata
+
+RUN make all \
+        RUST_VERSION=${RUST_VERSION} \
+        TARGET_ARCH=${TARGET_ARCH} \
+        SQLX_VERSION=${SQLX_VERSION} && \
+    make -f .output/rustup/Makefile all && \
+    make -f .output/postgresql/Makefile install OS=alpine MAJOR=12

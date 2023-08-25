@@ -17,7 +17,6 @@ add_argument_args = frozenset(['default', 'dest', 'required', 'metavar'])
 
 def parse(args: List[CliArg]):
     parser = argparse.ArgumentParser(add_help=False, allow_abbrev=False)
-    
     for arg in args:
         parser.add_argument(arg.name, *arg.aliases, **{key:value for key, value in vars(arg).items() if key in add_argument_args})
     args, _ = parser.parse_known_args()
@@ -29,5 +28,8 @@ def reparse(args: List[CliArg], tvars: List[str]) -> argparse.Namespace:
     for arg in args:
         parser.add_argument(arg.name, *arg.aliases, **{key:value for key, value in vars(arg).items() if key in add_argument_args})
     for var in tvars:
+        # it is special var used in template: env[item]
+        if var == 'env':
+            continue
         parser.add_argument('--' + var, default=argparse.SUPPRESS,  dest=var, metavar='')
     return parser.parse_args()

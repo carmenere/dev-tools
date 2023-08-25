@@ -1,18 +1,15 @@
-TOPDIR := {{ TOPDIR | default('$(shell pwd)', true) }}
+TOPDIR := $(shell pwd)
 
-MAJOR ?= {{ MAJOR | default('12', true) }}
-MINOR ?= {{ MINOR | default('15_2', true) }}
-VERSION ?= {{ VERSION | default('$(MAJOR).$(MINOR)', true) }}
-
-OS = {{ OS | default('ubuntu', true) }}
-OS_CODENAME = {{ OS_CODENAME | default('$(lsb_release -cs)', true) }}
-
-REMOTE_PREFIX = {{ REMOTE_PREFIX | default('0.0.0.0/0', true) }}
-AUTH_POLICY = {{ AUTH_POLICY | default('host  all  all  $(REMOTE_PREFIX)  md5', true) }}
-PG_HBA = {{ PG_HBA | default('/etc/postgresql/$(MAJOR)/main/pg_hba.conf', true) }}
-
-SUDO_BIN = {{ SUDO_BIN | default('$(shell which sudo)', true)}}
-SUDO_USER = {{ SUDO_USER | default('', true)}}
+AUTH_POLICY ?= {{ AUTH_POLICY }}
+MAJOR ?= {{ MAJOR }}
+MINOR ?= {{ MINOR }}
+OS ?= {{ OS }}
+OS_CODENAME ?= {{ OS_CODENAME }}
+PG_HBA ?= {{ PG_HBA }}
+REMOTE_PREFIX ?= {{ REMOTE_PREFIX }}
+SUDO_BIN ?= {{ SUDO_BIN }}
+SUDO_USER ?= {{ SUDO_USER }}
+VERSION ?= {{ VERSION }}
 
 # $(and ..., ..., ...) 
 # - each argument is expanded, in order;
@@ -26,6 +23,8 @@ else
     SUDO = 
 endif
 
+.PHONY: install-ubuntu install-debian install-alpine install-macos install add-auth-policy
+
 install-ubuntu install-debian:
 	sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(OS_CODENAME)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 	wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
@@ -35,6 +34,15 @@ install-ubuntu install-debian:
 		postgresql-contrib \
 		postgresql-server-dev-$(MAJOR) \
 		libpq-dev
+
+install-alpine:
+	apk update --no-cache && apk add \
+		postgresql$(MAJOR) \
+		postgresql$(MAJOR)-contrib \
+		postgresql$(MAJOR)-dev
+
+install-macos:
+	brew install postgresql@$(MAJOR)
 
 install: install-$(OS)
 
