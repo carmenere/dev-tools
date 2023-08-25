@@ -30,7 +30,7 @@ endif
 # Targets
 TGT_ARTEFACTS_DIR ?= $(ARTEFACTS_DIR)/.create-artefacts-dir
 
-.PHONY: init run upload clean distclean
+.PHONY: init run clean distclean
 
 $(TGT_ARTEFACTS_DIR):
 	mkdir -p $(ARTEFACTS_DIR)
@@ -49,6 +49,6 @@ run: init
 	2>&1 | tee $(LOG_FILE); exit $${PIPESTATUS[0]}'
 
 clean:
-
-distclean:
 	[ ! -d $(ARTEFACTS_DIR) ] || rm -Rf $(ARTEFACTS_DIR)
+
+distclean: clean

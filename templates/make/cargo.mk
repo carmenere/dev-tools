@@ -92,6 +92,6 @@ ifdef BINS
 endif
 
 clean:
-	$(CMD_CLEAN)
 
-distclean: clean
+distclean: 
+	$(CMD_CLEAN)

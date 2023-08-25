@@ -28,7 +28,7 @@ ifeq ($(ENABLE_OPTIMIZATIONS),yes)
 BUILD_OPTS += --enable-optimizations
 endif
 
-.PHONY: all prefix download build install
+.PHONY: all download build install
 
 all: download build install
 

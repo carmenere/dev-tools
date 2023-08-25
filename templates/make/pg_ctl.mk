@@ -44,7 +44,7 @@ CMD_START ?= $(PG_CTL) -D $(DATADIR) -l $(PG_CTL_LOG) -o '\
 CMD_STOP ?= $(PG_CTL) -D $(DATADIR) -o '-k $(DATADIR) -c config_file=$(PG_CTL_CONF)' stop
 
 # Targets
-.PHONY: initdb start force-start
+.PHONY: initdb start force-start stop clean distclean
 
 $(PG_CONF):
 	echo $(ADMIN_PASSWORD) > $(INITDB_PWFILE)

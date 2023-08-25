@@ -23,6 +23,8 @@ else
     SUDO = 
 endif
 
+.PHONY: install-ubuntu install-debian install-alpine install-macos install add-auth-policy
+
 install-ubuntu install-debian:
 	sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(OS_CODENAME)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 	wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -

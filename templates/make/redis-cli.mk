@@ -5,6 +5,8 @@ ADMIN_DB ?= {{ ADMIN_DB }}
 ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD }}
 ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR }}
 CNT = {{ CNT }}
+CONFIG_REWRITE ?= {{ CONFIG_REWRITE }}
+EXIT_IF_CREATE_EXISTED_USER = {{ EXIT_IF_CREATE_EXISTED_USER }}
 HOST ?= {{ HOST }}
 MODE = {{ MODE }}
 PORT ?= {{ PORT }}
@@ -13,41 +15,38 @@ USER_DB ?= {{ USER_DB }}
 USER_NAME := {{ USER_NAME }}
 USER_PASSWORD ?= {{ USER_PASSWORD }}
 
-CONN_URL ?= redis://$(ADMIN):"$(ADMIN_PASSWORD)"@$(HOST):$(PORT)/$(ADMIN_DB)
+CONN_URL ?= redis://$(ADMIN):$(ADMIN_PASSWORD)@$(HOST):$(PORT)/$(ADMIN_DB)
 USER_CONN_URL ?= redis-cli -u redis://$(USER_NAME):$(USER_PASSWORD)@$(HOST):$(PORT)/$(USER_DB)
+
+define check_user
+$(REDIS_CLI) ACL DRYRUN $1 ACL WHOAMI
+endef
 
 #
 ifdef CNT
-    REDIS_CLI ?= docker exec $(TI) $(CNT) redis-cli -u $(CONN_URL)
-    REDIS_CLI_USER ?= docker exec $(TI) $(CNT) redis-cli -u $(USER_CONN_URL)
+    REDIS_CLI ?= docker exec $(TI) $(CNT) redis-cli -e -u $(CONN_URL)
+    REDIS_CLI_USER ?= docker exec $(TI) $(CNT) redis-cli -e -u $(USER_CONN_URL)
+    CONFIG_REWRITE = no
 else
-    REDIS_CLI ?= redis-cli -u $(CONN_URL)
-    REDIS_CLI_USER ?= redis-cli -u $(USER_CONN_URL)
+    REDIS_CLI ?= redis-cli -e -u $(CONN_URL)
+    REDIS_CLI_USER ?= redis-cli -e -u $(USER_CONN_URL)
 endif
 
+.PHONY: init create-user rm-user connect connect-admin flush clean distclean
+
+requirepass:
 ifeq ($(REQUIREPASS),yes)
-    SET_REQUIRE_PASS ?= $(REDIS_CLI) config set requirepass "$(ADMIN_PASSWORD)"
-else
-    SET_REQUIRE_PASS ?= echo ""
+	$(REDIS_CLI) config set requirepass "$(ADMIN_PASSWORD)"
 endif
 
-# Targets
-TGT_ARTEFACTS_DIR ?= $(ARTEFACTS_DIR)/.create-artefacts-dir
-TGT_CREATE_USER ?= $(ARTEFACTS_DIR)/.$(MODE)-create-user-$(USER_NAME)-$(USER_PASSWORD)
+create-user:
+	$(call check_user,$(USER_NAME)); if [ "$$?" = 0 ] && [ "$(EXIT_IF_CREATE_EXISTED_USER)" = yes ]; then false; fi
+	$(call check_user,$(USER_NAME)); if [ "$$?" != 0 ]; then $(REDIS_CLI) ACL SETUSER $(USER_NAME) \>$(USER_PASSWORD) on allkeys allcommands; fi
 
-.PHONY: init clean force-clean distclean drop force-drop clean-artefacts connect
+rm-user:
+	$(call check_user,$(USER_NAME)); if [ "$$?" = 0 ]; then $(REDIS_CLI) ACL DELUSER $(USER_NAME); fi
 
-$(TGT_ARTEFACTS_DIR):
-	mkdir -p $(ARTEFACTS_DIR)
-	touch $@
-
-$(TGT_CREATE_USER): $(TGT_ARTEFACTS_DIR)
-	[ -f $(TGT_CREATE_USER) ] || $(SET_REQUIRE_PASS)
-	[ -f $(TGT_CREATE_USER) ] || $(REDIS_CLI) ACL SETUSER $(USER_NAME) \>$(USER_PASSWORD) on allkeys allcommands
-	$(REDIS_CLI) CONFIG REWRITE
-	[ -f $(TGT_CREATE_USER) ] || touch $@
-
-init: $(TGT_CREATE_USER)
+init: requirepass create-user save
 
 connect: override TI = -ti
 connect:
@@ -57,25 +56,16 @@ connect-admin: override TI = -ti
 connect-admin:
 	$(REDIS_CLI)
 
-drop:
-	[ ! -f $(TGT_CREATE_USER) ] || $(REDIS_CLI) ACL DELUSER $(USER_NAME)
-	$(REDIS_CLI) CONFIG REWRITE
-
-force-drop:
-	$(REDIS_CLI) ACL DELUSER $(USER_NAME) || true
-	$(REDIS_CLI) CONFIG REWRITE
-
-clean-artefacts:
-	[ ! -f $(TGT_CREATE_USER) ] || rm -fv $(TGT_CREATE_USER)
-
 flush:
 	$(REDIS_CLI) FLUSHALL
 	$(REDIS_CLI) config set requirepass ""
+
+save:
+ifeq ($(CONFIG_REWRITE),yes)
 	$(REDIS_CLI) CONFIG REWRITE
+endif
 
-clean: drop clean-artefacts flush
-
-force-clean: force-drop clean-artefacts flush
+clean: rm-user flush save
 
 distclean: clean
 	[ ! -d $(ARTEFACTS_DIR) ] || rm -Rf $(ARTEFACTS_DIR)

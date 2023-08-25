@@ -36,7 +36,7 @@ else
     PUBLISH_OPT =
 endif
 
-.PHONY: network network-rm build run start stop rm rm-by-image prune prune-all
+.PHONY: network network-rm build run start stop rm rm-by-image rm-all prune purge
 
 network:
 	@echo ERR_IF_BRIDGE_EXISTS = $(ERR_IF_BRIDGE_EXISTS)

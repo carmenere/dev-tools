@@ -66,7 +66,7 @@ endif
 
 # Targets
 
-.PHONY: init create-user create-db connect drop clean clear-db distclean dump
+.PHONY: init create-user create-db grant revoke connect connect-admin clear clean dump distclean import
 
 create-user:
 	if [[ "$(EXIT_IF_CREATE_EXISTED_USER)" == yes && -n "$(call check,user,$(USER_NAME))" ]]; then false; fi

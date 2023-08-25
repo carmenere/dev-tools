@@ -6,7 +6,7 @@ services:
     container_name: {{ REDIS }}
     networks:
       - {{ REDIS_BRIDGE }}
-    command: redis-server --requirepass {{ REDIS_ADMIN_PASSWORD }}
+    command: redis-server --requirepass "{{ REDIS_ADMIN_PASSWORD }}"
     ports:
       - "{{ REDIS_PUBLISH }}"
     logging:

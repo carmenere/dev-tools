@@ -61,7 +61,7 @@ ifdef PKILL_PATTERN
 	@echo killed.
 endif
 
-clean:
+clean: stop
 
-distclean: stop
+distclean: stop clean
 	[ ! -d $(ARTEFACTS_DIR) ] || rm -Rf $(ARTEFACTS_DIR)
