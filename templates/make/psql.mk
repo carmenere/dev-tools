@@ -1,13 +1,17 @@
 TOPDIR := $(shell pwd)
+LIB := {{ LIB }}
+include $(LIB)/common.mk
 
-ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR }}
-AUTH_METHOD ?= {{ AUTH_METHOD }}
-CONTAINER = {{ CONTAINER }}
-HOST ?= {{ HOST }}
-MODE = {{ MODE }}
+ADMIN ?= {{ ADMIN }}
 ADMIN_DB ?= {{ ADMIN_DB }}
 ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD }}
-ADMIN ?= {{ ADMIN }}
+ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR }}
+AUTH_METHOD ?= {{ AUTH_METHOD }}
+CNT = {{ CNT }}
+EXIT_IF_CREATE_EXISTED_DB = {{ EXIT_IF_CREATE_EXISTED_DB }}
+EXIT_IF_CREATE_EXISTED_USER = {{ EXIT_IF_CREATE_EXISTED_USER }}
+HOST ?= {{ HOST }}
+MODE = {{ MODE }}
 PORT ?= {{ PORT }}
 SUDO_BIN = {{ SUDO_BIN }}
 SUDO_USER = {{ SUDO_USER }}
@@ -16,30 +20,23 @@ USER_DB ?= {{ USER_DB }}
 USER_NAME ?= {{ USER_NAME }}
 USER_PASSWORD ?= {{ USER_PASSWORD }}
 
-ATTRIBUTE ?= 
+CONN_URL ?= postgresql://$(ADMIN):$(ADMIN_PASSWORD)@$(HOST):$(PORT)/$(ADMIN_DB)
+USER_CONN_URL ?= postgresql://$(USER_NAME):$(USER_PASSWORD)@$(HOST):$(PORT)/$(USER_DB)
+
+define select_user
+SELECT '$1' FROM pg_roles WHERE rolname = '$1'
+endef
+
+define select_db
+SELECT '$1' FROM pg_database WHERE datname = '$1'
+endef
+
+define check
+$$($(PSQL) -tXAc $$'$(subst ',\',$(call select_$1,$2))')
+endef
+
+ATTRIBUTES ?= 
 PATH_TO_DUMP ?= 
-
-ifeq ($(AUTH_METHOD),remote)
-    PSQL_ADMIN ?= $(DOCKER_EXEC) psql postgresql://$(ADMIN):$(ADMIN_PASSWORD)@$(HOST):$(PORT)/$(ADMIN_DB)
-    PSQL ?= $(DOCKER_EXEC) psql postgresql://$(USER_NAME):$(USER_PASSWORD)@$(HOST):$(PORT)/$(USER_DB)
-else ifeq ($(AUTH_METHOD),peer)
-    PSQL_ADMIN ?= $(DOCKER_EXEC) $(SUDO) -iu $(ADMIN) ADMIN_DB=$(ADMIN_DB) psql
-    PSQL ?= $(DOCKER_EXEC) $(SUDO) -iu $(USER_NAME) ADMIN_DB=$(USER_DB) psql
-else
-    $(error Unsupported value '$(AUTH_METHOD)' for 'AUTH_METHOD' variable. SECTION=$(SECTION))
-endif
-
-ifeq ($(strip $(MODE)$(CONTAINER)),docker)
-    $(error For MODE=docker var CONTAINER must be defined!)
-endif
-
-ifeq ($(strip $(MODE)),docker)
-    DOCKER_EXEC = docker exec $(TI) $(CONTAINER)
-else ifeq ($(MODE),host)
-    DOCKER_EXEC = 
-else
-    $(error Unknown value '$(MODE)' for var 'MODE'.)
-endif
 
 # $(and ..., ..., ...) 
 # - each argument is expanded, in order;
@@ -53,82 +50,62 @@ else
     SUDO = 
 endif
 
+#
+ifdef CNT
+    PSQL ?= docker exec $(TI) $(CNT) $(SUDO) -iu $(ADMIN) ADMIN_DB=$(ADMIN_DB) psql
+    PSQL_USER ?= docker exec $(TI) $(CNT) $(SUDO) -iu $(USER_NAME) ADMIN_DB=$(USER_DB) psql
+else ifeq ($(AUTH_METHOD),remote)
+    PSQL = psql $(CONN_URL)
+    PSQL_USER ?= psql $(USER_CONN_URL)
+else ifeq ($(AUTH_METHOD),peer)
+    PSQL ?= $(SUDO) -iu $(ADMIN) ADMIN_DB=$(ADMIN_DB) psql
+    PSQL_USER ?= $(SUDO) -iu $(USER_NAME) ADMIN_DB=$(USER_DB) psql
+else
+    $(error Unsupported value '$(AUTH_METHOD)' for 'AUTH_METHOD' variable. SECTION=$(SECTION))
+endif
+
 # Targets
-TGT_TMP_ARTEFACTS_DIR ?= $(TMP_ARTEFACTS_DIR)/.create-tmp-artefacts-dir
-TGT_ARTEFACTS_DIR ?= $(ARTEFACTS_DIR)/.create-artefacts-dir
-TGT_CREATE_USER ?= $(ARTEFACTS_DIR)/.$(MODE)-create-user-$(USER_NAME)-$(USER_PASSWORD)
-TGT_CREATE_DB ?= $(ARTEFACTS_DIR)/.$(MODE)-create-db-$(USER_DB)
-TGT_GRANT ?= $(ARTEFACTS_DIR)/.$(MODE)-grant-$(USER_NAME)-$(USER_DB)
 
-.PHONY: init check-user check-superuser create-user create-db connect drop force-drop clean-artefacts clean force-clean clear-db distclean dump
+.PHONY: init create-user create-db connect drop clean clear-db distclean dump
 
-$(TGT_ARTEFACTS_DIR):
-	mkdir -p $(ARTEFACTS_DIR)
-	touch $@
+create-user:
+	if [[ "$(EXIT_IF_CREATE_EXISTED_USER)" == yes && -n "$(call check,user,$(USER_NAME))" ]]; then false; fi
+	[ -n "$(call check,user,$(USER_NAME))" ] || $(PSQL) -c "CREATE USER $(USER_NAME) WITH ENCRYPTED PASSWORD '$(USER_PASSWORD)' $(USER_ATTRIBUTES);"
 
-check-superuser:
-	$(PSQL_ADMIN) -c "SELECT 1;" 2>&1 | grep 'psql: error:' && exit 1 || true
+create-db: create-user
+	if [[ "$(EXIT_IF_CREATE_EXISTED_DB)" == yes && -n "$(call check,db,$(USER_DB))" ]]; then false; fi
+	[ -n "$(call check,db,$(USER_DB))" ] || $(PSQL) -c "CREATE DATABASE $(USER_DB) WITH OWNER=$(USER_NAME);"
 
-check-user:
-	$(PSQL) -c "SELECT 1;" 2>&1 | grep 'psql: error:' && exit 1 || true
-
-$(TGT_CREATE_USER): $(TGT_ARTEFACTS_DIR)
-	[ -f $(TGT_CREATE_USER) ] || $(PSQL_ADMIN) -c "CREATE USER $(USER_NAME) WITH ENCRYPTED PASSWORD '$(USER_PASSWORD)' $(USER_ATTRIBUTES);"
-	[ -f $(TGT_CREATE_USER) ] || touch $@
-
-$(TGT_CREATE_DB): $(TGT_CREATE_USER)
-	[ -f $(TGT_CREATE_DB) ] || $(PSQL_ADMIN) -c "CREATE DATABASE $(USER_DB) WITH OWNER=$(USER_NAME);"
-	[ -f $(TGT_CREATE_DB) ] || touch $@
-
-$(TGT_GRANT): $(TGT_CREATE_DB)
+grant: create-db
 	# Assign priviliges to user '$(USER_NAME)'
-	[ -f $(TGT_GRANT) ] || $(PSQL_ADMIN) -c "GRANT ALL PRIVILEGES ON DATABASE $(USER_DB) TO $(USER_NAME);"
-	[ -f $(TGT_GRANT) ] || $(PSQL_ADMIN) -c "GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO $(USER_NAME);"
-	[ -f $(TGT_GRANT) ] || touch $@
+	$(PSQL) -c "GRANT ALL PRIVILEGES ON DATABASE $(USER_DB) TO $(USER_NAME);"
+	$(PSQL) -c "GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO $(USER_NAME);"
 
+revoke:
+	$(foreach A,$(ATTRIBUTES),$(PSQL) -c "ALTER USER $(USER_NAME) WITH NO$(ATTRIBUTE);" $(LF))
 
-init: $(TGT_CREATE_USER) $(TGT_CREATE_DB) $(TGT_GRANT)
+init: create-user create-db grant
 
 connect: override TI = -ti
 connect:
-	$(PSQL)
+	$(PSQL_USER)
 
 connect: override TI = -ti
 connect-admin:
-	$(PSQL_ADMIN)
+	$(PSQL)
 
-clear-db:
-	$(eval CLEAR_DB ?= $(shell test -f $(TGT_CREATE_DB) && test -f $(TGT_CREATE_USER) && echo 'yes' || ''))
-	[ -z "$(CLEAR_DB)" ] || $(PSQL) -c "DROP SCHEMA public CASCADE;"
-	[ -z "$(CLEAR_DB)" ] || $(PSQL) -c "CREATE schema public;"
+clear:
+	$(PSQL_USER) -c "DROP SCHEMA IF EXISTS public CASCADE;"
+	$(PSQL_USER) -c "CREATE schema public;"
 
-drop:
-	[ ! -f $(TGT_CREATE_DB) ] || $(PSQL_ADMIN) -c "DROP DATABASE IF EXISTS $(USER_DB);"
-	[ ! -f $(TGT_CREATE_USER) ] || $(PSQL_ADMIN) -c "DROP USER IF EXISTS $(USER_NAME);"
-
-force-drop:
-	$(PSQL_ADMIN) -c "DROP DATABASE IF EXISTS $(USER_DB);"
-	$(PSQL_ADMIN) -c "DROP USER IF EXISTS $(USER_NAME);"
-
-clean-artefacts:
-	[ ! -f $(TGT_CREATE_USER) ] || rm -fv $(TGT_CREATE_USER)
-	[ ! -f $(TGT_CREATE_DB) ] || rm -fv $(TGT_CREATE_DB)
-	[ ! -f $(TGT_GRANT) ] || rm -fv $(TGT_GRANT)
-
-clean: drop clean-artefacts
-
-force-clean: force-drop clean-artefacts
+clean:
+	$(PSQL) -c "DROP DATABASE IF EXISTS $(USER_DB);"
+	$(PSQL) -c "DROP USER IF EXISTS $(USER_NAME);"
 
 dump:
-	ADMIN_PASSWORD=$(USER_PASSWORD) pg_dump -h $(HOST) -p $(PORT) -U $(USER_NAME) -d $(USER_DB) --file=$(PATH_TO_DUMP)
+	PGUSER=$(USER_PASSWORD) pg_dump -h $(HOST) -p $(PORT) -U $(USER_NAME) -d $(USER_DB) --file=$(PATH_TO_DUMP)
 
 distclean: clean
-	[ ! -d $(ARTEFACTS_DIR) ] || rm -Rf $(ARTEFACTS_DIR)
 
 import: clean init
-	$(PSQL) --set ON_ERROR_STOP=on -f "$(PATH_TO_DUMP)"
-
-revoke-attribute:
-ifdef ATTRIBUTE
-	[ -f $(TGT_CREATE_USER) ] || $(PSQL_ADMIN) -c "ALTER USER $(USER_NAME) WITH NO$(ATTRIBUTE);"
-endif
+	$(USER_URL) --set ON_ERROR_STOP=on -f "$(PATH_TO_DUMP)"
