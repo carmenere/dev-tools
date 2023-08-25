@@ -5,111 +5,43 @@ LIB ?= $(DEVTOOLS_DIR)/lib
 # Default vars
 include $(DEVTOOLS_DIR)/vars/defaults.mk $(DEVTOOLS_DIR)/vars/ctxes.mk $(LIB)/common.mk
 
-STAGES += docker-build
-STAGES += sysctl-start
-STAGES += docker-run
-STAGES += schemas-start
-STAGES += build-build
-STAGES += venv-init
-STAGES += pip-requirements
-STAGES += tmux-init
-STAGES += apps-start
+DRY_RUN = n
 
-.PHONY: all
+START_STAGES += docker--build
+START_STAGES += sysctl--start
+START_STAGES += docker--run
+START_STAGES += schemas--start
+START_STAGES += build--build
+START_STAGES += venv--init
+START_STAGES += pip--requirements
+START_STAGES += tmux--init
+START_STAGES += apps--start
 
-# generic-run:
-# 	$(foreach S,$(STAGES), \
-# 		$(eval STAGE = $(firstword $(subst -, ,$@))) \
-# 		$(eval TGT = $(lastword $(subst -, ,$@))) \
-# 		$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),yes),$(CTX))))) \
-# 		$(eval CT = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$(STAGE)),$(CTX))))) \
-# 		$(foreach CTX,$(CT),$(MAKE) -nf $($(CTX)__OUT) $(TGT) ${LF}) \
-# 	$(LF))
+.PHONY: start
 
-build-build:
-	@echo "===> STAGE = $@ <==="
-	$(eval STAGE = $(firstword $(subst -, ,$@)))
-	$(eval TGT = $(lastword $(subst -, ,$@)))
+start:
+	$(foreach STAGE,$(START_STAGES), \
+		@echo "===> STAGE = $(STAGE) <===" ${LF} \
+		$(eval STG = $(firstword $(subst --, ,$(STAGE)))) \
+		$(eval TGT = $(lastword $(subst --, ,$(STAGE)))) \
+		$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),yes),$(CTX))))) \
+		$(eval ECTXES = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$(STG)),$(CTX))))) \
+		$(foreach CTX,$(ECTXES),$(MAKE) -$(DRY_RUN)f $($(CTX)__OUT) $(TGT) ${LF}) \
+	)
+
+tests:
+	$(eval STAGE = tests--run)
+	@echo "===> STAGE = $(STAGE) <===" ${LF} \
+	$(eval STG = $(firstword $(subst --, ,$(STAGE))))
+	$(eval TGT = $(lastword $(subst --, ,$(STAGE))))
 	$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),yes),$(CTX)))))
-	$(eval CT = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$(STAGE)),$(CTX)))))
-	$(foreach CTX,$(CT),$(MAKE) -nf $($(CTX)__OUT) $(TGT) ${LF})
+	$(eval ECTXES = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$(STG)),$(CTX)))))
+	$(foreach CTX,$(ECTXES),$(MAKE) -$(DRY_RUN)f $($(CTX)__OUT) $(TGT) ${LF})
 
-venv-init:
-	@echo "===> STAGE = $@ <==="
-	$(eval STAGE = $(firstword $(subst -, ,$@)))
-	$(eval TGT = $(lastword $(subst -, ,$@)))
+tmux-kill:
+	@echo "===> STAGE = tmux--kill-server <===" ${LF} \
+	$(eval STG = $(firstword $(subst --, ,tmux--kill-server)))
+	$(eval TGT = $(lastword $(subst --, ,tmux--kill-server)))
 	$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),yes),$(CTX)))))
-	$(eval CT = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$(STAGE)),$(CTX)))))
-	$(foreach CTX,$(CT),$(MAKE) -nf $($(CTX)__OUT) $(TGT) ${LF})
-
-pip-requirements:
-	@echo "===> STAGE = $@ <==="
-	$(eval STAGE = $(firstword $(subst -, ,$@)))
-	$(eval TGT = $(lastword $(subst -, ,$@)))
-	$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),yes),$(CTX)))))
-	$(eval CT = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$(STAGE)),$(CTX)))))
-	$(foreach CTX,$(CT),$(MAKE) -nf $($(CTX)__OUT) $(TGT) ${LF})
-
-apps-start:
-	@echo "===> STAGE = $@ <==="
-	$(eval STAGE = $(firstword $(subst -, ,$@)))
-	$(eval TGT = $(lastword $(subst -, ,$@)))
-	$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),yes),$(CTX)))))
-	$(eval CT = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$(STAGE)),$(CTX)))))
-	$(foreach CTX,$(CT),$(MAKE) -nf $($(CTX)__OUT) $(TGT) ${LF})
-
-schemas-start:
-	@echo "===> STAGE = $@ <==="
-	$(eval STAGE = $(firstword $(subst -, ,$@)))
-	$(eval TGT = $(lastword $(subst -, ,$@)))
-	$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),yes),$(CTX)))))
-	$(eval CT = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$(STAGE)),$(CTX)))))
-	$(foreach CTX,$(CT),$(MAKE) -nf $($(CTX)__OUT) $(TGT) ${LF})
-
-sysctl-start:
-	@echo "===> STAGE = $@ <==="
-	$(eval STAGE = $(firstword $(subst -, ,$@)))
-	$(eval TGT = $(lastword $(subst -, ,$@)))
-	$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),yes),$(CTX)))))
-	$(eval CT = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$(STAGE)),$(CTX)))))
-	$(foreach CTX,$(CT),$(MAKE) -nf $($(CTX)__OUT) $(TGT) ${LF})
-
-tests-run:
-	@echo "===> STAGE = $@ <==="
-	$(eval STAGE = $(firstword $(subst -, ,$@)))
-	$(eval TGT = $(lastword $(subst -, ,$@)))
-	$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),yes),$(CTX)))))
-	$(eval CT = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$(STAGE)),$(CTX)))))
-	$(foreach CTX,$(CT),$(MAKE) -nf $($(CTX)__OUT) $(TGT) ${LF})
-
-tmux-init:
-	@echo "===> STAGE = $@ <==="
-	$(eval STAGE = $(firstword $(subst -, ,$@)))
-	$(eval TGT = $(lastword $(subst -, ,$@)))
-	$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),yes),$(CTX)))))
-	$(eval CT = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$(STAGE)),$(CTX)))))
-	$(foreach CTX,$(CT),$(MAKE) -nf $($(CTX)__OUT) $(TGT) ${LF})
-
-docker-build:
-	@echo "===> STAGE = $@ <==="
-	$(eval STAGE = $(firstword $(subst -, ,$@)))
-	$(eval TGT = $(lastword $(subst -, ,$@)))
-	$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),yes),$(CTX)))))
-	$(eval CT = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$(STAGE)),$(CTX)))))
-	$(foreach CTX,$(CT),$(MAKE) -nf $($(CTX)__OUT) $(TGT) ${LF})
-
-docker-run:
-	@echo "===> STAGE = $@ <==="
-	$(eval STAGE = $(firstword $(subst -, ,$@)))
-	$(eval TGT = $(lastword $(subst -, ,$@)))
-	$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),yes),$(CTX)))))
-	$(eval CT = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$(STAGE)),$(CTX)))))
-	$(foreach CTX,$(CT),$(MAKE) -nf $($(CTX)__OUT) $(TGT) ${LF})
-
-run: $(STAGES)
-
-# tmux-kill:
-# 	$(MAKE) -f $(TMUX_MAKE) kill-server
-
-# connect: 
-# 	$(MAKE) -f $(TMUX_MAKE) connect
+	$(eval ECTXES = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$(STG)),$(CTX)))))
+	$(foreach CTX,$(ECTXES),$(MAKE) -$(DRY_RUN)f $($(CTX)__OUT) $(TGT) ${LF})

@@ -77,6 +77,9 @@ prune:
 	docker volume prune -f
 	docker network prune -f
 
-prune-all:
+purge:
 	[ -z "$$(docker ps -aq)" ] || docker rm -f $$(docker ps -aq)
 	docker system prune -a -f --volumes
+	docker volume prune -f
+	docker network prune -f
+	docker builder prune --force --all

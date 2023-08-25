@@ -41,7 +41,7 @@ init:
 # 2. Put CTX's vars to Render's cli args.
 all: init
 	@echo DEVTOOLS_DIR = $(DEVTOOLS_DIR)
-	$(foreach CTX,$(CTXES),echo CTX=$(CTX) && cd $(DEVTOOLS_DIR) && \
+	$(foreach CTX,$(CTXES),echo "### CTX=$(CTX) ###" && cd $(DEVTOOLS_DIR) && \
 		$(foreach VAR,$(filter envs_$(CTX)__%,$(.VARIABLES)),$(subst envs_$(CTX)__,,$(VAR))=$$'$(call escape,$($(VAR)))')\
 		$(RENDER) \
 		$(foreach V,$(filter $(CTX)__%,$(.VARIABLES)),--$(subst $(CTX)__,,$(V))=$$'$(call escape,$($(V)))') \

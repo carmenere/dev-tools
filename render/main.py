@@ -10,6 +10,7 @@ from .render import Template
 settings = parse(args)
 tmpl = Template(settings.get('tmpl_dir'), settings.get('tmpl'))
 
+LOG.info(f"Template: '{tmpl.path.absolute()}'.")
 LOG.debug(f"tmpl={tmpl.path}, tvars = {tmpl.vars}")
 
 parsed: argparse.Namespace = reparse(args, tmpl.vars)

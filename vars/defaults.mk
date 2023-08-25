@@ -31,9 +31,9 @@ LDFLAGS ?= $$(shell echo $${LDFLAGS})
 CC ?= $$(shell echo $${CC})
 CXX ?= $$(shell echo $${CXX})
 
-SERVICE_CMD_PREFIX = brew services
-SERVICE_START_CMD = $(SERVICE_CMD_PREFIX) start
-SERVICE_STOP_CMD = $(SERVICE_CMD_PREFIX) stop
+SERVICE_CMD_PREFIX ?= brew services
+SERVICE_START_CMD ?= $(SERVICE_CMD_PREFIX) start
+SERVICE_STOP_CMD ?= $(SERVICE_CMD_PREFIX) stop
 
 SERVICE_DB ?= fizzbuzz
 SERVICE_PASSWORD ?= 12345
@@ -76,10 +76,22 @@ LOG_FILE ?= $(ARTEFACTS_DIR)/logs.txt
 PID_FILE ?= $(ARTEFACTS_DIR)/.pid
 
 # templates/makefiles/py.mk + pip.mk + venv.mk
-PY_MAJOR = 3.11
-PY_MINOR = 4
-PY_OWNER = $(USER)
-PY_PREFIX = $(shell echo ~/.py/$(PY_MAJOR).$(PY_MINOR))
+PY_MAJOR ?= 3.11
+PY_MINOR ?= 4
+PY_OWNER ?= $(USER)
+PY_PREFIX ?= $(shell echo ~/.py/$(PY_MAJOR).$(PY_MINOR))
 
 # python
-PYTHON = $(PY_PREFIX)/bin/python$(PY_MAJOR)
+PYTHON ?= $(PY_PREFIX)/bin/python$(PY_MAJOR)
+
+# templates/makefiles/compose.mk 
+COMPOSE_DAEMONIZE ?= no
+COMPOSE_FORCE_RECREATE ?= no
+COMPOSE_NO_CACHE ?= yes
+COMPOSE_PURGE_ON_BUILD = no
+COMPOSE_RM_ALL ?= no
+COMPOSE_RM_FORCE ?= yes
+COMPOSE_RM_ON_UP ?= no
+COMPOSE_RM_STOP ?= yes
+COMPOSE_RM_VOLUMES ?= no
+COMPOSE_TIMEOUT ?= 10

@@ -5,7 +5,7 @@ LOG_FILE ?= {{ LOG_FILE }}
 REPORTS_DIR ?= {{ REPORTS_DIR }}
 TEST_CASES ?= {{ TEST_CASES }}
 TEST_CASES_DIR ?= {{ TEST_CASES_DIR }}
-VPYTHON ?= {{ VPYTHON }}
+PYTHON ?= {{ PYTHON }}
 
 {% set e = [] -%}
 {% if ENVS -%}
@@ -39,7 +39,7 @@ $(TGT_ARTEFACTS_DIR):
 init: $(TGT_ARTEFACTS_DIR)
 
 run: init
-	bash -c '$(ENVS) $(VPYTHON) \
+	bash -c '$(ENVS) $(PYTHON) \
 		-m pytest -v "$(TCASES)" \
 		--color=yes \
 		--junitxml=$(ARTEFACTS_DIR)/junit_report.xml \

@@ -31,8 +31,7 @@ class Template:
         content = self.tmpl.render(**{k.upper():v for k,v in tvars.items()}, env=dict(os.environ))
 
         create_dir(out.parent)
-
-        LOG.info(f"Template: '{self.path.absolute()}'.")
+        
         with open(out, mode="w", encoding="utf-8") as message:
             message.write(content)
             LOG.info(f"Rendered file: '{out.absolute()}'.")

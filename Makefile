@@ -1,6 +1,13 @@
 TOPDIR := $(shell pwd)
 
-export SETTINGS = $(shell realpath $(VARS))
+# If VARS is undefined $(shell realpath ) returns . (or current directory)
+ifdef VARS
+SETTINGS = $(shell realpath $(VARS))
+else
+SETTINGS =
+endif
+
+export SETTINGS
 export SEVERITY ?= info
 
 CONF = $(TOPDIR)/configure.mk
@@ -10,38 +17,11 @@ STAGES = $(TOPDIR)/stages.mk
 
 all: configure
 
-init:
-	make -f $(CONF) init
-
-configure: init
+configure:
 	make -f $(CONF) all
 
-run: configure
-	make -f $(STAGES) run
+start: configure
+	make -f $(STAGES) start
 
-build:
-	make -f $(STAGES) build
-
-venv:
-	make -f $(STAGES) venv
-
-pip:
-	make -f $(STAGES) pip
-
-apps:
-	make -f $(STAGES) apps
-
-schemas:
-	make -f $(STAGES) schemas
-
-sysctl:
-	make -f $(STAGES) sysctl
-
-tests:
+tests: configure
 	make -f $(STAGES) tests
-
-tmux:
-	make -f $(STAGES) tmux
-
-docker:
-	make -f $(STAGES) docker

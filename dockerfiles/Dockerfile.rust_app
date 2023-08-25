@@ -17,8 +17,8 @@ RUN echo ${BUILD_VERSION} > /etc/version
 ########################################################################################################################
 FROM ${BASE_IMAGE} AS runtime
 ########################################################################################################################
-COPY --from=core /etc/version /etc/version
-COPY --from=core /usr/local/bin /usr/local/bin
+# COPY --from=core /etc/version /etc/version
+# COPY --from=core /usr/local/bin /usr/local/bin
 
 ENV RUST_BACKTRACE=full
 

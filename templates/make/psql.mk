@@ -5,9 +5,9 @@ AUTH_METHOD ?= {{ AUTH_METHOD }}
 CONTAINER = {{ CONTAINER }}
 HOST ?= {{ HOST }}
 MODE = {{ MODE }}
-PGDATABASE ?= {{ PGDATABASE }}
-PGPASSWORD ?= {{ PGPASSWORD }}
-PGUSER ?= {{ PGUSER }}
+ADMIN_DB ?= {{ ADMIN_DB }}
+ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD }}
+ADMIN ?= {{ ADMIN }}
 PORT ?= {{ PORT }}
 SUDO_BIN = {{ SUDO_BIN }}
 SUDO_USER = {{ SUDO_USER }}
@@ -20,11 +20,11 @@ ATTRIBUTE ?=
 PATH_TO_DUMP ?= 
 
 ifeq ($(AUTH_METHOD),remote)
-    PSQL_ADMIN ?= $(DOCKER_EXEC) psql postgresql://$(PGUSER):$(PGPASSWORD)@$(HOST):$(PORT)/$(PGDATABASE)
+    PSQL_ADMIN ?= $(DOCKER_EXEC) psql postgresql://$(ADMIN):$(ADMIN_PASSWORD)@$(HOST):$(PORT)/$(ADMIN_DB)
     PSQL ?= $(DOCKER_EXEC) psql postgresql://$(USER_NAME):$(USER_PASSWORD)@$(HOST):$(PORT)/$(USER_DB)
 else ifeq ($(AUTH_METHOD),peer)
-    PSQL_ADMIN ?= $(DOCKER_EXEC) $(SUDO) -iu $(PGUSER) PGDATABASE=$(PGDATABASE) psql
-    PSQL ?= $(DOCKER_EXEC) $(SUDO) -iu $(USER_NAME) PGDATABASE=$(USER_DB) psql
+    PSQL_ADMIN ?= $(DOCKER_EXEC) $(SUDO) -iu $(ADMIN) ADMIN_DB=$(ADMIN_DB) psql
+    PSQL ?= $(DOCKER_EXEC) $(SUDO) -iu $(USER_NAME) ADMIN_DB=$(USER_DB) psql
 else
     $(error Unsupported value '$(AUTH_METHOD)' for 'AUTH_METHOD' variable. SECTION=$(SECTION))
 endif
@@ -120,7 +120,7 @@ clean: drop clean-artefacts
 force-clean: force-drop clean-artefacts
 
 dump:
-	PGPASSWORD=$(USER_PASSWORD) pg_dump -h $(HOST) -p $(PORT) -U $(USER_NAME) -d $(USER_DB) --file=$(PATH_TO_DUMP)
+	ADMIN_PASSWORD=$(USER_PASSWORD) pg_dump -h $(HOST) -p $(PORT) -U $(USER_NAME) -d $(USER_DB) --file=$(PATH_TO_DUMP)
 
 distclean: clean
 	[ ! -d $(ARTEFACTS_DIR) ] || rm -Rf $(ARTEFACTS_DIR)
