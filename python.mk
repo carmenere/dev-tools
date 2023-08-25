@@ -5,10 +5,10 @@ LIB ?= $(DEVTOOLS_DIR)/lib
 # Default vars
 include $(DEVTOOLS_DIR)/vars/defaults.mk
 
-DL ?= $(abspath .dl)
+DL ?= $(abspath .toolchain/.dl)
 REQUIREMENTS ?= $(TOPDIR)/render/requirements.txt
 SEVERITY ?= info
-VENV_DIR ?= $(abspath .venv)
+VENV_DIR ?= $(abspath .toolchain/.venv)
 VPYTHON ?= $(VENV_DIR)/bin/python
 
 .PHONY: all python vpython requirements rm-vpython

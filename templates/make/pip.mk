@@ -42,17 +42,16 @@ ifneq ($(UPGRADE_SETUPTOOLS),no)
 UPGRADE += setuptools
 endif
 
-.PHONY: clean distclean upgrade install requirements
+.PHONY: upgrade install requirements clean distclean
 
-artefacts-dir:
+$(TGT_UPGRADE):
 	[ -d $(ARTEFACTS_DIR) ] || mkdir -p $(ARTEFACTS_DIR)
-
-$(TGT_UPGRADE): artefacts-dir
 	@echo PYTHONUSERBASE = $(PYTHONUSERBASE)
 	$(PYTHONUSERBASE) $(PIP) install $(PIP_OPTS) --upgrade $(UPGRADE)
 	touch $@
 
-$(TGT_INSTALL_REQUIREMENTS): $(REQUIREMENTS) artefacts-dir
+$(TGT_INSTALL_REQUIREMENTS): $(REQUIREMENTS)
+	[ -d $(ARTEFACTS_DIR) ] || mkdir -p $(ARTEFACTS_DIR)
 ifdef REQUIREMENTS
 	$(PYTHONUSERBASE) $(PIP) install $(PIP_OPTS) -r $(REQUIREMENTS)
 endif

@@ -25,3 +25,6 @@ start: configure
 
 tests: configure
 	make -f $(STAGES) tests
+
+tmux-kill: configure
+	make -f $(STAGES) tmux-kill

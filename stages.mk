@@ -39,9 +39,10 @@ tests:
 	$(foreach CTX,$(ECTXES),$(MAKE) -$(DRY_RUN)f $($(CTX)__OUT) $(TGT) ${LF})
 
 tmux-kill:
-	@echo "===> STAGE = tmux--kill-server <===" ${LF} \
-	$(eval STG = $(firstword $(subst --, ,tmux--kill-server)))
-	$(eval TGT = $(lastword $(subst --, ,tmux--kill-server)))
+	$(eval STAGE = tmux--kill-server)
+	@echo "===> STAGE = $(STAGE) <===" ${LF} \
+	$(eval STG = $(firstword $(subst --, ,$(STAGE))))
+	$(eval TGT = $(lastword $(subst --, ,$(STAGE))))
 	$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),yes),$(CTX)))))
 	$(eval ECTXES = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$(STG)),$(CTX)))))
 	$(foreach CTX,$(ECTXES),$(MAKE) -$(DRY_RUN)f $($(CTX)__OUT) $(TGT) ${LF})
