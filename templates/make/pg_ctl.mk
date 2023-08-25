@@ -50,11 +50,9 @@ $(PG_CONF):
 	echo $(ADMIN_PASSWORD) > $(INITDB_PWFILE)
 	$(CMD_INITDB)
 	rm $(INITDB_PWFILE)
-	touch $@
 
 $(POSTMASTER):
 	$(CMD_START)
-	touch $@
 
 initdb: $(PG_CONF)
 
