@@ -28,9 +28,9 @@ RUN_OPTS += $(PUBLISH_OPT)
 {% do args.append("{}=$({})".format(item, item)) -%}
 {% endif -%}
 {% endfor -%}
-{% endif -%}
+{% endif %}
 
-{% if args %}
+{% if args -%}
 BUILD_ARGS ?= \
     --build-arg {{ args|join(' \\\n    --build-arg ') }}
 {% endif %}
@@ -45,18 +45,24 @@ BUILD_ARGS ?= \
 {% do e.append("{}=$({})".format(item, item)) -%}
 {% endif -%}
 {% endfor -%}
-{% endif -%}
-
-{% if e %}
-ENVS ?= \
-    --env {{ e|join(' \\\n    --env ') }}
 {% endif %}
 
-ifdef PUBLISH
-    PUBLISH_OPT = --publish $(PUBLISH)
-else
-    PUBLISH_OPT =
-endif
+{% if e -%}
+ENVS ?= \
+    --env {{ e|join(' \\\n    --env ') }}
+{% endif -%}
+
+{% set p = [] -%}
+{% if PUBLISH -%}
+{% for item in PUBLISH.split(' ') -%}
+{% do p.append("{}".format(item)) -%}
+{% endfor -%}
+{% endif %}
+
+{% if p -%}
+PUBLISH_OPT ?= \
+    --publish {{ p|join(' \\\n    --publish ') }}
+{% endif %}
 
 .PHONY: network network-rm build run start stop rm rm-by-image rm-all prune purge
 

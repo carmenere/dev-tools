@@ -7,8 +7,16 @@ services:
     networks:
       - {{ REDIS_BRIDGE }}
     command: redis-server --requirepass "{{ REDIS_ADMIN_PASSWORD }}"
+{%- set p = [] -%}
+{% if REDIS_PUBLISH -%}
+{% for item in REDIS_PUBLISH.split(' ') -%}
+{% do p.append("\"{}\"".format(item)) -%}
+{% endfor -%}
+{% endif -%}
+{% if p %}
     ports:
-      - "{{ REDIS_PUBLISH }}"
+      - {{ p|join('\n      - ') }}
+{% endif %}
     logging:
       driver: "json-file"
       options:
@@ -22,8 +30,16 @@ services:
       - {{ PG_BRIDGE }}
     volumes:
       - postgres:/var/lib/postgresql/data
+{%- set p = [] -%}
+{% if PG_PUBLISH -%}
+{% for item in PG_PUBLISH.split(' ') -%}
+{% do p.append("\"{}\"".format(item)) -%}
+{% endfor -%}
+{% endif -%}
+{% if p %}
     ports:
-      - "{{ PG_PUBLISH }}"
+      - {{ p|join('\n      - ') }}
+{% endif %}
     command: ["postgres", "-c", "log_statement=all"]
     logging:
       driver: "json-file"
@@ -68,8 +84,16 @@ services:
     container_name: {{ FOO }}
     networks:
       - {{ FOO_BRIDGE }}
+{%- set p = [] -%}
+{% if FOO_PUBLISH -%}
+{% for item in FOO_PUBLISH.split(' ') -%}
+{% do p.append("\"{}\"".format(item)) -%}
+{% endfor -%}
+{% endif -%}
+{% if p %}
     ports:
-      - "{{ FOO_PUBLISH }}"
+      - {{ p|join('\n      - ') }}
+{% endif %}
     command: /bin/sh -c 'echo "OK"'
     logging:
       driver: "json-file"
@@ -105,8 +129,16 @@ services:
     networks:
       - {{ BAR_BRIDGE }}
     command: /bin/sh -c 'echo "OK"'
+{%- set p = [] -%}
+{% if BAR_PUBLISH -%}
+{% for item in BAR_PUBLISH.split(' ') -%}
+{% do p.append("\"{}\"".format(item)) -%}
+{% endfor -%}
+{% endif -%}
+{% if p %}
     ports:
-      - "{{ BAR_PUBLISH }}"
+      - {{ p|join('\n      - ') }}
+{% endif %}
     logging:
       driver: "json-file"
       options:

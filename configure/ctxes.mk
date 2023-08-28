@@ -431,7 +431,16 @@ docker_pg__DAEMONIZE = $(DOCKER_DAEMONIZE)
 docker_pg__DOCKERFILE = $(DOCKERFILES)/Dockerfile
 docker_pg__DRIVER = $(DOCKER_NETWORK_DRIVER)
 docker_pg__ERR_IF_BRIDGE_EXISTS = yes
-docker_pg__PUBLISH = $(PG_PORT):$(PG_PORT)/tcp
+
+port_docker_pg__OS_PORT = 55432
+ifdef port_docker_pg__OS_PORT
+docker_pg__PUBLISH += $(port_docker_pg__OS_PORT):$(PG_PORT)/tcp
+endif
+
+ifndef docker_pg__PUBLISH
+docker_pg__PUBLISH = 
+endif
+
 docker_pg__SUBNET = $(DOCKER_NETWORK_SUBNET)
 docker_pg__TAG = latest
 
@@ -475,7 +484,16 @@ docker_redis__CTX = $(PROJECT_ROOT)
 docker_redis__DOCKERFILE = $(DOCKERFILES)/Dockerfile
 docker_redis__DRIVER = $(DOCKER_NETWORK_DRIVER)
 docker_redis__ERR_IF_BRIDGE_EXISTS = yes
-docker_redis__PUBLISH = $(REDIS_PORT):$(REDIS_PORT)/tcp
+
+port_docker_redis_OS_PORT = 56379
+ifdef port_docker_redis_OS_PORT
+docker_redis__PUBLISH += $(port_docker_redis_OS_PORT):$(REDIS_PORT)/tcp
+endif
+
+ifndef docker_redis__PUBLISH
+docker_redis__PUBLISH = 
+endif
+
 docker_redis__SUBNET = $(DOCKER_NETWORK_SUBNET)
 docker_redis__TAG = latest
 
