@@ -5,7 +5,6 @@ CONF = $(DEVTOOLS_DIR)/configure/configure.mk
 STAGES = $(DEVTOOLS_DIR)/configure/stages.mk
 VENV_DIR ?= $(abspath $(TOOLCHAIN)/.venv)
 
-
 # If VARS is undefined $(shell realpath ) returns current directory (.)
 ifdef VARS
 SETTINGS = $(shell realpath $(VARS))
@@ -16,7 +15,8 @@ endif
 export SEVERITY ?= info
 export DRY_RUN ?= no
 
-.PHONY: toolchain configure init upgrade stop start stop-services tests reports clean-services clean distclean
+.PHONY: toolchain configure init build schemas upgrade stop start stop-services tests reports clean-services \
+clean distclean kill ctxes
 
 toolchain:
 	cd $(TOOLCHAIN) && autoreconf -fi . && ./configure VENV_DIR=$(VENV_DIR) && $(MAKE) -f Makefile init 
@@ -46,10 +46,10 @@ start: stop build
 stop-services:
 	make -f $(STAGES) stop-services
 
-tests:
+tests: start
 	make -f $(STAGES) tests
 
-reports:
+reports: tests
 	make -f $(STAGES) reports
 
 clean-services: stop

@@ -468,7 +468,7 @@ pytest_bar__ENVS =
 pytest_bar__LOG_FILE = $(pytest_bar__OUT_DIR)/.logs
 pytest_bar__REPORTS_DIR = $(pytest_bar__OUT_DIR)/.reports
 pytest_bar__TEST_CASES =
-pytest_bar__TEST_CASES_DIR = $(PROJECT_ROOT)/tests
+pytest_bar__TEST_CASES_DIR = $(PROJECT_ROOT)/examples/bar/tests
 pytest_bar__PYTHON = $(venv_pytest_bar__VENV_DIR)/bin/python
 
 pytest_bar__MODE = tmux
@@ -493,7 +493,7 @@ pytest_foo__ENVS =
 pytest_foo__LOG_FILE = $(pytest_foo__OUT_DIR)/.logs
 pytest_foo__REPORTS_DIR = $(pytest_foo__OUT_DIR)/.reports
 pytest_foo__TEST_CASES =
-pytest_foo__TEST_CASES_DIR = $(PROJECT_ROOT)/tests
+pytest_foo__TEST_CASES_DIR = $(PROJECT_ROOT)/examples/foo/tests
 pytest_foo__PYTHON = $(venv_pytest_foo__VENV_DIR)/bin/python
 
 pytest_foo__MODE = tmux
