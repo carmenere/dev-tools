@@ -230,10 +230,10 @@ ctx_venv_pytest_bar__ENABLED = yes
 ctx_venv_pytest_bar__STAGE = venv
 
 venv_pytest_bar__IN = $(MK)/venv.mk
-venv_pytest_bar__OUT_DIR = $(OUT_DIR)/pytest/venvs
-venv_pytest_bar__OUT = $(venv_pytest_bar__OUT_DIR)/bar.mk
+venv_pytest_bar__OUT_DIR = $(OUT_DIR)/pytest/bar
+venv_pytest_bar__OUT = $(venv_pytest_bar__OUT_DIR)/venv.mk
 
-venv_pytest_bar__VENV_DIR = $(venv_pytest_bar__OUT_DIR)/.bar
+venv_pytest_bar__VENV_DIR = $(venv_pytest_bar__OUT_DIR)/.venv
 venv_pytest_bar__PYTHON = $(PYTHON)
 venv_pytest_bar__VENV_PROMT = [VENV]
 
@@ -246,8 +246,8 @@ ctx_pip_pytest_bar__ENABLED = yes
 ctx_pip_pytest_bar__STAGE = pip
 
 pip_pytest_bar__IN = $(MK)/pip.mk
-pip_pytest_bar__OUT_DIR = $(OUT_DIR)/pytest/pips
-pip_pytest_bar__OUT = $(pip_pytest_bar__OUT_DIR)/bar.mk
+pip_pytest_bar__OUT_DIR = $(OUT_DIR)/pytest/bar
+pip_pytest_bar__OUT = $(pip_pytest_bar__OUT_DIR)/pip.mk
 
 pip_pytest_bar__CC = $(CC)
 pip_pytest_bar__CPPFLAGS = $(CPPFLAGS)
@@ -377,14 +377,14 @@ ctx_pytest_bar__ENABLED = yes
 ctx_pytest_bar__STAGE = tests
 
 pytest_bar__IN = $(MK)/pytest.mk
-pytest_bar__OUT_DIR = $(OUT_DIR)/pytest
-pytest_bar__OUT = $(pytest_bar__OUT_DIR)/bar.mk
+pytest_bar__OUT_DIR = $(OUT_DIR)/pytest/bar
+pytest_bar__OUT = $(pytest_bar__OUT_DIR)/pytest.mk
 
 pytest_bar__LIB = $(LIB)
 
 pytest_bar__ENVS =
-pytest_bar__LOG_FILE = $(pytest_bar__OUT_DIR)/.bar.logs
-pytest_bar__REPORTS_DIR = $(pytest_bar__OUT_DIR)/.bar.reports
+pytest_bar__LOG_FILE = $(pytest_bar__OUT_DIR)/.logs
+pytest_bar__REPORTS_DIR = $(pytest_bar__OUT_DIR)/.reports
 pytest_bar__TEST_CASES =
 pytest_bar__TEST_CASES_DIR = $(PROJECT_ROOT)/tests
 pytest_bar__PYTHON = $(venv_pytest_bar__VENV_DIR)/bin/python

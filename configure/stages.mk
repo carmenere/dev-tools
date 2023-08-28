@@ -1,9 +1,9 @@
-DEVTOOLS_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+DEVTOOLS_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))/..
 TOPDIR ?= $(shell pwd)
 LIB ?= $(DEVTOOLS_DIR)/lib
 
 # Default vars
-include $(DEVTOOLS_DIR)/vars/defaults.mk $(DEVTOOLS_DIR)/vars/ctxes.mk $(LIB)/common.mk
+include $(DEVTOOLS_DIR)/configure/defaults.mk $(DEVTOOLS_DIR)/configure/ctxes.mk $(LIB)/common.mk
 
 DRY_RUN = n
 
@@ -33,7 +33,7 @@ START_STAGES += apps--start
 
 start:
 	$(foreach STAGE,$(START_STAGES), \
-		@echo "===> STAGE = $(STAGE) <===" ${LF} \
+		@echo "===> STAGE: $(STAGE) <===" ${LF} \
 		$(eval STG = $(firstword $(subst --, ,$(STAGE)))) \
 		$(eval TGT = $(lastword $(subst --, ,$(STAGE)))) \
 		$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),yes),$(CTX))))) \
@@ -43,7 +43,7 @@ start:
 
 tests:
 	$(eval STAGE = tests)
-	@echo "===> STAGE = $(STAGE) <===" ${LF} \
+	@echo "===> STAGE: $(STAGE) <===" ${LF} \
 	$(eval STG = $(firstword $(subst --, ,$(STAGE))))
 	$(eval TGT = $(lastword $(subst --, ,$(STAGE))))
 	$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),yes),$(CTX)))))
@@ -52,7 +52,7 @@ tests:
 
 reports:
 	$(eval STAGE = reposts)
-	@echo "===> STAGE = $(STAGE) <===" ${LF} \
+	@echo "===> STAGE: $(STAGE) <===" ${LF} \
 	$(eval STG = $(firstword $(subst --, ,$(STAGE))))
 	$(eval TGT = $(lastword $(subst --, ,$(STAGE))))
 	$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),yes),$(CTX)))))
