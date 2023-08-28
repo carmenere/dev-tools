@@ -4,14 +4,14 @@ SCHEMAS_DIR = migrations/schemas
 FIXTURES_DIR = migrations/fixtures
 OUT_DIR = $(TOPDIR)/.output
 
-OS_CODENAME = $$(shell lsb_release -cs)
+OS_CODENAME = $(shell lsb_release -cs)
 
 PG_ADMIN_DB = postgres
 PG_ADMIN_PASSWORD = postgres
 PG_ADMIN = postgres
 PG_PORT = 5432
 PG_HOST = $(LOCALHOST)
-PG_CONFIG = $$(shell which pg_config)
+PG_CONFIG = $(shell which pg_config)
 
 REDIS_ADMIN = default
 REDIS_ADMIN_DB = 0
@@ -30,10 +30,10 @@ SUDO = $(shell which sudo)
 
 PWD = $$(shell pwd)
 
-CPPFLAGS = $$(shell echo $${CPPFLAGS})
-LDFLAGS = $$(shell echo $${LDFLAGS})
-CC = $$(shell echo $${CC})
-CXX = $$(shell echo $${CXX})
+CPPFLAGS = $(shell echo $${CPPFLAGS})
+LDFLAGS = $(shell echo $${LDFLAGS})
+CC = $(shell echo $${CC})
+CXX = $(shell echo $${CXX})
 
 SERVICE_CMD_PREFIX = brew services
 SERVICE_START_CMD = $(SERVICE_CMD_PREFIX) start
@@ -72,7 +72,6 @@ MODE = host
 
 # templates/makefiles/cargo.mk
 CARGO_PROFILE = dev
-CARGO_TOML = Cargo.toml
 CARGO_CLIPPY_FORMAT = human
 CARGO_CLIPPY_REPORT = &1
 CARGO_TARGET_DIR = target

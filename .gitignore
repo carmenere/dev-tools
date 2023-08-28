@@ -3,6 +3,9 @@
 
 # IDE
 .vscode/
+.target-vscode/
+target/
+.rust-analyzer/
 
 # Autotools artefacts
 aclocal.m4

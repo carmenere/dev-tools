@@ -23,7 +23,7 @@ cargo_foo__LINTS = $(CARGO_LINTS)
 cargo_foo__PROFILE = $(CARGO_PROFILE)
 cargo_foo__TARGET_ARCH = $(RUST_TARGET_ARCH)
 cargo_foo__TARGET_DIR = $(CARGO_TARGET_DIR)
-cargo_foo__TOML = $(CARGO_TOML)
+cargo_foo__TOML = $(PROJECT_ROOT)/examples/foo/Cargo.toml
 
 ifeq ($(cargo_foo__PROFILE),dev)
 	cargo_foo__PROFILE_DIR = debug
@@ -62,7 +62,7 @@ cargo_bar__LINTS = $(CARGO_LINTS)
 cargo_bar__PROFILE = $(CARGO_PROFILE)
 cargo_bar__TARGET_ARCH = $(RUST_TARGET_ARCH)
 cargo_bar__TARGET_DIR = $(CARGO_TARGET_DIR)
-cargo_bar__TOML = $(CARGO_TOML)
+cargo_bar__TOML = $(PROJECT_ROOT)/examples/bar/Cargo.toml
 
 ifeq ($(cargo_bar__PROFILE),dev)
 	cargo_bar__PROFILE_DIR = debug
@@ -96,7 +96,7 @@ ctx_postgresql__STAGE = services
 
 postgresql__IN = $(MK)/postgresql.mk
 postgresql__OUT_DIR = $(OUT_DIR)/services
-postgresql__OUT = $(postgresql__OUT_DIR)/postgresql.mk
+postgresql__OUT = $(postgresql__OUT_DIR)/pg.mk
 
 postgresql__SERVICE = postgresql@12
 postgresql__START_CMD = $(SERVICE_START_CMD) $(postgresql__SERVICE)
@@ -227,7 +227,7 @@ CTXES := $(CTXES) redis_cli
 CTX := venv_pytest_bar
 ########################################################################################################################
 ctx_venv_pytest_bar__ENABLED = yes
-ctx_venv_pytest_bar__STAGE = venv
+ctx_venv_pytest_bar__STAGE = venvs
 
 venv_pytest_bar__IN = $(MK)/venv.mk
 venv_pytest_bar__OUT_DIR = $(OUT_DIR)/pytest/bar
@@ -255,10 +255,47 @@ pip_pytest_bar__CXX = $(CXX)
 pip_pytest_bar__INSTALL_SCHEMA =
 pip_pytest_bar__LDFLAGS = $(LDFLAGS)
 pip_pytest_bar__PYTHON = $(venv_pytest_bar__VENV_DIR)/bin/python
-pip_pytest_bar__REQUIREMENTS = $(PROJECT_ROOT)/apps/bar/tests/requirements.txt
+pip_pytest_bar__REQUIREMENTS = $(PROJECT_ROOT)/examples/bar/tests/requirements.txt
 pip_pytest_bar__USERBASE =
 
 CTXES := $(CTXES) pip_pytest_bar
+
+########################################################################################################################
+CTX := venv_pytest_foo
+########################################################################################################################
+ctx_venv_pytest_foo__ENABLED = yes
+ctx_venv_pytest_foo__STAGE = venvs
+
+venv_pytest_foo__IN = $(MK)/venv.mk
+venv_pytest_foo__OUT_DIR = $(OUT_DIR)/pytest/foo
+venv_pytest_foo__OUT = $(venv_pytest_foo__OUT_DIR)/venv.mk
+
+venv_pytest_foo__VENV_DIR = $(venv_pytest_foo__OUT_DIR)/.venv
+venv_pytest_foo__PYTHON = $(PYTHON)
+venv_pytest_foo__VENV_PROMT = [VENV]
+
+CTXES := $(CTXES) venv_pytest_foo
+
+########################################################################################################################
+CTX := pip_pytest_foo
+########################################################################################################################
+ctx_pip_pytest_foo__ENABLED = yes
+ctx_pip_pytest_foo__STAGE = pip
+
+pip_pytest_foo__IN = $(MK)/pip.mk
+pip_pytest_foo__OUT_DIR = $(OUT_DIR)/pytest/foo
+pip_pytest_foo__OUT = $(pip_pytest_foo__OUT_DIR)/pip.mk
+
+pip_pytest_foo__CC = $(CC)
+pip_pytest_foo__CPPFLAGS = $(CPPFLAGS)
+pip_pytest_foo__CXX = $(CXX)
+pip_pytest_foo__INSTALL_SCHEMA =
+pip_pytest_foo__LDFLAGS = $(LDFLAGS)
+pip_pytest_foo__PYTHON = $(venv_pytest_foo__VENV_DIR)/bin/python
+pip_pytest_foo__REQUIREMENTS = $(PROJECT_ROOT)/examples/foo/tests/requirements.txt
+pip_pytest_foo__USERBASE =
+
+CTXES := $(CTXES) pip_pytest_foo
 
 ########################################################################################################################
 CTX := python
@@ -308,7 +345,7 @@ app_sqlx_bar__LIB = $(LIB)
 
 app_sqlx_bar__BIN_PATH = sqlx migrate run
 app_sqlx_bar__LOG_FILE = $(app_sqlx_bar__OUT_DIR)/.bar.logs
-app_sqlx_bar__OPTS = --source "$(PROJECT_ROOT)/apps/bar/$(SCHEMAS_DIR)"
+app_sqlx_bar__OPTS = --source "$(PROJECT_ROOT)/examples/bar/$(SCHEMAS_DIR)"
 app_sqlx_bar__PID_FILE = $(app_sqlx_bar__OUT_DIR)/.bar.pid
 app_sqlx_bar__PKILL_PATTERN =
 
@@ -321,6 +358,43 @@ envs_app_sqlx_bar__DATABASE_URL = $(DATABASE_URL)
 app_sqlx_bar__ENVS = $(foreach VAR,$(filter envs_app_sqlx_bar__%,$(.VARIABLES)),$(subst envs_app_sqlx_bar__,,$(VAR)))
 
 CTXES := $(CTXES) app_sqlx_bar
+
+########################################################################################################################
+CTX := venv_alembic_baz
+########################################################################################################################
+ctx_venv_alembic_baz__ENABLED = yes
+ctx_venv_alembic_baz__STAGE = venvs
+
+venv_alembic_baz__IN = $(MK)/venv.mk
+venv_alembic_baz__OUT_DIR = $(OUT_DIR)/alembic/baz
+venv_alembic_baz__OUT = $(venv_alembic_baz__OUT_DIR)/venv.mk
+
+venv_alembic_baz__VENV_DIR = $(venv_alembic_baz__OUT_DIR)/.venv
+venv_alembic_baz__PYTHON = $(PYTHON)
+venv_alembic_baz__VENV_PROMT = [VENV]
+
+CTXES := $(CTXES) venv_alembic_baz
+
+########################################################################################################################
+CTX := pip_alembic_baz
+########################################################################################################################
+ctx_pip_alembic_baz__ENABLED = yes
+ctx_pip_alembic_baz__STAGE = pip
+
+pip_alembic_baz__IN = $(MK)/pip.mk
+pip_alembic_baz__OUT_DIR = $(OUT_DIR)/alembic/baz
+pip_alembic_baz__OUT = $(pip_alembic_baz__OUT_DIR)/pip.mk
+
+pip_alembic_baz__CC = $(CC)
+pip_alembic_baz__CPPFLAGS = $(CPPFLAGS)
+pip_alembic_baz__CXX = $(CXX)
+pip_alembic_baz__INSTALL_SCHEMA =
+pip_alembic_baz__LDFLAGS = $(LDFLAGS)
+pip_alembic_baz__PYTHON = $(venv_alembic_baz__VENV_DIR)/bin/python
+pip_alembic_baz__REQUIREMENTS = $(PROJECT_ROOT)/examples/baz/migrator/requirements.txt
+pip_alembic_baz__USERBASE =
+
+CTXES := $(CTXES) pip_alembic_baz
 
 ########################################################################################################################
 CTX := app_foo
@@ -343,6 +417,10 @@ app_foo__PKILL_PATTERN = $(app_foo__BIN_PATH)
 app_foo__MODE = tmux
 app_foo__TMUX_START_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(app_foo__OUT) tee' WINDOW_NAME=foo
 # app_foo__TMUX_STOP_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(app_foo__OUT) stop' WINDOW_NAME=foo
+
+envs_app_foo__RUST_LOG = foo=debug
+
+app_foo__ENVS = $(foreach VAR,$(filter envs_app_foo__%,$(.VARIABLES)),$(subst envs_app_foo__,,$(VAR)))
 
 CTXES := $(CTXES) app_foo
 
@@ -367,6 +445,10 @@ app_bar__PKILL_PATTERN = $(app_bar__BIN_PATH)
 app_bar__MODE = tee
 app_bar__TMUX_START_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(app_bar__OUT) tee' WINDOW_NAME=bar
 # app_bar__TMUX_STOP_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(app_bar__OUT) stop' WINDOW_NAME=foo
+
+envs_app_bar__RUST_LOG = bar=debug
+
+app_bar__ENVS = $(foreach VAR,$(filter envs_app_bar__%,$(.VARIABLES)),$(subst envs_app_bar__,,$(VAR)))
 
 CTXES := $(CTXES) app_bar
 
@@ -396,6 +478,31 @@ pytest_bar__TMUX_START_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(pytest_
 CTXES := $(CTXES) pytest_bar
 
 ########################################################################################################################
+CTX := pytest_foo
+########################################################################################################################
+ctx_pytest_foo__ENABLED = yes
+ctx_pytest_foo__STAGE = tests
+
+pytest_foo__IN = $(MK)/pytest.mk
+pytest_foo__OUT_DIR = $(OUT_DIR)/pytest/foo
+pytest_foo__OUT = $(pytest_foo__OUT_DIR)/pytest.mk
+
+pytest_foo__LIB = $(LIB)
+
+pytest_foo__ENVS =
+pytest_foo__LOG_FILE = $(pytest_foo__OUT_DIR)/.logs
+pytest_foo__REPORTS_DIR = $(pytest_foo__OUT_DIR)/.reports
+pytest_foo__TEST_CASES =
+pytest_foo__TEST_CASES_DIR = $(PROJECT_ROOT)/tests
+pytest_foo__PYTHON = $(venv_pytest_foo__VENV_DIR)/bin/python
+
+pytest_foo__MODE = tmux
+pytest_foo__TMUX_START_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(pytest_foo__OUT) run' WINDOW_NAME=tests_foo
+# pytest_foo__STOP_CMD = ''
+
+CTXES := $(CTXES) pytest_foo
+
+########################################################################################################################
 CTX := tmux
 ########################################################################################################################
 ctx_tmux__ENABLED = yes
@@ -418,7 +525,7 @@ CTXES := $(CTXES) tmux
 CTX := docker_pg
 ########################################################################################################################
 ctx_docker_pg__ENABLED = $(DOCKER_SERVICES)
-ctx_docker_pg__STAGE = docker
+ctx_docker_pg__STAGE = services
 
 docker_pg__IN = $(MK)/docker.mk
 docker_pg__OUT_DIR = $(OUT_DIR)/docker
@@ -431,16 +538,9 @@ docker_pg__DAEMONIZE = $(DOCKER_DAEMONIZE)
 docker_pg__DOCKERFILE = $(DOCKERFILES)/Dockerfile
 docker_pg__DRIVER = $(DOCKER_NETWORK_DRIVER)
 docker_pg__ERR_IF_BRIDGE_EXISTS = yes
-
-port_docker_pg__OS_PORT = 55432
-ifdef port_docker_pg__OS_PORT
-docker_pg__PUBLISH += $(port_docker_pg__OS_PORT):$(PG_PORT)/tcp
-endif
-
-ifndef docker_pg__PUBLISH
-docker_pg__PUBLISH = 
-endif
-
+docker_pg__PUBLISH = $(PG_PORT):$(PG_PORT)/tcp
+docker_pg__RESTART_POLICY = always
+docker_pg__RM_AFTER_STOP = no
 docker_pg__SUBNET = $(DOCKER_NETWORK_SUBNET)
 docker_pg__TAG = latest
 
@@ -471,29 +571,22 @@ CTXES := $(CTXES) docker_pg
 CTX := docker_redis
 ########################################################################################################################
 ctx_docker_redis__ENABLED = $(DOCKER_SERVICES)
-ctx_docker_redis__STAGE = docker
+ctx_docker_redis__STAGE = services
 
 docker_redis__IN = $(MK)/docker.mk
 docker_redis__OUT_DIR = $(OUT_DIR)/docker
 docker_redis__OUT = $(docker_redis__OUT_DIR)/redis.mk
 
-docker_redis__DAEMONIZE = $(DOCKER_DAEMONIZE)
 docker_redis__BRIDGE = $(DOCKER_NETWORK_NAME)
 docker_redis__CONTAINER = redis
 docker_redis__CTX = $(PROJECT_ROOT)
+docker_redis__DAEMONIZE = $(DOCKER_DAEMONIZE)
 docker_redis__DOCKERFILE = $(DOCKERFILES)/Dockerfile
 docker_redis__DRIVER = $(DOCKER_NETWORK_DRIVER)
 docker_redis__ERR_IF_BRIDGE_EXISTS = yes
-
-port_docker_redis_OS_PORT = 56379
-ifdef port_docker_redis_OS_PORT
-docker_redis__PUBLISH += $(port_docker_redis_OS_PORT):$(REDIS_PORT)/tcp
-endif
-
-ifndef docker_redis__PUBLISH
-docker_redis__PUBLISH = 
-endif
-
+docker_redis__PUBLISH = $(REDIS_PORT):$(REDIS_PORT)/tcp
+docker_redis__RESTART_POLICY = always
+docker_redis__RM_AFTER_STOP = no
 docker_redis__SUBNET = $(DOCKER_NETWORK_SUBNET)
 docker_redis__TAG = latest
 
@@ -516,20 +609,22 @@ CTXES := $(CTXES) docker_redis
 CTX := docker_rust
 ########################################################################################################################
 ctx_docker_rust__ENABLED = $(DOCKER_SERVICES)
-ctx_docker_rust__STAGE = docker
+ctx_docker_rust__STAGE = build
 
 docker_rust__IN = $(MK)/docker.mk
 docker_rust__OUT_DIR = $(OUT_DIR)/docker
 docker_rust__OUT = $(docker_rust__OUT_DIR)/rust.mk
 
-docker_rust__DAEMONIZE = $(DOCKER_DAEMONIZE)
 docker_rust__BRIDGE = $(DOCKER_NETWORK_NAME)
 docker_rust__CONTAINER = builder_rust
 docker_rust__CTX = $(PROJECT_ROOT)
+docker_rust__DAEMONIZE = $(DOCKER_DAEMONIZE)
 docker_rust__DOCKERFILE = $(DOCKERFILES)/Dockerfile.rust
 docker_rust__DRIVER = $(DOCKER_NETWORK_DRIVER)
 docker_rust__ERR_IF_BRIDGE_EXISTS = yes
-docker_rust__PUBLISH =
+docker_rust__PUBLISH = 
+docker_rust__RESTART_POLICY = no
+docker_rust__RM_AFTER_STOP = yes
 docker_rust__SUBNET = $(DOCKER_NETWORK_SUBNET)
 docker_rust__TAG = latest
 
@@ -555,7 +650,7 @@ CTXES := $(CTXES) docker_rust
 CTX := docker_bar
 ########################################################################################################################
 ctx_docker_bar__ENABLED = $(DOCKER_SERVICES)
-ctx_docker_bar__STAGE = docker
+ctx_docker_bar__STAGE = apps
 
 docker_bar__IN = $(MK)/docker.mk
 docker_bar__OUT_DIR = $(OUT_DIR)/docker
@@ -568,9 +663,11 @@ docker_bar__CTX = $(PROJECT_ROOT)
 docker_bar__DOCKERFILE = $(DOCKERFILES)/Dockerfile.rust_app
 docker_bar__DRIVER = $(DOCKER_NETWORK_DRIVER)
 docker_bar__ERR_IF_BRIDGE_EXISTS = yes
-docker_bar__PUBLISH = 80:80/tcp
+docker_bar__PUBLISH = 8080:80/tcp
 docker_bar__SUBNET = $(DOCKER_NETWORK_SUBNET)
 docker_bar__TAG = latest
+docker_bar__RESTART_POLICY = no
+docker_bar__RM_AFTER_STOP = yes
 
 ifdef docker_bar__TAG
     docker_bar__IMAGE = bar:$(docker_bar__TAG)
@@ -596,7 +693,7 @@ CTXES := $(CTXES) docker_bar
 CTX := docker_foo
 ########################################################################################################################
 ctx_docker_foo__ENABLED = $(DOCKER_SERVICES)
-ctx_docker_foo__STAGE = docker
+ctx_docker_foo__STAGE = apps
 
 docker_foo__IN = $(MK)/docker.mk
 docker_foo__OUT_DIR = $(OUT_DIR)/docker
@@ -609,9 +706,11 @@ docker_foo__CTX = $(PROJECT_ROOT)
 docker_foo__DOCKERFILE = $(DOCKERFILES)/Dockerfile.rust_app
 docker_foo__DRIVER = $(DOCKER_NETWORK_DRIVER)
 docker_foo__ERR_IF_BRIDGE_EXISTS = yes
-docker_foo__PUBLISH = 81:81/tcp
+docker_foo__PUBLISH = 8081:80/tcp
 docker_foo__SUBNET = $(DOCKER_NETWORK_SUBNET)
 docker_foo__TAG = latest
+docker_foo__RESTART_POLICY = no
+docker_foo__RM_AFTER_STOP = yes
 
 ifdef docker_foo__TAG
     docker_foo__IMAGE = foo:$(docker_foo__TAG)
@@ -652,6 +751,7 @@ stand_example__TARGET_ARCH = $(envs_docker_rust__TARGET_ARCH)
 
 # BAR
 stand_example__BAR = bar
+stand_example__BAR_RESTART_POLICY = $(docker_bar__RESTART_POLICY)
 stand_example__BAR_BASE_IMAGE = $(envs_docker_bar__BASE_IMAGE)
 stand_example__BAR_BRIDGE = $(stand_example__BRIDGE)
 stand_example__BAR_BUILD_PROFILE = $(envs_docker_bar__BUILD_PROFILE)
@@ -665,6 +765,7 @@ stand_example__BAR_TARGET_ARCH = $(envs_docker_bar__TARGET_ARCH)
 
 # FOO
 stand_example__FOO = foo
+stand_example__FOO_RESTART_POLICY = $(docker_foo__RESTART_POLICY)
 stand_example__FOO_BASE_IMAGE = $(envs_docker_foo__BASE_IMAGE)
 stand_example__FOO_BRIDGE = $(stand_example__BRIDGE)
 stand_example__FOO_BUILD_PROFILE = $(envs_docker_foo__BUILD_PROFILE)
@@ -678,6 +779,7 @@ stand_example__FOO_TARGET_ARCH = $(envs_docker_foo__TARGET_ARCH)
 
 # PG
 stand_example__PG = pg
+stand_example__PG_RESTART_POLICY = $(docker_pg__RESTART_POLICY)
 stand_example__PG_IMAGE = $(envs_docker_pg__BASE_IMAGE)
 stand_example__PG_PUBLISH = $(docker_pg__PUBLISH)
 stand_example__PG_BRIDGE = $(stand_example__BRIDGE)
@@ -687,6 +789,7 @@ stand_example__PG_BRIDGE = $(stand_example__BRIDGE)
 
 # REDIS
 stand_example__REDIS = redis
+stand_example__REDIS_RESTART_POLICY = $(docker_redis__RESTART_POLICY)
 stand_example__REDIS_ADMIN_PASSWORD = $(REDIS_ADMIN_PASSWORD)
 stand_example__REDIS_IMAGE = $(envs_docker_redis__BASE_IMAGE)
 stand_example__REDIS_PUBLISH = $(docker_redis__PUBLISH)

@@ -22,7 +22,7 @@ services:
       options:
         max-size: "100m"
         max-file: "2"
-    restart: always
+    restart: {{ REDIS_RESTART_POLICY }}
   {{ PG }}:
     image: {{ PG_IMAGE }}
     container_name: {{ PG }}
@@ -46,7 +46,7 @@ services:
       options:
         max-size: "100m"
         max-file: "2"
-    restart: always
+    restart: {{ PG_RESTART_POLICY }}
 {%- set e = [] -%}
 {% if PG_ENVS -%}
 {% for item in PG_ENVS.split(' ') -%}
@@ -100,7 +100,7 @@ services:
       options:
         max-size: "100m"
         max-file: "2"
-    restart: always
+    restart: {{ FOO_RESTART_POLICY }}
 {%- set e = [] -%}
 {% if FOO_ENVS -%}
 {% for item in FOO_ENVS.split(' ') -%}
@@ -144,7 +144,7 @@ services:
       options:
         max-size: "100m"
         max-file: "2"
-    restart: always
+    restart: {{ BAR_RESTART_POLICY }}
 {%- set e = [] -%}
 {% if BAR_ENVS -%}
 {% for item in BAR_ENVS.split(' ') -%}

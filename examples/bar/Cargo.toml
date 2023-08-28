@@ -1,0 +1,17 @@
+[package]
+name = "bar"
+version = "0.0.1"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.75"
+async-trait = "0.1.73"
+log = "0.4.20"
+env_logger = "0.10.0"
+
+[profile.release]
+strip = "symbols"
+
+[profile.dev]
+opt-level = 3
+debug = true

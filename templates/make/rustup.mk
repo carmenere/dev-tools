@@ -48,6 +48,10 @@ ifeq ($(CARGO_CACHE),yes)
 	$(SOURCE_ENV) && cargo cache -r all
 endif
 
+clean:
+
+distclean:
+
 # Create migrations in current dir (.): sqlx migrate add --source . init
 # Clean: cargo cache -r all
 # Show: cargo cache -i

@@ -20,7 +20,7 @@ TARGET_DIR ?= {{ TARGET_DIR }}
 {{ item }} = {{ env[item] }}
 {% endfor -%}
 {% for item in ENVS.split(' ') -%}
-{% do e.append("{}=$({})".format(item, item)) -%}
+{% do e.append("{}='$({})'".format(item, item)) -%}
 {% endfor -%}
 {% endif -%}
 

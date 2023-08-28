@@ -57,3 +57,7 @@ stop:
 	$(STOP_CMD)
 
 restart: stop start
+
+clean:
+
+distclean:

@@ -42,3 +42,7 @@ ifdef WINDOW_NAME
 else
 	tmux a -t $(SESSION_NAME)
 endif
+
+clean:
+
+distclean:

@@ -16,7 +16,7 @@ MODE ?= {{ MODE }}
 {{ item }} = {{ env[item] }}
 {% endfor -%}
 {% for item in ENVS.split(' ') -%}
-{% do e.append("{}=$({})".format(item, item)) -%}
+{% do e.append("{}='$({})'".format(item, item)) -%}
 {% endfor -%}
 {% endif -%}
 
@@ -33,22 +33,22 @@ endif
 .PHONY: shell daemon tmux tee start stop restart clean distclean
 
 shell:
-	echo ENVS = $$'$(call, escape,$(ENVS))' > $(LOG_FILE)
+	echo ENVS = $$'$(call escape,$(ENVS))' > $(LOG_FILE)
 ifdef START_BIN
-	bash -c '$(START_BIN); exit $${PIPESTATUS[0]}'
+	bash -c $$'$(call escape,$(START_BIN); exit $${PIPESTATUS[0]})'
 endif
 
 tmux:
 	$(TMUX_START_CMD)
 
 tee:
-	echo ENVS = $$'$(call, escape,$(ENVS))' > $(LOG_FILE)
+	echo ENVS = $$'$(call escape,$(ENVS))' > $(LOG_FILE)
 ifdef START_BIN
-	bash -c '$(START_BIN) 2>&1 | tee -a $(LOG_FILE); exit $${PIPESTATUS[0]}'
+	bash -c $$'$(call escape,$(START_BIN) 2>&1 | tee -a $(LOG_FILE); exit $${PIPESTATUS[0]})'
 endif
 
 daemon:
-	echo ENVS = $$'$(call, escape,$(ENVS))' > $(LOG_FILE)
+	echo ENVS = $$'$(call escape,$(ENVS))' > $(LOG_FILE)
 ifdef START_BIN
 	$(START_BIN) >>$(LOG_FILE) 2>&1 & echo $$! > $(PID_FILE)
 endif

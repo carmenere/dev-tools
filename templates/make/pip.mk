@@ -5,10 +5,11 @@ INSTALL_SCHEMA ?= {{ INSTALL_SCHEMA }}
 USERBASE ?= {{ USERBASE }}
 PYTHON ?= {{ PYTHON }}
 REQUIREMENTS ?= {{ REQUIREMENTS }}
-export CC ?= {{ CC }}
-export CPPFLAGS ?= {{ CPPFLAGS }}
-export CXX ?= {{ CXX }}
-export LDFLAGS ?= {{ LDFLAGS }}
+
+export CC = {{ CC }}
+export CPPFLAGS = {{ CPPFLAGS }}
+export CXX = {{ CXX }}
+export LDFLAGS = {{ LDFLAGS }}
 
 SITE_PACKAGES = $(shell $(PYTHON) -m pip show pip | grep Location | cut -d':' -f 2)
 PIP ?= $(PYTHON) -m pip
@@ -39,7 +40,7 @@ ifneq ($(UPGRADE_SETUPTOOLS),no)
 UPGRADE += setuptools
 endif
 
-.PHONY: upgrade install requirements clean distclean
+.PHONY: upgrade install requirements init clean distclean
 
 $(SITE_PACKAGES)/.upgrade:
 	$(PYTHONUSERBASE) $(PIP) install $(PIP_OPTS) --upgrade $(UPGRADE)
