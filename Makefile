@@ -1,6 +1,12 @@
+DEVTOOLS_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+TOOLCHAIN := $(DEVTOOLS_DIR)/toolchain
 TOPDIR := $(shell pwd)
 
-# If VARS is undefined $(shell realpath ) returns . (or current directory)
+CONF = $(DEVTOOLS_DIR)/configure/configure.mk
+STAGES = $(DEVTOOLS_DIR)/configure/stages.mk
+VENV_DIR ?= $(abspath $(TOOLCHAIN)/.venv)
+
+# If VARS is undefined $(shell realpath ) returns current directory (.)
 ifdef VARS
 SETTINGS = $(shell realpath $(VARS))
 else
@@ -10,15 +16,17 @@ endif
 export SETTINGS
 export SEVERITY ?= info
 
-CONF = $(TOPDIR)/configure.mk
-STAGES = $(TOPDIR)/stages.mk
+.PHONY: init toolchain configure start tests reports
 
-.PHONY: all configure
+toolchain:
+	cd $(TOOLCHAIN) && autoreconf -fi . && \
+		./configure VENV_DIR=$(VENV_DIR) && \
+		$(MAKE) -f Makefile init 
 
-all: configure
+init : toolchain
 
 configure:
-	make -f $(CONF) all
+	make -f $(CONF) all VENV_DIR=$(VENV_DIR) SEVERITY=$(SEVERITY)
 
 start: configure
 	make -f $(STAGES) start
@@ -26,5 +34,8 @@ start: configure
 tests: configure
 	make -f $(STAGES) tests
 
-tmux-kill: configure
-	make -f $(STAGES) tmux-kill
+reports: configure
+	make -f $(STAGES) reports
+
+distclean:
+	cd $(TOOLCHAIN) && $(MAKE) -f Makefile distclean

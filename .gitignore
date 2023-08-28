@@ -5,7 +5,6 @@
 .vscode/
 
 # Autotools artefacts
-**/config_h.rs
 aclocal.m4
 autom4te.cache/
 config.log

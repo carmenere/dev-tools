@@ -1,11 +1,13 @@
-TOPDIR := $(shell pwd)
+LIB := {{ LIB }}
+include $(LIB)/common.mk
 
-ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR }}
 LOG_FILE ?= {{ LOG_FILE }}
 REPORTS_DIR ?= {{ REPORTS_DIR }}
 TEST_CASES ?= {{ TEST_CASES }}
 TEST_CASES_DIR ?= {{ TEST_CASES_DIR }}
 PYTHON ?= {{ PYTHON }}
+TMUX_START_CMD ?= {{ TMUX_START_CMD }}
+MODE ?= {{ MODE }}
 
 {% set e = [] -%}
 {% if ENVS -%}
@@ -27,28 +29,28 @@ else
     TCASES = $(TEST_CASES_DIR)
 endif
 
-# Targets
-TGT_ARTEFACTS_DIR ?= $(ARTEFACTS_DIR)/.create-artefacts-dir
-
 .PHONY: init run clean distclean
 
-$(TGT_ARTEFACTS_DIR):
-	mkdir -p $(ARTEFACTS_DIR)
-	touch $@
+init:
 
-init: $(TGT_ARTEFACTS_DIR)
+tmux:
+	$(TMUX_START_CMD)
 
 run: init
 	bash -c '$(ENVS) $(PYTHON) \
 		-m pytest -v "$(TCASES)" \
 		--color=yes \
-		--junitxml=$(ARTEFACTS_DIR)/junit_report.xml \
+		--junitxml=$(REPORTS_DIR)/junit_report.xml \
 		--alluredir=$(REPORTS_DIR) \
 		--allure-no-capture \
 		--timeout=300 \
 	2>&1 | tee $(LOG_FILE); exit $${PIPESTATUS[0]}'
 
+start: $(MODE)
+
 clean:
-	[ ! -d $(ARTEFACTS_DIR) ] || rm -Rf $(ARTEFACTS_DIR)
+	[ ! -d $(REPORTS_DIR) ] || rm -Rf $(REPORTS_DIR)
+	[ ! -f $(LOG_FILE) ] || rm -vf $(LOG_FILE)
+
 
 distclean: clean

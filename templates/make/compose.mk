@@ -1,5 +1,3 @@
-TOPDIR := $(shell pwd)
-
 DAEMONIZE ?= {{ DAEMONIZE }}
 FORCE_RECREATE ?= {{ FORCE_RECREATE }}
 NO_CACHE ?= {{ NO_CACHE }}

@@ -1,5 +1,3 @@
-TOPDIR := $(shell pwd)
-
 DAEMONIZE ?= {{ DAEMONIZE }}
 BRIDGE ?= {{ BRIDGE }}
 CONTAINER ?= {{ CONTAINER }}

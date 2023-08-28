@@ -1,14 +1,10 @@
-TOPDIR := $(shell pwd)
-
 ADMIN ?= {{ ADMIN }}
 ADMIN_DB ?= {{ ADMIN_DB }}
 ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD }}
-ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR }}
 CNT = {{ CNT }}
 CONFIG_REWRITE ?= {{ CONFIG_REWRITE }}
 EXIT_IF_CREATE_EXISTED_USER = {{ EXIT_IF_CREATE_EXISTED_USER }}
 HOST ?= {{ HOST }}
-MODE = {{ MODE }}
 PORT ?= {{ PORT }}
 REQUIREPASS ?= {{ REQUIREPASS }}
 USER_DB ?= {{ USER_DB }}
@@ -68,4 +64,3 @@ endif
 clean: rm-user flush save
 
 distclean: clean
-	[ ! -d $(ARTEFACTS_DIR) ] || rm -Rf $(ARTEFACTS_DIR)
