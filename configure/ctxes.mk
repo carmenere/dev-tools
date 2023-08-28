@@ -217,7 +217,7 @@ redis_cli__EXIT_IF_CREATE_EXISTED_USER = no
 redis_cli__HOST = $(LOCALHOST)
 redis_cli__PORT = $(REDIS_PORT)
 redis_cli__REQUIREPASS = yes
-redis_cli__USER_DB = $(SERVICE_DB)
+redis_cli__USER_DB = $(REDIS_ADMIN_DB)
 redis_cli__USER_NAME = $(SERVICE_USER)
 redis_cli__USER_PASSWORD = $(SERVICE_PASSWORD)
 
