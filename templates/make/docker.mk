@@ -1,19 +1,27 @@
-TOPDIR := $(shell pwd)
-
-DAEMONIZE ?= {{ DAEMONIZE }}
 BRIDGE ?= {{ BRIDGE }}
 CONTAINER ?= {{ CONTAINER }}
 CTX ?= {{ CTX }}
+DAEMONIZE ?= {{ DAEMONIZE }}
 DOCKERFILE ?= {{ DOCKERFILE }}
 DRIVER ?= {{ DRIVER }}
 ERR_IF_BRIDGE_EXISTS = {{ ERR_IF_BRIDGE_EXISTS }}
 IMAGE ?= {{ IMAGE }}
-SUBNET ?= {{ SUBNET }}
 PUBLISH ?= {{ PUBLISH }}
+RESTART_POLICY ?= {{ RESTART_POLICY }}
+RM_AFTER_STOP ?= {{ RM_AFTER_STOP }}
+SUBNET ?= {{ SUBNET }}
 TAG ?= {{ TAG }}
 
 ifeq ($(DAEMONIZE),yes)
 RUN_OPTS += -d
+endif
+
+ifeq ($(RM_AFTER_STOP),yes)
+RUN_OPTS += --rm
+endif
+
+ifdef RESTART_POLICY
+RUN_OPTS += --restart $(RESTART_POLICY)
 endif
 
 RUN_OPTS += --name $(CONTAINER)
@@ -30,9 +38,9 @@ RUN_OPTS += $(PUBLISH_OPT)
 {% do args.append("{}=$({})".format(item, item)) -%}
 {% endif -%}
 {% endfor -%}
-{% endif -%}
+{% endif %}
 
-{% if args %}
+{% if args -%}
 BUILD_ARGS ?= \
     --build-arg {{ args|join(' \\\n    --build-arg ') }}
 {% endif %}
@@ -47,18 +55,24 @@ BUILD_ARGS ?= \
 {% do e.append("{}=$({})".format(item, item)) -%}
 {% endif -%}
 {% endfor -%}
-{% endif -%}
-
-{% if e %}
-ENVS ?= \
-    --env {{ e|join(' \\\n    --env ') }}
 {% endif %}
 
-ifdef PUBLISH
-    PUBLISH_OPT = --publish $(PUBLISH)
-else
-    PUBLISH_OPT =
-endif
+{% if e -%}
+ENVS ?= \
+    --env {{ e|join(' \\\n    --env ') }}
+{% endif -%}
+
+{% set p = [] -%}
+{% if PUBLISH -%}
+{% for item in PUBLISH.split(' ') -%}
+{% do p.append("{}".format(item)) -%}
+{% endfor -%}
+{% endif %}
+
+{% if p -%}
+PUBLISH_OPT ?= \
+    --publish {{ p|join(' \\\n    --publish ') }}
+{% endif %}
 
 .PHONY: network network-rm build run start stop rm rm-by-image rm-all prune purge
 
@@ -108,3 +122,15 @@ purge: rm-all
 	docker volume prune -f
 	docker network prune -f
 	docker builder prune --force --all
+
+status:
+	{% raw %}
+	docker ps --format "table {{.ID}} | {{.Status}}" -f name=$(CONTAINER))"
+	{% endraw %}
+
+connect:
+	docker exec -ti $(CONTAINER) /bin/sh
+
+clean: rm
+
+distclean: rm

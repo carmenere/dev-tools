@@ -1,5 +1,3 @@
-TOPDIR := $(shell pwd)
-
 LIB := {{ LIB }}
 include $(LIB)/common.mk
 
@@ -49,6 +47,10 @@ clean-cache:
 ifeq ($(CARGO_CACHE),yes)
 	$(SOURCE_ENV) && cargo cache -r all
 endif
+
+clean:
+
+distclean:
 
 # Create migrations in current dir (.): sqlx migrate add --source . init
 # Clean: cargo cache -r all

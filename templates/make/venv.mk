@@ -1,5 +1,3 @@
-TOPDIR := $(shell pwd)
-
 PYTHON ?= {{ PYTHON }}
 VENV_DIR ?= {{ VENV_DIR }}
 VENV_PROMT ?= {{ VENV_PROMT }}

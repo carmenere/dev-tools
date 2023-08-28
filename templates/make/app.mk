@@ -1,11 +1,13 @@
-TOPDIR := $(shell pwd)
+LIB := {{ LIB }}
+include $(LIB)/common.mk
 
-ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR }}
 BIN_PATH ?= {{ BIN_PATH }}
 LOG_FILE ?= {{ LOG_FILE }}
 OPTS ?= {{ OPTS }}
 PID_FILE ?= {{ PID_FILE }}
 PKILL_PATTERN ?= {{ PKILL_PATTERN }}
+TMUX_START_CMD ?= {{ TMUX_START_CMD }}
+MODE ?= {{ MODE }}
 
 {% set e = [] -%}
 {% set e = [] -%}
@@ -14,7 +16,7 @@ PKILL_PATTERN ?= {{ PKILL_PATTERN }}
 {{ item }} = {{ env[item] }}
 {% endfor -%}
 {% for item in ENVS.split(' ') -%}
-{% do e.append("{}=$({})".format(item, item)) -%}
+{% do e.append("{}='$({})'".format(item, item)) -%}
 {% endfor -%}
 {% endif -%}
 
@@ -28,31 +30,30 @@ else
     START_BIN ?=
 endif
 
-TGT_ARTEFACTS_DIR ?= $(ARTEFACTS_DIR)/.create-artefacts-dir
+.PHONY: shell daemon tmux tee start stop restart clean distclean
 
-.PHONY: init start stop start-daemon restart restart-daemon clean distclean
-
-$(TGT_ARTEFACTS_DIR):
-	mkdir -p $(ARTEFACTS_DIR)
-	touch $@
-
-init: $(TGT_ARTEFACTS_DIR)
-
-start: init
-	echo $(ENVS) > $(LOG_FILE)
+shell:
+	echo ENVS = $$'$(call escape,$(ENVS))' > $(LOG_FILE)
 ifdef START_BIN
-	bash -c '$(START_BIN) 2>&1 | tee -a $(LOG_FILE); exit $${PIPESTATUS[0]}'
+	bash -c $$'$(call escape,$(START_BIN); exit $${PIPESTATUS[0]})'
 endif
 
-start-daemon: init
-	echo $(ENVS) > $(LOG_FILE)
+tmux:
+	$(TMUX_START_CMD)
+
+tee:
+	echo ENVS = $$'$(call escape,$(ENVS))' > $(LOG_FILE)
+ifdef START_BIN
+	bash -c $$'$(call escape,$(START_BIN) 2>&1 | tee -a $(LOG_FILE); exit $${PIPESTATUS[0]})'
+endif
+
+daemon:
+	echo ENVS = $$'$(call escape,$(ENVS))' > $(LOG_FILE)
 ifdef START_BIN
 	$(START_BIN) >>$(LOG_FILE) 2>&1 & echo $$! > $(PID_FILE)
 endif
 
-restart: stop start
-
-restart-daemon: stop start-daemon
+start: $(MODE)
 
 stop:
 ifdef PKILL_PATTERN
@@ -61,7 +62,10 @@ ifdef PKILL_PATTERN
 	@echo killed.
 endif
 
+restart: stop $(MODE)
+
 clean: stop
+	[ ! -f $(LOG_FILE) ] || rm -vf $(LOG_FILE)
+	[ ! -f $(PID_FILE) ] || rm -vf $(PID_FILE)
 
 distclean: stop clean
-	[ ! -d $(ARTEFACTS_DIR) ] || rm -Rf $(ARTEFACTS_DIR)

@@ -1,11 +1,11 @@
-DEVTOOLS_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+DEVTOOLS_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))/..
 TOPDIR ?= $(shell pwd)
 LIB ?= $(DEVTOOLS_DIR)/lib
 PROJECT_ROOT ?= $(TOPDIR)
 
 # Default vars
-include $(DEVTOOLS_DIR)/vars/defaults.mk 
-include $(DEVTOOLS_DIR)/vars/ctxes.mk
+include $(DEVTOOLS_DIR)/configure/defaults.mk 
+include $(DEVTOOLS_DIR)/configure/ctxes.mk
 include $(LIB)/common.mk
 
 # Customized vars
@@ -23,12 +23,9 @@ export TMPL_DIR
 
 .PHONY: all python
 
-init:
-	$(MAKE) -f $(DEVTOOLS_DIR)/python.mk all VENV_DIR=$(VENV_DIR)
-
 # 1. Put CTX's envs to Render's envs.
 # 2. Put CTX's vars to Render's cli args.
-all: init
+all:
 	$(foreach CTX,$(CTXES),cd $(DEVTOOLS_DIR) && \
 		$(foreach P,$(enrich_envs_$(CTX)),\
 			$(foreach VAR,$(filter $(P)__%,$(.VARIABLES)), \

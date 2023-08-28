@@ -1,6 +1,3 @@
-TOPDIR := $(shell pwd)
-
-ARTEFACTS_DIR ?= {{ ARTEFACTS_DIR }}
 DEFAULT_CMD ?= {{ DEFAULT_CMD }}
 DEFAULT_TERM ?= {{ DEFAULT_TERM }}
 HISTORY_LIMIT ?= {{ HISTORY_LIMIT }}
@@ -11,16 +8,9 @@ TERM_SIZE ?= {{ TERM_SIZE }}
 CMD ?= 
 WINDOW_NAME ?= 
 
-# Targets
-TGT_ARTEFACTS_DIR ?= $(ARTEFACTS_DIR)/.create-artefacts-dir
-
 .PHONY: init open-window exec close-window close-session kill-server connect
 
-$(TGT_ARTEFACTS_DIR):
-	mkdir -p $(ARTEFACTS_DIR)
-	touch $@
-
-init: $(TGT_ARTEFACTS_DIR)
+init:
 	tmux has-session -t $(SESSION_NAME) || tmux new -s $(SESSION_NAME) -d
 	tmux has-session -t $(SESSION_NAME) && \
 		tmux set-option -t $(SESSION_NAME) -g default-command $(DEFAULT_CMD)
@@ -43,7 +33,7 @@ close-window:
 close-session:
 	tmux has-session -t $(SESSION_NAME) && tmux kill-session -t $(SESSION_NAME) || echo "Session $(SESSION_NAME) was not opened."
 
-kill-server:
+kill:
 	tmux kill-server || true
 
 connect:
@@ -52,3 +42,7 @@ ifdef WINDOW_NAME
 else
 	tmux a -t $(SESSION_NAME)
 endif
+
+clean:
+
+distclean:

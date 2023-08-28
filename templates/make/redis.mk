@@ -1,10 +1,7 @@
-AUTH_POLICY ?= {{ AUTH_POLICY }}
 MAJOR ?= {{ MAJOR }}
 MINOR ?= {{ MINOR }}
 OS ?= {{ OS }}
 OS_CODENAME ?= {{ OS_CODENAME }}
-PG_HBA ?= {{ PG_HBA }}
-REMOTE_PREFIX ?= {{ REMOTE_PREFIX }}
 SERVICE ?= {{ SERVICE }}
 START_CMD ?= {{ START_CMD }}
 STOP_CMD ?= {{ STOP_CMD }}
@@ -24,31 +21,19 @@ else
     SUDO = 
 endif
 
-.PHONY: install-ubuntu install-debian install-alpine install-macos install add-auth-policy
+.PHONY: install-ubuntu install-debian install-alpine install-macos install start stop restart
 
 install-ubuntu install-debian:
-	$(SUDO) sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(OS_CODENAME)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-	$(SUDO) wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | $(SUDO) apt-key add -
 	$(SUDO) apt-get update
-	$(SUDO) apt-get -y install \
-		postgresql-$(MAJOR) \
-		postgresql-contrib \
-		postgresql-server-dev-$(MAJOR) \
-		libpq-dev
+	$(SUDO) apt-get -y install redis
 
 install-alpine:
-	$(SUDO) apk update --no-cache && $(SUDO) apk add \
-		postgresql$(MAJOR) \
-		postgresql$(MAJOR)-contrib \
-		postgresql$(MAJOR)-dev
+	$(SUDO) apk update --no-cache && $(SUDO) apk add redis
 
 install-macos:
-	brew install postgresql@$(MAJOR)
+	brew install redis@$(MAJOR)
 
 install: install-$(OS)
-
-add-auth-policy:
-	grep -qxF '$(AUTH_POLICY)' $(PG_HBA) || echo "$(AUTH_POLICY)" | $(SUDO) tee -a $(PG_HBA)
 
 start:
 	$(START_CMD)

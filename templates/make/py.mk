@@ -1,5 +1,3 @@
-TOPDIR := $(shell pwd)
-
 DL ?= {{ DL }}
 MAJOR ?= {{ MAJOR }}
 MINOR ?= {{ MINOR }}
