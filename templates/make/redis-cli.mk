@@ -15,7 +15,7 @@ CONN_URL ?= redis://$(ADMIN):$(ADMIN_PASSWORD)@$(HOST):$(PORT)/$(ADMIN_DB)
 USER_CONN_URL ?= redis://$(USER_NAME):$(USER_PASSWORD)@$(HOST):$(PORT)/$(USER_DB)
 
 define check_user
-$(REDIS_CLI) ACL DRYRUN $1 ACL WHOAMI
+$(REDIS_CLI) ACL DRYRUN $1 PING
 endef
 
 #

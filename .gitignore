@@ -2,28 +2,28 @@
 .DS_Store
 
 # IDE
-.vscode/
-.target-vscode/
-target/
-.rust-analyzer/
+**/.rust-analyzer/
+**/.target-vscode/
+**/.vscode/
+**/target/
 
 # Autotools artefacts
-aclocal.m4
-autom4te.cache/
-config.log
-config.status
-configure~
+**/aclocal.m4
+**/autom4te.cache/
+**/config.log
+**/config.status
+**/configure~
 
 # Dev-tools artefacts
-.artefacts/
-.output/
-.dl/
+**/.artefacts
+**/.dl
+**/.output
 
 # Pytest artefacts
-.pytest_cache
+**/.pytest_cache
 
 # Python
-.venv/
-__pycache__/
-*.py[cod]
-*$py.class
+**/__pycache__/
+**/.venv/
+**/*.py[cod]
+**/*$py.class

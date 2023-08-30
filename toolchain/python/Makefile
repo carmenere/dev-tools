@@ -1,23 +1,23 @@
 DEVTOOLS_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))/../..
 MK := $(realpath $(DEVTOOLS_DIR)/templates/make)
 
-CC = @CC@
-CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
-DL = $(abspath @DL@)
-INSTALL_SCHEMA = @INSTALL_SCHEMA@
-LDFLAGS = @LDFLAGS@
-MAJOR = @MAJOR@
-MINOR = @MINOR@
-OWNER = @OWNER@
-PREFIX = @PREFIX@
-PYTHON = $(abspath @PYTHON@)
-REQUIREMENTS = $(abspath @REQUIREMENTS@)
-SUDO = @SUDO@
-USERBASE = @USERBASE@
-VENV_DIR = $(abspath @VENV_DIR@)
-VENV_PROMT = @VENV_PROMT@
-VPYTHON = $(abspath @VPYTHON@)
+CC = 
+CPPFLAGS = 
+CXX = 
+DL = $(abspath .dl)
+INSTALL_SCHEMA = 
+LDFLAGS = 
+MAJOR = 3.11
+MINOR = 4
+OWNER = an.romanov
+PREFIX = /Users/an.romanov/.py/3.11.4
+PYTHON = $(abspath /Users/an.romanov/.py/3.11.4/bin/python3.11)
+REQUIREMENTS = $(abspath /Users/an.romanov/Projects/ololo/dev-tools/toolchain/python/../../render/requirements.txt)
+SUDO = /usr/bin/sudo
+USERBASE = 
+VENV_DIR = $(abspath .venv)
+VENV_PROMT = toolchain
+VPYTHON = $(abspath .venv/bin/python)
 
 .PHONY: init python vpython requirements rm-vpython distclean
 

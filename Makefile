@@ -3,7 +3,9 @@ TOOLCHAIN := $(DEVTOOLS_DIR)/toolchain
 TOPDIR := $(shell pwd)
 CONF = $(DEVTOOLS_DIR)/configure/configure.mk
 STAGES = $(DEVTOOLS_DIR)/configure/stages.mk
-VENV_DIR ?= $(abspath $(TOOLCHAIN)/.venv)
+VENV_DIR ?= $(abspath $(TOOLCHAIN)/python/.venv)
+
+WITH ?= --with-python-defaults
 
 # If VARS is undefined $(shell realpath ) returns current directory (.)
 ifdef VARS
@@ -19,7 +21,9 @@ export DRY_RUN ?= no
 clean distclean kill ctxes
 
 toolchain:
-	cd $(TOOLCHAIN) && autoreconf -fi . && ./configure VENV_DIR=$(VENV_DIR) && $(MAKE) -f Makefile init 
+	cd $(TOOLCHAIN) && \
+		./configure $(WITH) && \
+		$(MAKE) -f Makefile init
 
 configure:
 	make -f $(CONF) all VENV_DIR=$(VENV_DIR) SETTINGS=$(SETTINGS)
