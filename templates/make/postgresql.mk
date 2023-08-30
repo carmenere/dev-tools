@@ -1,28 +1,19 @@
-AUTH_POLICY ?= {{ AUTH_POLICY }}
-MAJOR ?= {{ MAJOR }}
-MINOR ?= {{ MINOR }}
-OS ?= {{ OS }}
-OS_CODENAME ?= {{ OS_CODENAME }}
-PG_HBA ?= {{ PG_HBA }}
-REMOTE_PREFIX ?= {{ REMOTE_PREFIX }}
-SERVICE ?= {{ SERVICE }}
-START_CMD ?= {{ START_CMD }}
-STOP_CMD ?= {{ STOP_CMD }}
-SUDO_BIN ?= {{ SUDO_BIN }}
-SUDO_USER ?= {{ SUDO_USER }}
-VERSION ?= {{ VERSION }}
+{%- import "common/defaults.j2" as d -%}
+AUTH_POLICY ?= {{ AUTH_POLICY | default('host  all  all  0.0.0.0/0  md5', true) }}
+MAJOR ?= {{ MAJOR | default('12', true) }}
+MINOR ?= {{ MINOR | default('15_2', true) }}
+OS ?= {{ OS | default(d.OS, true) }}
+OS_CODENAME ?= {{ OS_CODENAME | default(d.OS_CODENAME, true) }}
+PG_HBA ?= {{ PG_HBA | default('/opt/homebrew/var/$(SERVICE)/pg_hba.conf', true) }}
+SERVICE ?= {{ SERVICE | default('postgresql@$(MAJOR)', true) }}
+CMD_PREFIX ?= {{ CMD_PREFIX | default(d.SERVICE_CMD_PREFIX, true) }}
+START_CMD ?= {{ START_CMD | default('$(CMD_PREFIX) start $(SERVICE)', true) }}
+STOP_CMD ?= {{ STOP_CMD | default('$(CMD_PREFIX) stop $(SERVICE)', true) }}
+SUDO_BIN ?= {{ SUDO_BIN | default(d.SUDO_BIN, true) }}
+SUDO_USER ?= {{ SUDO_USER | default(d.SUDO_USER, true) }}
+VERSION ?= {{ VERSION | default('$(MAJOR).$(MINOR)', true) }}
 
-# $(and ..., ..., ...) 
-# - each argument is expanded, in order;
-# - if an argument expands to an empty string the processing stops and the result of the expansion is the empty string;
-# - if all arguments expand to a non-empty string then the result of the expansion is the expansion of the last argument;
-ifneq ($(strip $(and $(SUDO_BIN),$(SUDO_USER))),)
-    SUDO = $(SUDO_BIN) -u $(SUDO_USER)
-else ifneq ($(strip $(SUDO_BIN)),)
-    SUDO = $(SUDO_BIN)
-else
-    SUDO = 
-endif
+{% include 'common/sudo.mk' %}
 
 .PHONY: install-ubuntu install-debian install-alpine install-macos install add-auth-policy
 
@@ -43,7 +34,7 @@ install-alpine:
 		postgresql$(MAJOR)-dev
 
 install-macos:
-	brew install postgresql@$(MAJOR)
+	brew install $(SERVICE)
 
 install: install-$(OS)
 

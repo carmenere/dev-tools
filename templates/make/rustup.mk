@@ -1,29 +1,19 @@
-LIB := {{ LIB }}
-include $(LIB)/common.mk
+{%- import "common/defaults.j2" as d -%}
+SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
 
-SOURCE_ENV = source "$${HOME}/.cargo/env"
+CRATES ?= {{ CRATES | default('cargo-cache sqlx-cli', true) }}
+RUST_VERSION ?= {{ RUST_VERSION | default(d.RUST_VERSION, true) }}
+RUSTFLAGS ?= {{ RUSTFLAGS | default(d.RUSTFLAGS, true) }}
+SOURCE_ENV ?= {{ SOURCE_ENV | default('source "$${HOME}/.cargo/env"', true) }}
+TARGET_ARCH ?= {{ TARGET_ARCH | default(d.RUST_TARGET_ARCH, true) }}
 
-TARGET_ARCH ?= {{ TARGET_ARCH }}
-RUST_VERSION ?= {{ RUST_VERSION }}
-SQLX_CLI_VERSION ?= {{ SQLX_VERSION }}
-CARGO_CACHE_VERSION ?= {{ CARGO_CACHE_VERSION }}
-RUSTFLAGS ?= {{ RUSTFLAGS }}
-
-CARGO_CACHE ?= {{ CARGO_CACHE }}
-SQLX ?= {{ SQLX }}
-
-# It isn't installed by default
-ifeq ($(CARGO_CACHE),yes)
-CRATES += cargo-cache
-endif
-
-# It installed by default
-ifneq ($(SQLX),no)
-CRATES += sqlx-cli
-endif
+CARGO_CACHE_VERSION = 0.8.3
+SQLX_CLI_VERSION = 0.7.1
 
 COMPONENTS += clippy
 COMPONENTS += rustfmt
+
+{% include 'common/lib.mk' %}
 
 .PHONY: all rustup default components install clean-cache
 
@@ -42,11 +32,6 @@ install:
 	$(foreach CRATE,$(CRATES),$(SOURCE_ENV) && \
 		cargo install --target=$(TARGET_ARCH) --version=$($(call uppercase,$(subst -,_,$(CRATE)))_VERSION) --force $(CRATE) \
 	$(LF))
-
-clean-cache:
-ifeq ($(CARGO_CACHE),yes)
-	$(SOURCE_ENV) && cargo cache -r all
-endif
 
 clean:
 

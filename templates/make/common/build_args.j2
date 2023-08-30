@@ -1,0 +1,16 @@
+{% set args = [] -%}
+{% if BUILD_ARGS -%}
+{% for item in BUILD_ARGS.split(' ') -%}
+{{ item }} = {{ env[item] }}
+{% endfor -%}
+{% for item in BUILD_ARGS.split(' ') -%}
+{% if env[item] -%}
+{% do args.append("{}=$({})".format(item, item)) -%}
+{% endif -%}
+{% endfor -%}
+{% endif %}
+
+{% if args -%}
+BUILD_ARGS ?= \
+    --build-arg {{ args|join(' \\\n    --build-arg ') }}
+{% endif %}

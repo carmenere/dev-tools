@@ -3,6 +3,29 @@ TMPL_DIR = $(DEVTOOLS_DIR)/templates
 MK = $(TMPL_DIR)/make
 DOCKER_COMPOSE = $(TMPL_DIR)/compose
 
+# Use 'abspath' instead 'realpath' because TARGET_DIR is not exists, but 'realpath' checks its existance
+# $1:profile,$2:TARGET_DIR,$3:TARGET_ARCH
+# EXAMPLE = $(call cargo_bins,dev,target,aarch64-apple-darwin)
+define cargo_bins
+$(eval 
+ifeq ($1,dev)
+PROFILE_DIR = debug
+else
+PROFILE_DIR = $1
+endif)$2/$3/$(PROFILE_DIR)
+endef
+
+# EXAMPLE = $(call docker_image,ABC,latest)
+# EXAMPLE = $(call docker_image,ABC)
+define docker_image
+$(eval 
+ifneq ($2,)
+IMAGE = $1:$2
+else
+IMAGE = $1
+endif)$(IMAGE)
+endef
+
 ########################################################################################################################
 CTX := cargo_foo
 ########################################################################################################################
@@ -14,25 +37,8 @@ cargo_foo__OUT_DIR = $(OUT_DIR)/cargo/foo
 cargo_foo__OUT = $(cargo_foo__OUT_DIR)/Makefile
 
 cargo_foo__BINS = foo
-cargo_foo__CLIPPY_FORMAT = $(CARGO_CLIPPY_FORMAT)
-cargo_foo__CLIPPY_REPORT = $(CARGO_CLIPPY_REPORT)
-cargo_foo__FEATURES = $(CARGO_FEATURES)
-cargo_foo__INSTALL_DIR = $(CARGO_INSTALL_DIR)
-cargo_foo__LIB = $(LIB)
-cargo_foo__LINTS = $(CARGO_LINTS)
-cargo_foo__PROFILE = $(CARGO_PROFILE)
-cargo_foo__TARGET_ARCH = $(RUST_TARGET_ARCH)
-cargo_foo__TARGET_DIR = $(CARGO_TARGET_DIR)
 cargo_foo__TOML = $(PROJECT_ROOT)/examples/foo/Cargo.toml
-
-ifeq ($(cargo_foo__PROFILE),dev)
-	cargo_foo__PROFILE_DIR = debug
-else
-	cargo_foo__PROFILE_DIR = $(PROFILE)
-endif
-
-# Use 'abspath' instead 'realpath' because TARGET_DIR is not exists, but 'realpath' checks its existance
-cargo_foo__BINS_DIR = $(abspath $(cargo_foo__TARGET_DIR))/$(cargo_foo__TARGET_ARCH)/$(cargo_foo__PROFILE_DIR)
+# cargo_foo__BINS_DIR = $(call cargo_bins,dev,target,aarch64-apple-darwin)
 
 # cargo envs
 envs_cargo_foo__RUSTFLAGS = $(RUSTFLAGS)
@@ -53,35 +59,13 @@ cargo_bar__OUT_DIR = $(OUT_DIR)/cargo/bar
 cargo_bar__OUT = $(cargo_bar__OUT_DIR)/Makefile
 
 cargo_bar__BINS = bar
-cargo_bar__CLIPPY_FORMAT = $(CARGO_CLIPPY_FORMAT)
-cargo_bar__CLIPPY_REPORT = $(CARGO_CLIPPY_REPORT)
-cargo_bar__FEATURES = $(CARGO_FEATURES)
-cargo_bar__INSTALL_DIR = $(CARGO_INSTALL_DIR)
-cargo_bar__LIB = $(LIB)
-cargo_bar__LINTS = $(CARGO_LINTS)
-cargo_bar__PROFILE = $(CARGO_PROFILE)
-cargo_bar__TARGET_ARCH = $(RUST_TARGET_ARCH)
-cargo_bar__TARGET_DIR = $(CARGO_TARGET_DIR)
-cargo_bar__TOML = $(PROJECT_ROOT)/examples/bar/Cargo.toml
-
-ifeq ($(cargo_bar__PROFILE),dev)
-	cargo_bar__PROFILE_DIR = debug
-else
-	cargo_bar__PROFILE_DIR = $(PROFILE)
-endif
-
-# Use 'abspath' instead 'realpath' because TARGET_DIR is not exists, but 'realpath' checks its existance
-cargo_bar__BINS_DIR = $(abspath $(cargo_bar__TARGET_DIR))/$(cargo_bar__TARGET_ARCH)/$(cargo_bar__PROFILE_DIR)
-
-# cargo envs
+cargo_foo__TOML = $(PROJECT_ROOT)/examples/bar/Cargo.toml
+# cargo_foo__BINS_DIR = $(call cargo_bins,dev,target,aarch64-apple-darwin)
 
 # inherit envs from CTX envs_cargo_foo__
 $(foreach VAR,$(filter envs_cargo_foo__%,$(.VARIABLES)), \
     $(eval envs_cargo_bar__$(subst envs_cargo_foo__,,$(VAR)) = $($(VAR))) \
 )
-
-# envs_cargo_bar__RUSTFLAGS = $(RUSTFLAGS)
-# envs_cargo_bar__BUILD_VERSION = $(BUILD_VERSION)
 envs_cargo_bar__DATABASE_URL = $(DATABASE_URL)
 
 cargo_bar__ENVS = $(foreach VAR,$(filter envs_cargo_bar__%,$(.VARIABLES)),$(subst envs_cargo_bar__,,$(VAR)))
@@ -98,20 +82,6 @@ postgresql__IN = $(MK)/postgresql.mk
 postgresql__OUT_DIR = $(OUT_DIR)/services
 postgresql__OUT = $(postgresql__OUT_DIR)/pg.mk
 
-postgresql__SERVICE = postgresql@12
-postgresql__START_CMD = $(SERVICE_START_CMD) $(postgresql__SERVICE)
-postgresql__STOP_CMD = $(SERVICE_STOP_CMD) $(postgresql__SERVICE)
-postgresql__AUTH_POLICY = host  all  all  $(REMOTE_PREFIX)  md5
-postgresql__MAJOR = 12
-postgresql__MINOR = 15_2
-postgresql__OS = ubuntu
-postgresql__OS_CODENAME = $(OS_CODENAME)
-postgresql__PG_HBA = /etc/postgresql/$(postgresql__MAJOR)/main/pg_hba.conf
-postgresql__REMOTE_PREFIX = 0.0.0.0/0
-postgresql__SUDO_BIN = $(SUDO)
-postgresql__SUDO_USER =
-postgresql__VERSION = $(postgresql__MAJOR).$(postgresql__MINOR)
-
 CTXES := $(CTXES) postgresql
 
 ########################################################################################################################
@@ -123,17 +93,6 @@ ctx_redis__STAGE = services
 redis__IN = $(MK)/redis.mk
 redis__OUT_DIR = $(OUT_DIR)/services
 redis__OUT = $(redis__OUT_DIR)/redis.mk
-
-redis__SERVICE = redis
-redis__START_CMD = $(SERVICE_START_CMD) $(redis__SERVICE)
-redis__STOP_CMD = $(SERVICE_STOP_CMD) $(redis__SERVICE)
-redis__MAJOR = 7
-redis__MINOR = 
-redis__OS = ubuntu
-redis__OS_CODENAME = $(OS_CODENAME)
-redis__SUDO_BIN = $(SUDO)
-redis__SUDO_USER =
-redis__VERSION = $(redis__MAJOR)
 
 CTXES := $(CTXES) redis
 
@@ -147,26 +106,6 @@ pg_ctl__IN = $(MK)/pg_ctl.mk
 pg_ctl__OUT_DIR = $(OUT_DIR)/services
 pg_ctl__OUT = $(pg_ctl__OUT_DIR)/pg_ctl.mk
 
-pg_ctl__ADMIN = $(PG_ADMIN)
-pg_ctl__ADMIN_DB = $(PG_ADMIN_DB)
-pg_ctl__ADMIN_PASSWORD = $(PG_ADMIN_PASSWORD)
-pg_ctl__DATADIR = $(pg_ctl__OUT_DIR)/pg_data
-pg_ctl__HOST = $(LOCALHOST)
-pg_ctl__INITDB_AUTH_HOST = md5
-pg_ctl__INITDB_AUTH_LOCAL = peer
-pg_ctl__INITDB_PWFILE = /tmp/passwd.tmp
-pg_ctl__LANG = $(LOCALE_LANG)
-pg_ctl__LC_ALL = $(LOCALE_LC_ALL)
-pg_ctl__LC_CTYPE = $(LOCALE_LC_CTYPE)
-pg_ctl__OS_USER = $(PG_ADMIN)
-pg_ctl__PG_CONFIG = $(PG_CONFIG)
-pg_ctl__PG_CTL_CONF = $(pg_ctl__DATADIR)/postgresql.conf
-pg_ctl__PG_CTL_LOG = $(pg_ctl__DATADIR)/pg_ctl.logs
-pg_ctl__PG_CTL_LOGGING_COLLECTOR = on
-pg_ctl__PORT = $(PG_PORT)
-pg_ctl__SUDO_BIN = $(SUDO)
-pg_ctl__SUDO_USER = $(PG_ADMIN)
-
 CTXES := $(CTXES) pg_ctl
 
 ########################################################################################################################
@@ -177,24 +116,7 @@ ctx_psql__STAGE = init
 
 psql__IN = $(MK)/psql.mk
 psql__OUT_DIR = $(OUT_DIR)/psql
-psql__OUT = $(psql__OUT_DIR)/Makefile
-
-psql__ADMIN ?= $(PG_ADMIN)
-psql__ADMIN_DB = $(PG_ADMIN_DB)
-psql__ADMIN_PASSWORD = $(PG_ADMIN_PASSWORD)
-psql__AUTH_METHOD = remote
-psql__CNT =
-psql__EXIT_IF_CREATE_EXISTED_DB = no
-psql__EXIT_IF_CREATE_EXISTED_USER = no
-psql__HOST = $(LOCALHOST)
-psql__LIB = $(LIB)
-psql__PORT = $(PG_PORT)
-psql__SUDO_BIN = $(SUDO)
-psql__SUDO_USER =
-psql__USER_ATTRIBUTES = SUPERUSER CREATEDB
-psql__USER_DB = $(SERVICE_DB)
-psql__USER_NAME = $(SERVICE_USER)
-psql__USER_PASSWORD = $(SERVICE_PASSWORD)
+psql__OUT = $(psql__OUT_DIR)/psql.mk
 
 CTXES := $(CTXES) psql
 
@@ -208,19 +130,6 @@ redis_cli__IN = $(MK)/redis-cli.mk
 redis_cli__OUT_DIR = $(OUT_DIR)/redis
 redis_cli__OUT = $(redis_cli__OUT_DIR)/redis.mk
 
-redis_cli__ADMIN = $(REDIS_ADMIN)
-redis_cli__ADMIN_DB = $(REDIS_ADMIN_DB)
-redis_cli__ADMIN_PASSWORD = $(REDIS_ADMIN_PASSWORD)
-redis_cli__CNT =
-redis_cli__CONFIG_REWRITE = $(REDIS_CONFIG_REWRITE)
-redis_cli__EXIT_IF_CREATE_EXISTED_USER = no
-redis_cli__HOST = $(LOCALHOST)
-redis_cli__PORT = $(REDIS_PORT)
-redis_cli__REQUIREPASS = yes
-redis_cli__USER_DB = $(REDIS_ADMIN_DB)
-redis_cli__USER_NAME = $(SERVICE_USER)
-redis_cli__USER_PASSWORD = $(SERVICE_PASSWORD)
-
 CTXES := $(CTXES) redis_cli
 
 ########################################################################################################################
@@ -230,11 +139,10 @@ ctx_venv_pytest_bar__ENABLED = yes
 ctx_venv_pytest_bar__STAGE = venvs
 
 venv_pytest_bar__IN = $(MK)/venv.mk
-venv_pytest_bar__OUT_DIR = $(OUT_DIR)/pytest/bar
-venv_pytest_bar__OUT = $(venv_pytest_bar__OUT_DIR)/venv.mk
+venv_pytest_bar__OUT_DIR = $(OUT_DIR)/venv/pytest/bar
+venv_pytest_bar__OUT = $(venv_pytest_bar__OUT_DIR)/Makefile
 
 venv_pytest_bar__VENV_DIR = $(venv_pytest_bar__OUT_DIR)/.venv
-venv_pytest_bar__PYTHON = $(PYTHON)
 venv_pytest_bar__VENV_PROMT = [VENV]
 
 CTXES := $(CTXES) venv_pytest_bar
@@ -246,17 +154,11 @@ ctx_pip_pytest_bar__ENABLED = yes
 ctx_pip_pytest_bar__STAGE = pip
 
 pip_pytest_bar__IN = $(MK)/pip.mk
-pip_pytest_bar__OUT_DIR = $(OUT_DIR)/pytest/bar
-pip_pytest_bar__OUT = $(pip_pytest_bar__OUT_DIR)/pip.mk
+pip_pytest_bar__OUT_DIR = $(OUT_DIR)/venv/pytest/bar
+pip_pytest_bar__OUT = $(pip_pytest_bar__OUT_DIR)/Makefile
 
-pip_pytest_bar__CC = $(CC)
-pip_pytest_bar__CPPFLAGS = $(CPPFLAGS)
-pip_pytest_bar__CXX = $(CXX)
-pip_pytest_bar__INSTALL_SCHEMA =
-pip_pytest_bar__LDFLAGS = $(LDFLAGS)
 pip_pytest_bar__PYTHON = $(venv_pytest_bar__VENV_DIR)/bin/python
 pip_pytest_bar__REQUIREMENTS = $(PROJECT_ROOT)/examples/bar/tests/requirements.txt
-pip_pytest_bar__USERBASE =
 
 CTXES := $(CTXES) pip_pytest_bar
 
@@ -268,10 +170,9 @@ ctx_venv_pytest_foo__STAGE = venvs
 
 venv_pytest_foo__IN = $(MK)/venv.mk
 venv_pytest_foo__OUT_DIR = $(OUT_DIR)/pytest/foo
-venv_pytest_foo__OUT = $(venv_pytest_foo__OUT_DIR)/venv.mk
+venv_pytest_foo__OUT = $(venv_pytest_foo__OUT_DIR)/Makefile
 
 venv_pytest_foo__VENV_DIR = $(venv_pytest_foo__OUT_DIR)/.venv
-venv_pytest_foo__PYTHON = $(PYTHON)
 venv_pytest_foo__VENV_PROMT = [VENV]
 
 CTXES := $(CTXES) venv_pytest_foo
@@ -284,16 +185,10 @@ ctx_pip_pytest_foo__STAGE = pip
 
 pip_pytest_foo__IN = $(MK)/pip.mk
 pip_pytest_foo__OUT_DIR = $(OUT_DIR)/pytest/foo
-pip_pytest_foo__OUT = $(pip_pytest_foo__OUT_DIR)/pip.mk
+pip_pytest_foo__OUT = $(pip_pytest_foo__OUT_DIR)/Makefile
 
-pip_pytest_foo__CC = $(CC)
-pip_pytest_foo__CPPFLAGS = $(CPPFLAGS)
-pip_pytest_foo__CXX = $(CXX)
-pip_pytest_foo__INSTALL_SCHEMA =
-pip_pytest_foo__LDFLAGS = $(LDFLAGS)
 pip_pytest_foo__PYTHON = $(venv_pytest_foo__VENV_DIR)/bin/python
 pip_pytest_foo__REQUIREMENTS = $(PROJECT_ROOT)/examples/foo/tests/requirements.txt
-pip_pytest_foo__USERBASE =
 
 CTXES := $(CTXES) pip_pytest_foo
 
@@ -302,14 +197,7 @@ CTX := python
 ########################################################################################################################
 python__IN = $(MK)/python.mk
 python__OUT_DIR = $(OUT_DIR)/python
-python__OUT = $(python__OUT_DIR)/Makefile
-
-python__DL = $(python__OUT_DIR)/.dl
-python__MAJOR = 3.11
-python__MINOR = 4
-python__OWNER = $(USER)
-python__PREFIX =
-python__SUDO = $(SUDO)
+python__OUT = $(python__OUT_DIR)/python.mk
 
 CTXES := $(CTXES) python
 
@@ -318,16 +206,13 @@ CTX := rustup
 ########################################################################################################################
 rustup__IN = $(MK)/rustup.mk
 rustup__OUT_DIR = $(OUT_DIR)/rustup
-rustup__OUT = $(rustup__OUT_DIR)/Makefile
+rustup__OUT = $(rustup__OUT_DIR)/rustup.mk
 
-rustup__CARGO_CACHE ?= no
+CRATES += cargo-cache
 rustup__CARGO_CACHE_VERSION = 0.8.3
-rustup__LIB = $(LIB)
-rustup__RUST_VERSION = $(RUST_VERSION)
-rustup__RUSTFLAGS = $(RUSTFLAGS)
-rustup__SQLX ?= yes
-rustup__SQLX_VERSION = 0.7.1
-rustup__TARGET_ARCH = $(RUST_TARGET_ARCH)
+
+CRATES += sqlx-cli
+rustup__SQLX_CLI_VERSION = 0.7.1
 
 CTXES := $(CTXES) rustup
 
@@ -338,18 +223,11 @@ ctx_app_sqlx_bar__ENABLED = yes
 ctx_app_sqlx_bar__STAGE = schemas
 
 app_sqlx_bar__IN = $(MK)/app.mk
-app_sqlx_bar__OUT_DIR = $(OUT_DIR)/schemas
-app_sqlx_bar__OUT = $(app_sqlx_bar__OUT_DIR)/bar.mk
-
-app_sqlx_bar__LIB = $(LIB)
+app_sqlx_bar__OUT_DIR = $(OUT_DIR)/app
+app_sqlx_bar__OUT = $(app_sqlx_bar__OUT_DIR)/bar/Makefile
 
 app_sqlx_bar__BIN_PATH = sqlx migrate run
-app_sqlx_bar__LOG_FILE = $(app_sqlx_bar__OUT_DIR)/.bar.logs
 app_sqlx_bar__OPTS = --source "$(PROJECT_ROOT)/examples/bar/$(SCHEMAS_DIR)"
-app_sqlx_bar__PID_FILE = $(app_sqlx_bar__OUT_DIR)/.bar.pid
-app_sqlx_bar__PKILL_PATTERN =
-
-app_sqlx_bar__MODE = tee
 app_sqlx_bar__TMUX_START_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(app_sqlx_bar__OUT) tee' WINDOW_NAME=schemas_foo
 
 # sqlx envs
@@ -367,10 +245,9 @@ ctx_venv_alembic_baz__STAGE = venvs
 
 venv_alembic_baz__IN = $(MK)/venv.mk
 venv_alembic_baz__OUT_DIR = $(OUT_DIR)/alembic/baz
-venv_alembic_baz__OUT = $(venv_alembic_baz__OUT_DIR)/venv.mk
+venv_alembic_baz__OUT = $(venv_alembic_baz__OUT_DIR)/Makefile
 
 venv_alembic_baz__VENV_DIR = $(venv_alembic_baz__OUT_DIR)/.venv
-venv_alembic_baz__PYTHON = $(PYTHON)
 venv_alembic_baz__VENV_PROMT = [VENV]
 
 CTXES := $(CTXES) venv_alembic_baz
@@ -383,16 +260,10 @@ ctx_pip_alembic_baz__STAGE = pip
 
 pip_alembic_baz__IN = $(MK)/pip.mk
 pip_alembic_baz__OUT_DIR = $(OUT_DIR)/alembic/baz
-pip_alembic_baz__OUT = $(pip_alembic_baz__OUT_DIR)/pip.mk
+pip_alembic_baz__OUT = $(pip_alembic_baz__OUT_DIR)/Makefile
 
-pip_alembic_baz__CC = $(CC)
-pip_alembic_baz__CPPFLAGS = $(CPPFLAGS)
-pip_alembic_baz__CXX = $(CXX)
-pip_alembic_baz__INSTALL_SCHEMA =
-pip_alembic_baz__LDFLAGS = $(LDFLAGS)
 pip_alembic_baz__PYTHON = $(venv_alembic_baz__VENV_DIR)/bin/python
 pip_alembic_baz__REQUIREMENTS = $(PROJECT_ROOT)/examples/baz/migrator/requirements.txt
-pip_alembic_baz__USERBASE =
 
 CTXES := $(CTXES) pip_alembic_baz
 
@@ -403,15 +274,11 @@ ctx_app_foo__ENABLED = $(HOST_APPS)
 ctx_app_foo__STAGE = apps
 
 app_foo__IN = $(MK)/app.mk
-app_foo__OUT_DIR = $(OUT_DIR)/apps
-app_foo__OUT = $(app_foo__OUT_DIR)/foo.mk
-
-app_foo__LIB = $(LIB)
+app_foo__OUT_DIR = $(OUT_DIR)/app/foo
+app_foo__OUT = $(app_foo__OUT_DIR)/Makefile
 
 app_foo__BIN_PATH = $(cargo_foo__BINS_DIR)/foo
-app_foo__ENVS =
 app_foo__LOG_FILE = $(app_foo__OUT_DIR)/.foo.logs
-app_foo__OPTS =
 app_foo__PID_FILE = $(app_foo__OUT_DIR)/.foo.pid
 app_foo__PKILL_PATTERN = $(app_foo__BIN_PATH)
 app_foo__MODE = tmux
@@ -431,15 +298,11 @@ ctx_app_bar__ENABLED = $(HOST_APPS)
 ctx_app_bar__STAGE = apps
 
 app_bar__IN = $(MK)/app.mk
-app_bar__OUT_DIR = $(OUT_DIR)/apps
-app_bar__OUT = $(app_bar__OUT_DIR)/bar.mk
-
-app_bar__LIB = $(LIB)
+app_bar__OUT_DIR = $(OUT_DIR)/app/bar
+app_bar__OUT = $(app_bar__OUT_DIR)/Makefile
 
 app_bar__BIN_PATH = $(cargo_bar__BINS_DIR)/bar
-app_bar__ENVS =
 app_bar__LOG_FILE = $(app_bar__OUT_DIR)/.foo.logs
-app_bar__OPTS =
 app_bar__PID_FILE = $(app_bar__OUT_DIR)/foo.pid
 app_bar__PKILL_PATTERN = $(app_bar__BIN_PATH)
 app_bar__MODE = tee
@@ -460,20 +323,13 @@ ctx_pytest_bar__STAGE = tests
 
 pytest_bar__IN = $(MK)/pytest.mk
 pytest_bar__OUT_DIR = $(OUT_DIR)/pytest/bar
-pytest_bar__OUT = $(pytest_bar__OUT_DIR)/pytest.mk
+pytest_bar__OUT = $(pytest_bar__OUT_DIR)/Makefile
 
-pytest_bar__LIB = $(LIB)
-
-pytest_bar__ENVS =
-pytest_bar__LOG_FILE = $(pytest_bar__OUT_DIR)/.logs
-pytest_bar__REPORTS_DIR = $(pytest_bar__OUT_DIR)/.reports
-pytest_bar__TEST_CASES =
 pytest_bar__TEST_CASES_DIR = $(PROJECT_ROOT)/examples/bar/tests
 pytest_bar__PYTHON = $(venv_pytest_bar__VENV_DIR)/bin/python
 
 pytest_bar__MODE = tmux
 pytest_bar__TMUX_START_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(pytest_bar__OUT) run' WINDOW_NAME=tests_bar
-# pytest_bar__STOP_CMD = ''
 
 CTXES := $(CTXES) pytest_bar
 
@@ -485,20 +341,10 @@ ctx_pytest_foo__STAGE = tests
 
 pytest_foo__IN = $(MK)/pytest.mk
 pytest_foo__OUT_DIR = $(OUT_DIR)/pytest/foo
-pytest_foo__OUT = $(pytest_foo__OUT_DIR)/pytest.mk
+pytest_foo__OUT = $(pytest_foo__OUT_DIR)/Makefile
 
-pytest_foo__LIB = $(LIB)
-
-pytest_foo__ENVS =
-pytest_foo__LOG_FILE = $(pytest_foo__OUT_DIR)/.logs
-pytest_foo__REPORTS_DIR = $(pytest_foo__OUT_DIR)/.reports
-pytest_foo__TEST_CASES =
 pytest_foo__TEST_CASES_DIR = $(PROJECT_ROOT)/examples/foo/tests
 pytest_foo__PYTHON = $(venv_pytest_foo__VENV_DIR)/bin/python
-
-pytest_foo__MODE = tmux
-pytest_foo__TMUX_START_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(pytest_foo__OUT) run' WINDOW_NAME=tests_foo
-# pytest_foo__STOP_CMD = ''
 
 CTXES := $(CTXES) pytest_foo
 
@@ -510,14 +356,7 @@ ctx_tmux__STAGE = tmux
 
 tmux__IN = $(MK)/tmux.mk
 tmux__OUT_DIR = $(OUT_DIR)/tmux
-tmux__OUT = $(tmux__OUT_DIR)/example.mk
-
-tmux__DEFAULT_CMD = $(SH)
-tmux__DEFAULT_TERM = xterm-256color
-tmux__HISTORY_LIMIT = 1000000
-tmux__LOGS_DIR = $(tmux__OUT_DIR)
-tmux__SESSION_NAME = DEV-TOOLS
-tmux__TERM_SIZE = 240x32
+tmux__OUT = $(tmux__OUT_DIR)/Makefile
 
 CTXES := $(CTXES) tmux
 
@@ -531,24 +370,10 @@ docker_pg__IN = $(MK)/docker.mk
 docker_pg__OUT_DIR = $(OUT_DIR)/docker
 docker_pg__OUT = $(docker_pg__OUT_DIR)/pg.mk
 
-docker_pg__BRIDGE = $(DOCKER_NETWORK_NAME)
-docker_pg__CONTAINER = db
+docker_pg__CONTAINER = pg
 docker_pg__CTX = $(PROJECT_ROOT)
-docker_pg__DAEMONIZE = $(DOCKER_DAEMONIZE)
-docker_pg__DOCKERFILE = $(DOCKERFILES)/Dockerfile
-docker_pg__DRIVER = $(DOCKER_NETWORK_DRIVER)
-docker_pg__ERR_IF_BRIDGE_EXISTS = yes
-docker_pg__PUBLISH = $(PG_PORT):$(PG_PORT)/tcp
 docker_pg__RESTART_POLICY = always
 docker_pg__RM_AFTER_STOP = no
-docker_pg__SUBNET = $(DOCKER_NETWORK_SUBNET)
-docker_pg__TAG = latest
-
-ifdef docker_pg__TAG
-    docker_pg__IMAGE = pg:$(docker_pg__TAG)
-else
-    docker_pg__IMAGE = pg
-endif
 
 # build args for docker build
 args_docker_pg__BASE_IMAGE = $(DOCKER_PG_IMAGE)
@@ -577,24 +402,10 @@ docker_redis__IN = $(MK)/docker.mk
 docker_redis__OUT_DIR = $(OUT_DIR)/docker
 docker_redis__OUT = $(docker_redis__OUT_DIR)/redis.mk
 
-docker_redis__BRIDGE = $(DOCKER_NETWORK_NAME)
 docker_redis__CONTAINER = redis
 docker_redis__CTX = $(PROJECT_ROOT)
-docker_redis__DAEMONIZE = $(DOCKER_DAEMONIZE)
-docker_redis__DOCKERFILE = $(DOCKERFILES)/Dockerfile
-docker_redis__DRIVER = $(DOCKER_NETWORK_DRIVER)
-docker_redis__ERR_IF_BRIDGE_EXISTS = yes
-docker_redis__PUBLISH = $(REDIS_PORT):$(REDIS_PORT)/tcp
 docker_redis__RESTART_POLICY = always
 docker_redis__RM_AFTER_STOP = no
-docker_redis__SUBNET = $(DOCKER_NETWORK_SUBNET)
-docker_redis__TAG = latest
-
-ifdef docker_redis__TAG
-    docker_redis__IMAGE = redis:$(docker_redis__TAG)
-else
-    docker_redis__IMAGE = redis
-endif
 
 # docker build_args
 envs_docker_redis__BASE_IMAGE = $(DOCKER_REDIS_IMAGE)
@@ -615,24 +426,11 @@ docker_rust__IN = $(MK)/docker.mk
 docker_rust__OUT_DIR = $(OUT_DIR)/docker
 docker_rust__OUT = $(docker_rust__OUT_DIR)/rust.mk
 
-docker_rust__BRIDGE = $(DOCKER_NETWORK_NAME)
 docker_rust__CONTAINER = builder_rust
 docker_rust__CTX = $(PROJECT_ROOT)
-docker_rust__DAEMONIZE = $(DOCKER_DAEMONIZE)
 docker_rust__DOCKERFILE = $(DOCKERFILES)/Dockerfile.rust
-docker_rust__DRIVER = $(DOCKER_NETWORK_DRIVER)
-docker_rust__ERR_IF_BRIDGE_EXISTS = yes
-docker_rust__PUBLISH = 
-docker_rust__RESTART_POLICY = no
-docker_rust__RM_AFTER_STOP = yes
-docker_rust__SUBNET = $(DOCKER_NETWORK_SUBNET)
-docker_rust__TAG = latest
-
-ifdef docker_rust__TAG
-    docker_rust__IMAGE = rust:$(docker_rust__TAG)
-else
-    docker_rust__IMAGE = rust
-endif
+docker_rust__IMAGE = $(call docker_image,rust,$(docker_rust__TAG))
+docker_rust__PUBLISH = 8081:80/tcp
 
 # docker build_args
 envs_docker_rust__BASE_IMAGE = $(DOCKER_ALPINE_IMAGE)
@@ -656,32 +454,19 @@ docker_bar__IN = $(MK)/docker.mk
 docker_bar__OUT_DIR = $(OUT_DIR)/docker
 docker_bar__OUT = $(docker_bar__OUT_DIR)/bar.mk
 
-docker_bar__DAEMONIZE = $(DOCKER_DAEMONIZE)
-docker_bar__BRIDGE = $(DOCKER_NETWORK_NAME)
-docker_bar__CONTAINER = builder_rust
+docker_bar__CONTAINER = bar
 docker_bar__CTX = $(PROJECT_ROOT)
 docker_bar__DOCKERFILE = $(DOCKERFILES)/Dockerfile.rust_app
-docker_bar__DRIVER = $(DOCKER_NETWORK_DRIVER)
-docker_bar__ERR_IF_BRIDGE_EXISTS = yes
-docker_bar__PUBLISH = 8080:80/tcp
-docker_bar__SUBNET = $(DOCKER_NETWORK_SUBNET)
-docker_bar__TAG = latest
-docker_bar__RESTART_POLICY = no
-docker_bar__RM_AFTER_STOP = yes
-
-ifdef docker_bar__TAG
-    docker_bar__IMAGE = bar:$(docker_bar__TAG)
-else
-    docker_bar__IMAGE = bar
-endif
+docker_bar__PUBLISH = 8081:80/tcp
+docker_bar__IMAGE = $(call docker_image,bar,$(docker_bar__TAG))
 
 # docker build_args
 envs_docker_bar__APP = bar
 envs_docker_bar__BUILDER = $(docker_rust_IMAGE)
-envs_docker_bar__BASE_IMAGE = $(DOCKER_ALPINE_IMAGE)
 envs_docker_bar__BUILD_PROFILE = $(CARGO_PROFILE)
 envs_docker_bar__BUILD_VERSION = $(BUILD_VERSION)
 envs_docker_bar__TARGET_ARCH = $(DOCKER_RUST_TARGET_ARCH)
+envs_docker_bar__BASE_IMAGE = $(DOCKER_ALPINE_IMAGE)
 
 docker_bar__ENVS = $(foreach VAR,$(filter envs_docker_bar__%,$(.VARIABLES)),$(subst envs_docker_bar__,,$(VAR)))
 
@@ -699,24 +484,11 @@ docker_foo__IN = $(MK)/docker.mk
 docker_foo__OUT_DIR = $(OUT_DIR)/docker
 docker_foo__OUT = $(docker_foo__OUT_DIR)/foo.mk
 
-docker_foo__DAEMONIZE = $(DOCKER_DAEMONIZE)
-docker_foo__BRIDGE = $(DOCKER_NETWORK_NAME)
-docker_foo__CONTAINER = builder_rust
+docker_foo__CONTAINER = foo
 docker_foo__CTX = $(PROJECT_ROOT)
 docker_foo__DOCKERFILE = $(DOCKERFILES)/Dockerfile.rust_app
-docker_foo__DRIVER = $(DOCKER_NETWORK_DRIVER)
-docker_foo__ERR_IF_BRIDGE_EXISTS = yes
 docker_foo__PUBLISH = 8081:80/tcp
-docker_foo__SUBNET = $(DOCKER_NETWORK_SUBNET)
-docker_foo__TAG = latest
-docker_foo__RESTART_POLICY = no
-docker_foo__RM_AFTER_STOP = yes
-
-ifdef docker_foo__TAG
-    docker_foo__IMAGE = foo:$(docker_foo__TAG)
-else
-    docker_foo__IMAGE = foo
-endif
+docker_foo__IMAGE = $(call docker_image,foo,$(docker_foo__TAG))
 
 # docker build_args
 envs_docker_foo__APP = foo
@@ -826,18 +598,6 @@ CTX := compose_example
 compose_example__IN = $(MK)/compose.mk
 compose_example__OUT_DIR = $(OUT_DIR)/compose
 compose_example__OUT = $(compose_example__OUT_DIR)/example.mk
-
-compose_example__DAEMONIZE ?= $(COMPOSE_DAEMONIZE)
-compose_example__FORCE_RECREATE ?= $(COMPOSE_FORCE_RECREATE)
-compose_example__NO_CACHE ?= $(COMPOSE_NO_CACHE)
-compose_example__PROJECT ?= xxx
-compose_example__RM_ALL ?= $(COMPOSE_RM_ALL)
-compose_example__RM_FORCE ?= $(COMPOSE_RM_FORCE)
-compose_example__RM_ON_UP ?= $(COMPOSE_RM_ON_UP)
-compose_example__RM_STOP ?= $(COMPOSE_RM_STOP)
-compose_example__RM_VOLUMES ?= $(COMPOSE_RM_VOLUMES)
-compose_example__TIMEOUT ?= $(COMPOSE_TIMEOUT)
-compose_example__YAML ?= $(stand_example__OUT)
 
 CTXES := $(CTXES) compose_example
 

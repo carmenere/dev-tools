@@ -1,16 +1,20 @@
-BRIDGE ?= {{ BRIDGE }}
-CONTAINER ?= {{ CONTAINER }}
-CTX ?= {{ CTX }}
-DAEMONIZE ?= {{ DAEMONIZE }}
-DOCKERFILE ?= {{ DOCKERFILE }}
-DRIVER ?= {{ DRIVER }}
-ERR_IF_BRIDGE_EXISTS = {{ ERR_IF_BRIDGE_EXISTS }}
-IMAGE ?= {{ IMAGE }}
-PUBLISH ?= {{ PUBLISH }}
-RESTART_POLICY ?= {{ RESTART_POLICY }}
-RM_AFTER_STOP ?= {{ RM_AFTER_STOP }}
-SUBNET ?= {{ SUBNET }}
-TAG ?= {{ TAG }}
+BRIDGE ?= {{ BRIDGE | default('dev-tools', true) }}
+CONTAINER ?= {{ CONTAINER | default('', true) }}
+CTX ?= {{ CTX | default('.', true) }}
+DAEMONIZE ?= {{ DAEMONIZE | default('yes', true) }}
+DOCKERFILE ?= {{ DOCKERFILE | default('', true) }}
+DRIVER ?= {{ DRIVER | default('bridge', true) }}
+ERR_IF_BRIDGE_EXISTS = {{ ERR_IF_BRIDGE_EXISTS | default('yes', true) }}
+IMAGE ?= {{ IMAGE | default('', true) }}
+RESTART_POLICY ?= {{ RESTART_POLICY | default('no', true) }}
+RM_AFTER_STOP ?= {{ RM_AFTER_STOP | default('yes', true) }}
+SUBNET ?= {{ SUBNET | default('192.168.100.0/24', true) }}
+TAG ?= {{ TAG | default('latest', true) }}
+
+{% include 'common/lib.mk' %}
+{% include 'common/envs.j2' %}
+{% include 'common/build_args.j2' %}
+{% include 'common/publish.j2' %}
 
 ifeq ($(DAEMONIZE),yes)
 RUN_OPTS += -d
@@ -27,52 +31,6 @@ endif
 RUN_OPTS += --name $(CONTAINER)
 RUN_OPTS += --network $(BRIDGE)
 RUN_OPTS += $(PUBLISH_OPT)
-
-{% set args = [] -%}
-{% if BUILD_ARGS -%}
-{% for item in BUILD_ARGS.split(' ') -%}
-{{ item }} = {{ env[item] }}
-{% endfor -%}
-{% for item in BUILD_ARGS.split(' ') -%}
-{% if env[item] -%}
-{% do args.append("{}=$({})".format(item, item)) -%}
-{% endif -%}
-{% endfor -%}
-{% endif %}
-
-{% if args -%}
-BUILD_ARGS ?= \
-    --build-arg {{ args|join(' \\\n    --build-arg ') }}
-{% endif %}
-
-{% set e = [] -%}
-{% if ENVS -%}
-{% for item in ENVS.split(' ') -%}
-{{ item }} = {{ env[item] }}
-{% endfor -%}
-{% for item in ENVS.split(' ') -%}
-{% if env[item] -%}
-{% do e.append("{}=$({})".format(item, item)) -%}
-{% endif -%}
-{% endfor -%}
-{% endif %}
-
-{% if e -%}
-ENVS ?= \
-    --env {{ e|join(' \\\n    --env ') }}
-{% endif -%}
-
-{% set p = [] -%}
-{% if PUBLISH -%}
-{% for item in PUBLISH.split(' ') -%}
-{% do p.append("{}".format(item)) -%}
-{% endfor -%}
-{% endif %}
-
-{% if p -%}
-PUBLISH_OPT ?= \
-    --publish {{ p|join(' \\\n    --publish ') }}
-{% endif %}
 
 .PHONY: network network-rm build run start stop rm rm-by-image rm-all prune purge
 

@@ -1,29 +1,18 @@
-LIB := {{ LIB }}
-include $(LIB)/common.mk
+{%- import "common/defaults.j2" as d -%}
+SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
 
-BIN_PATH ?= {{ BIN_PATH }}
-LOG_FILE ?= {{ LOG_FILE }}
-OPTS ?= {{ OPTS }}
-PID_FILE ?= {{ PID_FILE }}
-PKILL_PATTERN ?= {{ PKILL_PATTERN }}
-TMUX_START_CMD ?= {{ TMUX_START_CMD }}
-MODE ?= {{ MODE }}
+BIN_PATH ?= {{ BIN_PATH | default('', true) }}
+LOG_FILE ?= {{ LOG_FILE | default('$(SELFDIR)/.logs', true) }}
+OPTS ?= {{ OPTS | default('', true) }}
+PID_FILE ?= {{ PID_FILE | default('$(SELFDIR)/.pid', true) }}
+PKILL_PATTERN ?= {{ PKILL_PATTERN | default('', true) }}
+TMUX_START_CMD ?= {{ TMUX_START_CMD | default('', true) }}
+MODE ?= {{ MODE | default('tee', true) }}
 
-{% set e = [] -%}
-{% set e = [] -%}
-{% if ENVS -%}
-{% for item in ENVS.split(' ') -%}
-{{ item }} = {{ env[item] }}
-{% endfor -%}
-{% for item in ENVS.split(' ') -%}
-{% do e.append("{}='$({})'".format(item, item)) -%}
-{% endfor -%}
-{% endif -%}
+{% include 'common/sudo.mk' %}
+{% include 'common/lib.mk' %}
+{% include 'common/envs.j2' %}
 
-{% if e %}
-ENVS ?= \
-    {{ e|join(' \\\n    ') }}
-{% endif %}
 ifdef BIN_PATH
     START_BIN ?= $(ENVS) $(BIN_PATH) $(OPTS)
 else

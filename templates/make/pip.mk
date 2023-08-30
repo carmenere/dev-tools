@@ -1,15 +1,15 @@
-TOPDIR := $(shell pwd)
+{%- import "common/defaults.j2" as d -%}
+SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
 
+PYTHON ?= {{ PYTHON | default(d.PYTHON, true) }}
+INSTALL_SCHEMA ?= {{ INSTALL_SCHEMA | default('', true)}}
+USERBASE ?= {{ USERBASE | default('', true)}}
+REQUIREMENTS ?= {{ REQUIREMENTS | default('requirements.txt', true)}}
 
-INSTALL_SCHEMA ?= {{ INSTALL_SCHEMA }}
-USERBASE ?= {{ USERBASE }}
-PYTHON ?= {{ PYTHON }}
-REQUIREMENTS ?= {{ REQUIREMENTS }}
-
-export CC = {{ CC }}
-export CPPFLAGS = {{ CPPFLAGS }}
-export CXX = {{ CXX }}
-export LDFLAGS = {{ LDFLAGS }}
+export CC = {{ CC | default(d.CC, true)}}
+export CPPFLAGS = {{ CPPFLAGS | default(d.CPPFLAGS, true)}}
+export CXX = {{ CXX | default(d.CXX, true)}}
+export LDFLAGS = {{ LDFLAGS | default(d.LDFLAGS, true)}}
 
 SITE_PACKAGES = $(shell $(PYTHON) -m pip show pip | grep Location | cut -d':' -f 2)
 PIP ?= $(PYTHON) -m pip

@@ -1,13 +1,18 @@
-DL ?= {{ DL }}
-MAJOR ?= {{ MAJOR }}
-MINOR ?= {{ MINOR }}
-OWNER ?= {{ OWNER }}
-PREFIX ?= {{ PREFIX }}
-SUDO ?= {{ SUDO }}
+{%- import "common/defaults.j2" as d -%}
+SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
+
+DL ?= {{ DL | default('.dl', true)}}
+MAJOR ?= {{ MAJOR | default(d.PY_MAJOR, true)}}
+MINOR ?= {{ MINOR | default(d.PY_MINOR, true)}}
+OWNER ?= {{ OWNER | default(d.PY_OWNER, true)}}
+PREFIX ?= {{ PREFIX | default('$(SELFDIR)/.python', true)}}
+SUDO_BIN ?= {{ SUDO_BIN | default(d.SUDO_BIN, true) }}
 
 DOWNLOAD_URL = https://www.python.org/ftp/python/$(VERSION)/Python-$(VERSION).tgz 
 VERSION ?= $(MAJOR).$(MINOR)
 PYTHON ?= $(PREFIX)/bin/python$(MAJOR)
+
+{% include 'common/sudo.mk' %}
 
 ifdef VARS
     VARS_OPT = VARS=$(realpath $(shell realpath $(VARS)))

@@ -1,6 +1,9 @@
-PYTHON ?= {{ PYTHON }}
-VENV_DIR ?= {{ VENV_DIR }}
-VENV_PROMT ?= {{ VENV_PROMT }}
+{%- import "common/defaults.j2" as d -%}
+SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
+
+PYTHON ?= {{ PYTHON | default(d.PYTHON, true) }}
+VENV_DIR ?= {{ VENV_DIR | default('$(SELFDIR)/.venv', true) }}
+VENV_PROMT ?= {{ VENV_PROMT | default('[VENV]', true) }}
 
 .PHONY: init clean distclean
 

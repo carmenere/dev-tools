@@ -1,14 +1,14 @@
-DAEMONIZE ?= {{ DAEMONIZE }}
-FORCE_RECREATE ?= {{ FORCE_RECREATE }}
-NO_CACHE ?= {{ NO_CACHE }}
-PROJECT ?= {{ PROJECT }}
-RM_ALL ?= {{ RM_ALL }}
-RM_FORCE ?= {{ RM_FORCE }}
-RM_ON_UP ?= {{ RM_ON_UP }}
-RM_STOP ?= {{ RM_STOP }}
-RM_VOLUMES ?= {{ RM_VOLUMES }}
-TIMEOUT ?= {{ TIMEOUT }}
-YAML ?= {{ YAML }}
+DAEMONIZE ?= {{ DAEMONIZE | default ('yes', true) }}
+FORCE_RECREATE ?= {{ FORCE_RECREATE | default ('no', true) }}
+NO_CACHE ?= {{ NO_CACHE | default ('yes', true) }}
+PROJECT ?= {{ PROJECT | default ('', true) }}
+RM_ALL ?= {{ RM_ALL | default ('yes', true) }}
+RM_FORCE ?= {{ RM_FORCE | default ('yes', true) }}
+RM_ON_UP ?= {{ RM_ON_UP | default ('no', true) }}
+RM_STOP ?= {{ RM_STOP | default ('yes', true) }}
+RM_VOLUMES ?= {{ RM_VOLUMES | default ('no', true) }}
+TIMEOUT ?= {{ TIMEOUT | default ('10', true) }}
+YAML ?= {{ YAML | default ('', true) }}
 
 ifneq ($(RM_FORCE),no)
 RM_OPTS += --force

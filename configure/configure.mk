@@ -1,12 +1,12 @@
 DEVTOOLS_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))/..
 TOPDIR ?= $(shell pwd)
-LIB ?= $(DEVTOOLS_DIR)/lib
+# LIB ?= $(DEVTOOLS_DIR)/templates/make/common/lib.mk
 PROJECT_ROOT ?= $(TOPDIR)
 
 # Default vars
 include $(DEVTOOLS_DIR)/configure/defaults.mk 
 include $(DEVTOOLS_DIR)/configure/ctxes.mk
-include $(LIB)/common.mk
+include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
 
 # Customized vars
 ifdef SETTINGS
