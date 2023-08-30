@@ -41,10 +41,10 @@ cargo_foo__TOML = $(PROJECT_ROOT)/examples/foo/Cargo.toml
 # cargo_foo__BINS_DIR = $(call cargo_bins,dev,target,aarch64-apple-darwin)
 
 # cargo envs
-envs_cargo_foo__RUSTFLAGS = $(RUSTFLAGS)
-envs_cargo_foo__BUILD_VERSION = $(BUILD_VERSION)
+cargo_foo__RUSTFLAGS = $(RUSTFLAGS)
+cargo_foo__BUILD_VERSION = $(BUILD_VERSION)
 
-cargo_foo__ENVS = $(foreach VAR,$(filter envs_cargo_foo__%,$(.VARIABLES)),$(subst envs_cargo_foo__,,$(VAR)))
+cargo_foo__ENVS = RUSTFLAGS BUILD_VERSION
 
 CTXES := $(CTXES) cargo_foo
 
@@ -62,13 +62,14 @@ cargo_bar__BINS = bar
 cargo_foo__TOML = $(PROJECT_ROOT)/examples/bar/Cargo.toml
 # cargo_foo__BINS_DIR = $(call cargo_bins,dev,target,aarch64-apple-darwin)
 
-# inherit envs from CTX envs_cargo_foo__
-$(foreach VAR,$(filter envs_cargo_foo__%,$(.VARIABLES)), \
-    $(eval envs_cargo_bar__$(subst envs_cargo_foo__,,$(VAR)) = $($(VAR))) \
+# inherit envs from CTX cargo_foo__
+$(foreach VAR,$(filter cargo_foo__%,$(.VARIABLES)), \
+    $(eval cargo_bar__$(subst cargo_foo__,,$(VAR)) = $($(VAR))) \
 )
-envs_cargo_bar__DATABASE_URL = $(DATABASE_URL)
+cargo_bar__DATABASE_URL = $(DATABASE_URL)
 
-cargo_bar__ENVS = $(foreach VAR,$(filter envs_cargo_bar__%,$(.VARIABLES)),$(subst envs_cargo_bar__,,$(VAR)))
+cargo_bar__ENVS = $(cargo_foo__ENVS)
+cargo_bar__ENVS += DATABASE_URL
 
 CTXES := $(CTXES) cargo_bar
 
@@ -231,9 +232,9 @@ app_sqlx_bar__OPTS = --source "$(PROJECT_ROOT)/examples/bar/$(SCHEMAS_DIR)"
 app_sqlx_bar__TMUX_START_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(app_sqlx_bar__OUT) tee' WINDOW_NAME=schemas_foo
 
 # sqlx envs
-envs_app_sqlx_bar__DATABASE_URL = $(DATABASE_URL)
+app_sqlx_bar__DATABASE_URL = $(DATABASE_URL)
 
-app_sqlx_bar__ENVS = $(foreach VAR,$(filter envs_app_sqlx_bar__%,$(.VARIABLES)),$(subst envs_app_sqlx_bar__,,$(VAR)))
+app_sqlx_bar__ENVS = DATABASE_URL
 
 CTXES := $(CTXES) app_sqlx_bar
 
@@ -285,9 +286,9 @@ app_foo__MODE = tmux
 app_foo__TMUX_START_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(app_foo__OUT) tee' WINDOW_NAME=foo
 # app_foo__TMUX_STOP_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(app_foo__OUT) stop' WINDOW_NAME=foo
 
-envs_app_foo__RUST_LOG = foo=debug
+app_foo__RUST_LOG = foo=debug
 
-app_foo__ENVS = $(foreach VAR,$(filter envs_app_foo__%,$(.VARIABLES)),$(subst envs_app_foo__,,$(VAR)))
+app_foo__ENVS = RUST_LOG
 
 CTXES := $(CTXES) app_foo
 
@@ -309,9 +310,9 @@ app_bar__MODE = tee
 app_bar__TMUX_START_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(app_bar__OUT) tee' WINDOW_NAME=bar
 # app_bar__TMUX_STOP_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(app_bar__OUT) stop' WINDOW_NAME=foo
 
-envs_app_bar__RUST_LOG = bar=debug
+app_bar__RUST_LOG = bar=debug
 
-app_bar__ENVS = $(foreach VAR,$(filter envs_app_bar__%,$(.VARIABLES)),$(subst envs_app_bar__,,$(VAR)))
+app_bar__ENVS = RUST_LOG
 
 CTXES := $(CTXES) app_bar
 
@@ -376,19 +377,16 @@ docker_pg__RESTART_POLICY = always
 docker_pg__RM_AFTER_STOP = no
 
 # build args for docker build
-args_docker_pg__BASE_IMAGE = $(DOCKER_PG_IMAGE)
+docker_pg__BASE_IMAGE = $(DOCKER_PG_IMAGE)
 
-docker_pg__BUILD_ARGS = $(foreach VAR,$(filter args_docker_pg__%,$(.VARIABLES)),$(subst args_docker_pg__,,$(VAR)))
+docker_pg__BUILD_ARGS = BASE_IMAGE
 
 # envs for docker run
-e_docker_pg__POSTGRES_PASSWORD = $(psql__ADMIN_PASSWORD)
-e_docker_pg__POSTGRES_DB = $(psql__ADMIN_DB)
-e_docker_pg__POSTGRES_USER = $(psql__ADMIN)
+docker_pg__POSTGRES_PASSWORD = $(ADMIN_PASSWORD)
+docker_pg__POSTGRES_DB = $(ADMIN_DB)
+docker_pg__POSTGRES_USER = $(ADMIN)
 
-docker_pg__ENVS = $(foreach VAR,$(filter e_docker_pg__%,$(.VARIABLES)),$(subst e_docker_pg__,,$(VAR)))
-
-# This will paste args_docker_pg__% to namespace envs_docker_pg__ and pass as ENVs to render.py
-enrich_envs_docker_pg = args_docker_pg e_docker_pg
+docker_pg__ENVS = POSTGRES_PASSWORD POSTGRES_DB POSTGRES_USER
 
 CTXES := $(CTXES) docker_pg
 
@@ -408,9 +406,7 @@ docker_redis__RESTART_POLICY = always
 docker_redis__RM_AFTER_STOP = no
 
 # docker build_args
-envs_docker_redis__BASE_IMAGE = $(DOCKER_REDIS_IMAGE)
-
-docker_redis__ENVS = $(foreach VAR,$(filter envs_docker_redis__%,$(.VARIABLES)),$(subst envs_docker_redis__,,$(VAR)))
+docker_redis__BASE_IMAGE = $(DOCKER_REDIS_IMAGE)
 
 docker_redis__BUILD_ARGS = BASE_IMAGE
 
@@ -433,12 +429,10 @@ docker_rust__IMAGE = $(call docker_image,rust,$(docker_rust__TAG))
 docker_rust__PUBLISH = 8081:80/tcp
 
 # docker build_args
-envs_docker_rust__BASE_IMAGE = $(DOCKER_ALPINE_IMAGE)
-envs_docker_rust__RUST_VERSION = $(DOCKER_RUST_VERSION)
-envs_docker_rust__TARGET_ARCH = $(DOCKER_RUST_TARGET_ARCH)
-envs_docker_rust__SQLX_VERSION = 0.7.1
-
-docker_rust__ENVS = $(foreach VAR,$(filter envs_docker_rust__%,$(.VARIABLES)),$(subst envs_docker_rust__,,$(VAR)))
+docker_rust__BASE_IMAGE = $(DOCKER_ALPINE_IMAGE)
+docker_rust__RUST_VERSION = $(DOCKER_RUST_VERSION)
+docker_rust__TARGET_ARCH = $(DOCKER_RUST_TARGET_ARCH)
+docker_rust__SQLX_VERSION = 0.7.1
 
 docker_rust__BUILD_ARGS = BASE_IMAGE RUST_VERSION TARGET_ARCH SQLX_VERSION
 
@@ -461,14 +455,12 @@ docker_bar__PUBLISH = 8081:80/tcp
 docker_bar__IMAGE = $(call docker_image,bar,$(docker_bar__TAG))
 
 # docker build_args
-envs_docker_bar__APP = bar
-envs_docker_bar__BUILDER = $(docker_rust_IMAGE)
-envs_docker_bar__BUILD_PROFILE = $(CARGO_PROFILE)
-envs_docker_bar__BUILD_VERSION = $(BUILD_VERSION)
-envs_docker_bar__TARGET_ARCH = $(DOCKER_RUST_TARGET_ARCH)
-envs_docker_bar__BASE_IMAGE = $(DOCKER_ALPINE_IMAGE)
-
-docker_bar__ENVS = $(foreach VAR,$(filter envs_docker_bar__%,$(.VARIABLES)),$(subst envs_docker_bar__,,$(VAR)))
+docker_bar__APP = bar
+docker_bar__BUILDER = $(docker_rust_IMAGE)
+docker_bar__BUILD_PROFILE = $(CARGO_PROFILE)
+docker_bar__BUILD_VERSION = $(BUILD_VERSION)
+docker_bar__TARGET_ARCH = $(DOCKER_RUST_TARGET_ARCH)
+docker_bar__BASE_IMAGE = $(DOCKER_ALPINE_IMAGE)
 
 docker_bar__BUILD_ARGS = APP BASE_IMAGE BUILD_PROFILE BUILD_VERSION TARGET_ARCH
 
@@ -491,14 +483,12 @@ docker_foo__PUBLISH = 8081:80/tcp
 docker_foo__IMAGE = $(call docker_image,foo,$(docker_foo__TAG))
 
 # docker build_args
-envs_docker_foo__APP = foo
-envs_docker_foo__BUILDER = $(docker_rust_IMAGE)
-envs_docker_foo__BUILD_PROFILE = $(CARGO_PROFILE)
-envs_docker_foo__BUILD_VERSION = $(BUILD_VERSION)
-envs_docker_foo__TARGET_ARCH = $(DOCKER_RUST_TARGET_ARCH)
-envs_docker_foo__BASE_IMAGE = $(DOCKER_ALPINE_IMAGE)
-
-docker_foo__ENVS = $(foreach VAR,$(filter envs_docker_foo__%,$(.VARIABLES)),$(subst envs_docker_foo__,,$(VAR)))
+docker_foo__APP = foo
+docker_foo__BUILDER = $(docker_rust_IMAGE)
+docker_foo__BUILD_PROFILE = $(CARGO_PROFILE)
+docker_foo__BUILD_VERSION = $(BUILD_VERSION)
+docker_foo__TARGET_ARCH = $(DOCKER_RUST_TARGET_ARCH)
+docker_foo__BASE_IMAGE = $(DOCKER_ALPINE_IMAGE)
 
 docker_foo__BUILD_ARGS = APP BASE_IMAGE BUILD_PROFILE BUILD_VERSION TARGET_ARCH
 
@@ -513,62 +503,63 @@ stand_example__OUT = $(stand_example__OUT_DIR)/example.yaml
 
 # RUST
 stand_example__RUST = rust
-stand_example__RUST_BASE_IMAGE = $(envs_docker_rust__BASE_IMAGE) 
+stand_example__RUST_BASE_IMAGE = $(docker_rust__BASE_IMAGE) 
 stand_example__RUST_CTX = $(docker_rust__CTX)
 stand_example__RUST_DOCKERFILE = $(docker_rust__DOCKERFILE)
 stand_example__RUST_IMAGE = $(docker_rust__IMAGE)
-stand_example__RUST_VERSION = $(envs_docker_rust__RUST_VERSION) 
-stand_example__SQLX_VERSION = $(envs_docker_rust__SQLX_VERSION)
-stand_example__TARGET_ARCH = $(envs_docker_rust__TARGET_ARCH) 
+stand_example__RUST_VERSION = $(docker_rust__RUST_VERSION) 
+stand_example__SQLX_VERSION = $(docker_rust__SQLX_VERSION)
+stand_example__TARGET_ARCH = $(docker_rust__TARGET_ARCH) 
 
 # BAR
 stand_example__BAR = bar
 stand_example__BAR_RESTART_POLICY = $(docker_bar__RESTART_POLICY)
-stand_example__BAR_BASE_IMAGE = $(envs_docker_bar__BASE_IMAGE)
+stand_example__BAR_BASE_IMAGE = $(docker_bar__BASE_IMAGE)
 stand_example__BAR_BRIDGE = $(stand_example__BRIDGE)
-stand_example__BAR_BUILD_PROFILE = $(envs_docker_bar__BUILD_PROFILE)
-stand_example__BAR_BUILD_VERSION = $(envs_docker_bar__BUILD_VERSION)
+stand_example__BAR_BUILD_PROFILE = $(docker_bar__BUILD_PROFILE)
+stand_example__BAR_BUILD_VERSION = $(docker_bar__BUILD_VERSION)
 stand_example__BAR_BUILDER = $(stand_example__RUST_IMAGE)
 stand_example__BAR_CTX = $(docker_bar__CTX)
 stand_example__BAR_DOCKERFILE = $(docker_bar__DOCKERFILE)
 stand_example__BAR_IMAGE = $(docker_bar__IMAGE)
 stand_example__BAR_PUBLISH = $(docker_bar__PUBLISH)
-stand_example__BAR_TARGET_ARCH = $(envs_docker_bar__TARGET_ARCH)
+stand_example__BAR_TARGET_ARCH = $(docker_bar__TARGET_ARCH)
+stand_example__XX = 98765
+stand_example__YYY = qwerty
 
 # FOO
 stand_example__FOO = foo
 stand_example__FOO_RESTART_POLICY = $(docker_foo__RESTART_POLICY)
-stand_example__FOO_BASE_IMAGE = $(envs_docker_foo__BASE_IMAGE)
+stand_example__FOO_BASE_IMAGE = $(docker_foo__BASE_IMAGE)
 stand_example__FOO_BRIDGE = $(stand_example__BRIDGE)
-stand_example__FOO_BUILD_PROFILE = $(envs_docker_foo__BUILD_PROFILE)
-stand_example__FOO_BUILD_VERSION = $(envs_docker_foo__BUILD_VERSION)
+stand_example__FOO_BUILD_PROFILE = $(docker_foo__BUILD_PROFILE)
+stand_example__FOO_BUILD_VERSION = $(docker_foo__BUILD_VERSION)
 stand_example__FOO_BUILDER = $(stand_example__RUST_IMAGE)
 stand_example__FOO_CTX = $(docker_foo__CTX)
 stand_example__FOO_DOCKERFILE = $(docker_foo__DOCKERFILE)
 stand_example__FOO_IMAGE = $(docker_foo__IMAGE)
 stand_example__FOO_PUBLISH = $(docker_foo__PUBLISH)
-stand_example__FOO_TARGET_ARCH = $(envs_docker_foo__TARGET_ARCH)
+stand_example__FOO_TARGET_ARCH = $(docker_foo__TARGET_ARCH)
+stand_example__WWW = 98765
+stand_example__YY = qwerty
 
 # PG
 stand_example__PG = pg
 stand_example__PG_RESTART_POLICY = $(docker_pg__RESTART_POLICY)
-stand_example__PG_IMAGE = $(envs_docker_pg__BASE_IMAGE)
+stand_example__PG_IMAGE = $(docker_pg__BASE_IMAGE)
 stand_example__PG_PUBLISH = $(docker_pg__PUBLISH)
 stand_example__PG_BRIDGE = $(stand_example__BRIDGE)
-# stand_example__PG_CTX = $(docker_pg__CTX)
-# stand_example__PG_DOCKERFILE = $(docker_pg__DOCKERFILE)
-# stand_example__PG_BASE_IMAGE = $(envs_docker_pg__BASE_IMAGE)
+stand_example__POSTGRES_PASSWORD = $(docker_pg__)
+stand_example__POSTGRES_DB = $(docker_pg__POSTGRES_DB)
+stand_example__POSTGRES_USER = $(docker_pg__POSTGRES_USER)
 
 # REDIS
 stand_example__REDIS = redis
 stand_example__REDIS_RESTART_POLICY = $(docker_redis__RESTART_POLICY)
 stand_example__REDIS_ADMIN_PASSWORD = $(REDIS_ADMIN_PASSWORD)
-stand_example__REDIS_IMAGE = $(envs_docker_redis__BASE_IMAGE)
+stand_example__REDIS_IMAGE = $(docker_redis__BASE_IMAGE)
 stand_example__REDIS_PUBLISH = $(docker_redis__PUBLISH)
 stand_example__REDIS_BRIDGE = $(stand_example__BRIDGE)
-# stand_example__REDIS_CTX = $(docker_redis__CTX)
-# stand_example__REDIS_DOCKERFILE = $(docker_redis__DOCKERFILE)
-# stand_example__REDIS_BASE_IMAGE = $(envs_docker_redis__BASE_IMAGE)
 
 # NETWORKS
 stand_example__BRIDGE = example
@@ -576,19 +567,13 @@ stand_example__DRIVER = $(DOCKER_NETWORK_DRIVER)
 stand_example__NETWORK = 192.168.200.0/24
 
 # PG_ENVS
-stand_example__PG_ENVS = $(foreach VAR,$(filter e_docker_pg__%,$(.VARIABLES)),$(subst e_docker_pg__,,$(VAR)))
+stand_example__PG_ENVS = POSTGRES_PASSWORD POSTGRES_DB POSTGRES_USER
 
 # BAR_ENVS
-envs_bar_stand_example__XX = 98765
-envs_bar_stand_example__YYY = qwerty
-stand_example__BAR_ENVS = $(foreach VAR,$(filter envs_bar_stand_example__%,$(.VARIABLES)),$(subst envs_bar_stand_example__,,$(VAR)))
+stand_example__BAR_ENVS = XX YYY
 
 # FOO_ENVS
-envs_foo_stand_example__WWW = 98765
-envs_foo_stand_example__YY = qwerty
-stand_example__FOO_ENVS = $(foreach VAR,$(filter envs_foo_stand_example__%,$(.VARIABLES)),$(subst envs_foo_stand_example__,,$(VAR)))
-
-enrich_envs_stand_example = e_docker_pg envs_bar_stand_example envs_foo_stand_example
+stand_example__FOO_ENVS = WWW YY
 
 CTXES := $(CTXES) stand_example
 

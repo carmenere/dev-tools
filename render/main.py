@@ -3,18 +3,19 @@ from pathlib import Path
 
 from .log import LOG
 from .settings import args
-from .cli import reparse, parse
+from .cli import get_tvars, parse
 from .render import Template
 
 
 settings = parse(args)
+LOG.debug(f"cli_args = { {k:v for k,v in settings.items()} }")
+
 tmpl = Template(settings.get('tmpl_dir'), settings.get('tmpl'))
 
 LOG.info(f"Template: '{tmpl.path.absolute()}'.")
-LOG.debug(f"tmpl={tmpl.path}, tvars = {tmpl.vars}")
 
-parsed: argparse.Namespace = reparse(args, tmpl.vars)
+tvars = get_tvars(tmpl.vars)
 
-LOG.debug(f"cli_args = { {k:v for k,v in vars(parsed).items()} }")
+LOG.debug(f"tvars = {tvars}")
 
-tmpl.render(out=Path(parsed.out_dir).joinpath(parsed.out), tvars={k:v for k,v in vars(parsed).items() if k in tmpl.vars})
+tmpl.render(out=Path(settings.get('out_dir')).joinpath(settings.get('out')), tvars=tvars)

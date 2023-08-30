@@ -27,12 +27,11 @@ export TMPL_DIR
 # 2. Put CTX's vars to Render's cli args.
 all:
 	$(foreach CTX,$(CTXES),cd $(DEVTOOLS_DIR) && \
-		$(foreach P,$(enrich_envs_$(CTX)),\
+		$(foreach P,$(enrich_$(CTX)),\
 			$(foreach VAR,$(filter $(P)__%,$(.VARIABLES)), \
-				$(eval envs_$(CTX)__$(subst $(P)__,,$(VAR)) = $($(VAR))) \
+				$(eval $(CTX)__$(subst $(P)__,,$(VAR)) = $($(VAR))) \
 			) \
 		) \
-		$(foreach VAR,$(filter envs_$(CTX)__%,$(.VARIABLES)),$(subst envs_$(CTX)__,,$(VAR))=$$'$(call escape,$($(VAR)))')\
-		$(RENDER) \
-		$(foreach V,$(filter $(CTX)__%,$(.VARIABLES)),--$(subst $(CTX)__,,$(V))=$$'$(call escape,$($(V)))') \
+		$(foreach V,$(filter $(CTX)__%,$(.VARIABLES)),$(subst $(CTX)__,,$(V))=$$'$(call escape,$($(V)))') \
+		$(RENDER) --in=$($(CTX)__IN) --out=$($(CTX)__OUT) \
 	$(LF))

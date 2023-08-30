@@ -30,12 +30,12 @@ class Template:
         self.jenv = Environment(loader=FileSystemLoader(searchpath=self.path.parent), undefined=StrictUndefined, extensions=['jinja2.ext.do'])
         self.tmpl  = self.jenv.get_template(self.path.name)
         self.vars: list = get_tvars(self.jenv, self.path.name)
-        LOG.info(f"self.vars - {self.vars}")
+        LOG.debug(f"self.vars: {self.vars}")
 
     def render(self, out: Path, tvars: dict):
         LOG.debug(f"out = {out}")
         LOG.debug("TVARS:\n{}".format("\n".join(f"{k} = {tvars[k]}" for k in sorted(tvars.keys()))))
-        LOG.debug("ENVS:\n{}".format("\n".join(f"{k} = {dict(os.environ)[k]}" for k in sorted(dict(os.environ).keys()))))
+        LOG.debug("os.environ:\n{}".format("\n".join(f"{k} = {dict(os.environ)[k]}" for k in sorted(dict(os.environ).keys()))))
         content = self.tmpl.render(**{k.upper():v for k,v in tvars.items()}, env=dict(os.environ))
 
         create_dir(out.parent)

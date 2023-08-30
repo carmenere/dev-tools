@@ -14,27 +14,23 @@ class Settings:
 args = [
     CliArg(
         name = '--tmpl_dir',
-        aliases = ['--TMPL_DIR'],
         default = os.environ.get('TMPL_DIR', os.getcwd()),
         required = False,
         dest = 'tmpl_dir',
     ),
     CliArg(
         name = '--in',
-        aliases = ['--IN'],
         dest = 'tmpl',
         required = True,
     ),
     CliArg(
         name = '--out_dir',
-        aliases = ['--OUT_DIR'],
         default = os.environ.get('OUT_DIR', os.path.join(os.getcwd(), '.output')),
         required = False,
         dest = 'out_dir',
     ),
     CliArg(
         name = '--out',
-        aliases = ['--OUT'],
         required = True,
         dest = 'out',
     )

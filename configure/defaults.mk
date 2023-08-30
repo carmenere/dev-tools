@@ -70,15 +70,6 @@ RUSTFLAGS = -C target-feature=-crt-static
 
 MODE = host
 
-# templates/makefiles/cargo.mk
-CARGO_PROFILE = dev
-CARGO_CLIPPY_FORMAT = human
-CARGO_CLIPPY_REPORT = &1
-CARGO_TARGET_DIR = target
-CARGO_INSTALL_DIR = /usr/local/bin
-CARGO_FEATURES =
-CARGO_LINTS =
-
 # templates/makefiles/app.mk
 ENVS =
 OPTS =
@@ -95,13 +86,4 @@ PY_PREFIX = $(shell echo ~/.py/$(PY_MAJOR).$(PY_MINOR))
 # python
 PYTHON = $(PY_PREFIX)/bin/python$(PY_MAJOR)
 
-# templates/makefiles/compose.mk 
-COMPOSE_DAEMONIZE = yes
-COMPOSE_FORCE_RECREATE = no
-COMPOSE_NO_CACHE = yes
-COMPOSE_RM_ALL = no
-COMPOSE_RM_FORCE = yes
-COMPOSE_RM_ON_UP = no
-COMPOSE_RM_STOP = yes
-COMPOSE_RM_VOLUMES = no
-COMPOSE_TIMEOUT = 10
+
