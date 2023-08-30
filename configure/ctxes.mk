@@ -145,8 +145,10 @@ d__PY_DIR = $(shell echo ~/.py/{PY_MAJOR}.{PY_MAJOR})
 d__PYTHON = {PY_DIR}/bin/python
 
 # cargo
-d__TARGET_DIR = target
+d__CARGO_TARGET_DIR = target
+d__CARGO_PROFILE = dev
 
+# 
 d__DEFAULTS = $(call list_by_prefix,d__)
 
 CTXES := $(CTXES) d
@@ -397,7 +399,7 @@ app_foo__IN = $(MK)/app.mk
 app_foo__OUT_DIR = $(d__OUTDIR)/app/foo
 app_foo__OUT = $(app_foo__OUT_DIR)/Makefile
 
-app_foo__BIN_PATH = $(d__PROJECT_ROOT)/examples/foo/$(call cargo_bins,dev,$(d__TARGET_DIR),$(d__RUST_TARGET_ARCH))
+app_foo__BIN_PATH = $(d__PROJECT_ROOT)/examples/foo/$(call cargo_bins,dev,$(d__CARGO_TARGET_DIR),$(d__RUST_TARGET_ARCH))
 app_foo__LOG_FILE = $(app_foo__OUT_DIR)/.foo.logs
 app_foo__PID_FILE = $(app_foo__OUT_DIR)/.foo.pid
 app_foo__PKILL_PATTERN = $(app_foo__BIN_PATH)
@@ -422,7 +424,7 @@ app_bar__IN = $(MK)/app.mk
 app_bar__OUT_DIR = $(d__OUTDIR)/app/bar
 app_bar__OUT = $(app_bar__OUT_DIR)/Makefile
 
-app_bar__BIN_PATH = $(d__PROJECT_ROOT)/examples/bar/$(call cargo_bins,dev,$(d__TARGET_DIR),$(d__RUST_TARGET_ARCH))
+app_bar__BIN_PATH = $(d__PROJECT_ROOT)/examples/bar/$(call cargo_bins,dev,$(d__CARGO_TARGET_DIR),$(d__RUST_TARGET_ARCH))
 app_bar__LOG_FILE = $(app_bar__OUT_DIR)/.foo.logs
 app_bar__PID_FILE = $(app_bar__OUT_DIR)/foo.pid
 app_bar__PKILL_PATTERN = $(app_bar__BIN_PATH)
@@ -531,7 +533,7 @@ docker_redis__RESTART_POLICY = always
 docker_redis__RM_AFTER_STOP = no
 
 # docker build_args
-docker_redis__arg_BASE_IMAGE = $(DOCKER_REDIS_IMAGE)
+docker_redis__arg_BASE_IMAGE = $(d__DOCKER_REDIS_IMAGE)
 
 docker_redis__BUILD_ARGS = $(call list_by_prefix,docker_redis__arg_)
 
@@ -552,13 +554,14 @@ docker_rust__OUT = $(docker_rust__OUT_DIR)/rust.mk
 docker_rust__CONTAINER = builder_rust
 docker_rust__CTX = $(d__PROJECT_ROOT)
 docker_rust__DOCKERFILE = $(DOCKERFILES)/Dockerfile.rust
+docker_rust__TAG = latest
 docker_rust__IMAGE = $(call docker_image,rust,$(docker_rust__TAG))
 docker_rust__PUBLISH = 8081:80/tcp
 
 # docker build_args
-docker_rust__arg_BASE_IMAGE = $(DOCKER_ALPINE_IMAGE)
-docker_rust__arg_RUST_VERSION = $(DOCKER_RUST_VERSION)
-docker_rust__arg_TARGET_ARCH = $(DOCKER_RUST_TARGET_ARCH)
+docker_rust__arg_BASE_IMAGE = $(d__DOCKER_ALPINE_IMAGE)
+docker_rust__arg_RUST_VERSION = $(d__DOCKER_RUST_VERSION)
+docker_rust__arg_TARGET_ARCH = $(d__DOCKER_RUST_TARGET_ARCH)
 docker_rust__arg_SQLX_VERSION = 0.7.1
 
 docker_rust__BUILD_ARGS = $(call list_by_prefix,docker_rust__arg_)
@@ -585,7 +588,7 @@ docker_bar__IMAGE = $(call docker_image,bar,$(docker_bar__TAG))
 
 # docker build_args
 docker_bar__arg_APP = bar
-docker_bar__arg_BUILDER = $(docker_rust_IMAGE)
+docker_bar__arg_BUILDER = $(docker_rust__IMAGE)
 docker_bar__arg_BUILD_PROFILE = $(d__CARGO_PROFILE)
 docker_bar__arg_BUILD_VERSION = $(d__BUILD_VERSION)
 docker_bar__arg_TARGET_ARCH = $(d__DOCKER_RUST_TARGET_ARCH)
@@ -618,8 +621,8 @@ docker_foo__IMAGE = $(call docker_image,foo,$(docker_foo__TAG))
 
 # docker build_args
 docker_foo__arg_APP = foo
-docker_foo__arg_BUILDER = $(docker_rust_IMAGE)
-docker_foo__arg_BUILD_PROFILE = $(CARGO_PROFILE)
+docker_foo__arg_BUILDER = $(docker_rust__IMAGE)
+docker_foo__arg_BUILD_PROFILE = $(d__CARGO_PROFILE)
 docker_foo__arg_BUILD_VERSION = $(d__BUILD_VERSION)
 docker_foo__arg_TARGET_ARCH = $(d__DOCKER_RUST_TARGET_ARCH)
 docker_foo__arg_BASE_IMAGE = $(d__DOCKER_ALPINE_IMAGE)
