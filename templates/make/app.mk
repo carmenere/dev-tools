@@ -1,7 +1,7 @@
 {%- import "common/defaults.j2" as d -%}
 SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
 
-BIN_PATH ?= {{ BIN_PATH | default('', true) }}
+BIN_PATH ?= {{ BIN_PATH }}
 LOG_FILE ?= {{ LOG_FILE | default('$(SELFDIR)/.logs', true) }}
 OPTS ?= {{ OPTS | default('', true) }}
 PID_FILE ?= {{ PID_FILE | default('$(SELFDIR)/.pid', true) }}
@@ -11,7 +11,7 @@ MODE ?= {{ MODE | default('tee', true) }}
 
 {% include 'common/sudo.mk' %}
 {% include 'common/lib.mk' %}
-{% include 'common/envs.j2' %}
+{% include 'common/envs.jinja2' %}
 
 ifdef BIN_PATH
     START_BIN ?= $(ENVS) $(BIN_PATH) $(OPTS)

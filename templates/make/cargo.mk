@@ -2,19 +2,17 @@
 SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
 
 BINS ?= {{ BINS | default('', true) }}
-CARGO_TOML ?= {{ TOML | default('.Cargo.toml', true) }}
+CARGO_TOML ?= {{ CARGO_TOML }}
 CLIPPY_FORMAT ?= {{ CLIPPY_FORMAT | default('human', true) }}
 CLIPPY_REPORT ?= {{ CLIPPY_REPORT | default('&1', true) }}
 FEATURES ?= {{ FEATURES | default('', true) }}
-INSTALL_DIR ?= {{ INSTALL_DIR | default('', true) }}
 LINTS ?= {{ LINTS | default('', true) }}
-PROFILE ?= {{ PROFILE | default('dev', true) }}
-PROFILE_DIR ?= {{ PROFILE_DIR | default('', true) }}
+PROFILE ?= {{ PROFILE | default(d.PROFILE, true) }}
 TARGET_ARCH ?= {{ TARGET_ARCH | default(d.RUST_TARGET_ARCH, true) }}
-TARGET_DIR ?= {{ TARGET_DIR | default('target', true) }}
+TARGET_DIR ?= {{ TARGET_DIR | default(d.TARGET_DIR, true) }}
 
 {% include 'common/lib.mk' %}
-{% include 'common/envs.j2' %}
+{% include 'common/envs.jinja2' %}
 
 # OPT_BINS
 ifdef BINS

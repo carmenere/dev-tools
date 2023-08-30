@@ -1,5 +1,5 @@
 BRIDGE ?= {{ BRIDGE | default('dev-tools', true) }}
-CONTAINER ?= {{ CONTAINER | default('', true) }}
+CONTAINER ?= {{ CONTAINER }}
 CTX ?= {{ CTX | default('.', true) }}
 DAEMONIZE ?= {{ DAEMONIZE | default('yes', true) }}
 DOCKERFILE ?= {{ DOCKERFILE | default('', true) }}
@@ -12,9 +12,9 @@ SUBNET ?= {{ SUBNET | default('192.168.100.0/24', true) }}
 TAG ?= {{ TAG | default('latest', true) }}
 
 {% include 'common/lib.mk' %}
-{% include 'common/envs.j2' %}
-{% include 'common/build_args.j2' %}
-{% include 'common/publish.j2' %}
+{% include 'common/envs.jinja2' %}
+{% include 'common/build_args.jinja2' %}
+{% include 'common/publish.jinja2' %}
 
 ifeq ($(DAEMONIZE),yes)
 RUN_OPTS += -d

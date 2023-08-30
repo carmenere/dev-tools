@@ -1,6 +1,6 @@
 {%- import "common/defaults.j2" as d -%}
 MAJOR ?= {{ MAJOR | default('7', true) }}
-MINOR ?= {{ MINOR | default('', true) }}
+MINOR ?= {{ MINOR | default('0.1', true) }}
 OS ?= {{ OS | default(d.OS, true) }}
 OS_CODENAME ?= {{ OS_CODENAME | default(d.OS_CODENAME, true) }}
 SERVICE ?= {{ SERVICE | default('redis', true) }}
@@ -9,7 +9,7 @@ START_CMD ?= {{ START_CMD | default('$(CMD_PREFIX) start $(SERVICE)', true) }}
 STOP_CMD ?= {{ STOP_CMD | default('$(CMD_PREFIX) stop $(SERVICE)', true) }}
 SUDO_BIN ?= {{ SUDO_BIN | default(d.SUDO_BIN, true) }}
 SUDO_USER ?= {{ SUDO_USER | default(d.SUDO_USER, true) }}
-VERSION ?= {{ VERSION | default('$(MAJOR)', true) }}
+VERSION ?= {{ VERSION | default('$(MAJOR).$(MINOR)', true) }}
 
 {% include 'common/sudo.mk' %}
 

@@ -14,6 +14,21 @@ class CliArg:
         self.required = required
         self.metavar = metavar
 
+
+args = [
+    CliArg(
+        name = '--in',
+        dest = 'tmpl',
+        required = True,
+    ),
+    CliArg(
+        name = '--out',
+        required = True,
+        dest = 'out',
+    ),
+]
+
+
 add_argument_args = frozenset(['default', 'dest', 'required', 'metavar'])
 
 def parse(args: List[CliArg]):
@@ -30,5 +45,7 @@ def get_tvars(tvars: List[str]) -> argparse.Namespace:
         # it is special var used in template: env[item]
         if var == 'env':
             continue
-        d[var] = os.environ.get(var)
+        val = os.environ.get(var)
+        if val is not None:
+            d[var] = os.environ.get(var)
     return d

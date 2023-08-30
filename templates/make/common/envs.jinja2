@@ -1,7 +1,8 @@
+
 {% set e = [] -%}
 {% if ENVS -%}
 {% for item in ENVS.split(' ') -%}
-{{ item }} = {{ env[item] }}
+{{ item }} = {{ env['env_' + item] }}
 {% endfor -%}
 {% for item in ENVS.split(' ') -%}
 {% do e.append("{}='$({})'".format(item, item)) -%}

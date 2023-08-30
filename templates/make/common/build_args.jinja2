@@ -1,10 +1,10 @@
 {% set args = [] -%}
 {% if BUILD_ARGS -%}
 {% for item in BUILD_ARGS.split(' ') -%}
-{{ item }} = {{ env[item] }}
+{{ item }} = {{ env['arg_' + item] }}
 {% endfor -%}
 {% for item in BUILD_ARGS.split(' ') -%}
-{% if env[item] -%}
+{% if env['arg_' + item] -%}
 {% do args.append("{}=$({})".format(item, item)) -%}
 {% endif -%}
 {% endfor -%}

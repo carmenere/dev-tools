@@ -1,6 +1,5 @@
 DEVTOOLS_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 TOOLCHAIN := $(DEVTOOLS_DIR)/toolchain
-TOPDIR := $(shell pwd)
 CONF = $(DEVTOOLS_DIR)/configure/configure.mk
 STAGES = $(DEVTOOLS_DIR)/configure/stages.mk
 VENV_DIR ?= $(abspath $(TOOLCHAIN)/python/.venv)

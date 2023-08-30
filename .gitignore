@@ -27,3 +27,6 @@
 **/.venv/
 **/*.py[cod]
 **/*$py.class
+
+# Jinja2
+templates/make/common/defaults.j2

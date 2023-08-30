@@ -10,7 +10,7 @@ TMUX_START_CMD ?= {{ TMUX_START_CMD | default('', true) }}
 MODE ?= {{ MODE | default('tee', true) }}
 
 {% include 'common/lib.mk' %}
-{% include 'common/envs.j2' %}
+{% include 'common/envs.jinja2' %}
 
 ifdef TEST_CASES
     TCASES = $(foreach T,$(TEST_CASES),$(TEST_CASES_DIR)/$(T))
