@@ -4,7 +4,7 @@ LIB ?= $(DEVTOOLS_DIR)/lib
 
 ALL_STAGES += apps
 ALL_STAGES += build
-ALL_STAGES += extensions
+ALL_STAGES += deps
 ALL_STAGES += fixtures
 ALL_STAGES += init
 ALL_STAGES += reports
@@ -14,7 +14,8 @@ ALL_STAGES += tests
 ALL_STAGES += venvs
 
 # Default vars
-include $(DEVTOOLS_DIR)/configure/defaults.mk $(DEVTOOLS_DIR)/configure/ctxes.mk $(LIB)/common.mk
+include $(DEVTOOLS_DIR)/configure/ctxes.mk
+include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
 
 ifeq ($(DRY_RUN),yes)
 DR = n
@@ -22,18 +23,19 @@ else
 DR =
 endif
 
-.PHONY: extensions venvs init stop-disabled services schemas build fixtures upgrade apps stop stop-services \
+.PHONY: deps venvs init stop-disabled services schemas build fixtures upgrade apps stop stop-services \
 tests reports clean distclean
 
 define runner
-@echo ">-----> STAGE: $1 <-----<" ${LF}
+@echo ">-------------------------> BEGIN <-------------------------<" ${LF}
+@echo "STAGE: $1 ACTION: $3"
 $(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),$2),$(CTX)))))
 $(eval ECTXES = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$1),$(CTX)))))
 $(foreach CTX,$(ECTXES),$(MAKE) -$(DR)f $($(CTX)__OUT) $3 ${LF})
-@echo "<----- STAGE: $1 ----->" ${LF}
+@echo "<--------------------------  END  -------------------------->" ${LF}
 endef
 
-extensions:
+deps:
 	$(call runner,$@,yes,install)
 
 venvs:
@@ -47,7 +49,8 @@ tmux:
 	$(call runner,$@,yes,init)
 
 stop-disabled:
-	$(call runner,services apps,no,stop)
+	$(call runner,services,no,stop)
+	$(call runner,services,no,stop)
 
 services:
 	$(call runner,$@,yes,start)

@@ -1,15 +1,15 @@
-TOPDIR := $(shell pwd)
+# {% import "common/defaults.j2" as d %}
+SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
 
+PYTHON ?= {{ PYTHON | default(d.PYTHON, true) }}
+INSTALL_SCHEMA ?= {{ INSTALL_SCHEMA | default('', true)}}
+USERBASE ?= {{ USERBASE | default('', true)}}
+REQUIREMENTS ?= {{ REQUIREMENTS | default('requirements.txt', true)}}
 
-INSTALL_SCHEMA ?= {{ INSTALL_SCHEMA }}
-USERBASE ?= {{ USERBASE }}
-PYTHON ?= {{ PYTHON }}
-REQUIREMENTS ?= {{ REQUIREMENTS }}
-
-export CC = {{ CC }}
-export CPPFLAGS = {{ CPPFLAGS }}
-export CXX = {{ CXX }}
-export LDFLAGS = {{ LDFLAGS }}
+export CC = {{ CC | default(d.CC, true)}}
+export CPPFLAGS = {{ CPPFLAGS | default(d.CPPFLAGS, true)}}
+export CXX = {{ CXX | default(d.CXX, true)}}
+export LDFLAGS = {{ LDFLAGS | default(d.LDFLAGS, true)}}
 
 SITE_PACKAGES = $(shell $(PYTHON) -m pip show pip | grep Location | cut -d':' -f 2)
 PIP ?= $(PYTHON) -m pip
@@ -42,27 +42,26 @@ endif
 
 .PHONY: upgrade install requirements init clean distclean
 
-$(SITE_PACKAGES)/.upgrade:
+$(SITE_PACKAGES)/.upgrade: $(PYTHON)
 	$(PYTHONUSERBASE) $(PIP) install $(PIP_OPTS) --upgrade $(UPGRADE)
 	touch $@
 
-$(SITE_PACKAGES)/.requirements: $(REQUIREMENTS)
+$(SITE_PACKAGES)/.requirements: $(SITE_PACKAGES)/.upgrade $(REQUIREMENTS)
 ifdef REQUIREMENTS
 	$(PYTHONUSERBASE) $(PIP) install $(PIP_OPTS) -r $(REQUIREMENTS)
 endif
-	cp -f $(REQUIREMENTS) $(SITE_PACKAGES)/.requirements && touch $@
+	cp -f $(REQUIREMENTS) $(SITE_PACKAGES)/.requirements
+	touch $@
 
-$(SITE_PACKAGES)/.package-$(PACKAGE):
-ifdef REQUIREMENTS
+$(SITE_PACKAGES)/.package-$(PACKAGE): $(SITE_PACKAGES)/.upgrade
 	$(PYTHONUSERBASE) $(PIP) install $(PIP_OPTS) $(PACKAGE)
-endif
 	touch $@
 
 upgrade: $(SITE_PACKAGES)/.upgrade
 
-install: upgrade $(SITE_PACKAGES)/.package-$(PACKAGE)
+install: $(SITE_PACKAGES)/.package-$(PACKAGE)
 
-requirements: upgrade $(SITE_PACKAGES)/.requirements
+requirements: $(SITE_PACKAGES)/.requirements
 
 init: requirements
 

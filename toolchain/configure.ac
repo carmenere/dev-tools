@@ -4,24 +4,22 @@ AC_CONFIG_MACRO_DIR([m4])
 SET_ARG_VAR([IN], [$(pwd)/Makefile.in])
 SET_ARG_VAR([OUT], [$(pwd)/Makefile])
 
-SET_ARG_VAR([CC], [${CC}])
-SET_ARG_VAR([CPPFLAGS], [${CPPFLAGS}])
-SET_ARG_VAR([CXX], [${CXX}])
-SET_ARG_VAR([DL], [.dl])
-SET_ARG_VAR([INSTALL_SCHEMA], [""])
-SET_ARG_VAR([LDFLAGS], [${LDFLAGS}])
-SET_ARG_VAR([MAJOR], [3.11])
-SET_ARG_VAR([MINOR], [4])
-SET_ARG_VAR([OWNER], [${USER}])
-SET_ARG_VAR([REQUIREMENTS], [../render/requirements.txt])
-SET_ARG_VAR([SUDO], [$(which sudo)])
-SET_ARG_VAR([USERBASE], [""])
-SET_ARG_VAR([VENV_DIR], [".venv"])
-SET_ARG_VAR([VENV_PROMT], ["[toolchain]"])
+AC_ARG_WITH([python],
+[AS_HELP_STRING([--with-python], [Enable python])],
+[with_python=yes],
+[with_python=no])
 
-SET_ARG_VAR([PREFIX], ["$(echo ~/.py/${MAJOR}.${MINOR})"])
-SET_ARG_VAR([PYTHON], ["${PREFIX}/bin/python${MAJOR}"])
-SET_ARG_VAR([VPYTHON], ["${VENV_DIR}/bin/python"])
+AC_ARG_WITH([default_python],
+[AS_HELP_STRING([--with-default-python], [Use default settings while configuring python])],
+[with_default_python=yes],
+[with_default_python=no])
+
+SET_ARG_VAR([WITH_PYTHON_DEFAULTS], [$with_default_python])
+
+AS_IF([test "$with_default_python" == yes],
+[SET_ARG_VAR([WITH_PYTHON], [yes])],
+[SET_ARG_VAR([WITH_PYTHON], [$with_python])])
+
 
 AC_CONFIG_FILES([$OUT:$IN])
 AC_OUTPUT

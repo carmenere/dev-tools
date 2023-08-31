@@ -1,33 +1,20 @@
-LIB := {{ LIB }}
-include $(LIB)/common.mk
+{% import "common/defaults.j2" as d %}
+SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
 
-BINS ?= {{ BINS }}
-BINS_DIR ?= {{ BINS_DIR }}
-CARGO_TOML ?= {{ TOML }}
-CLIPPY_FORMAT ?= {{ CLIPPY_FORMAT }}
-CLIPPY_REPORT ?= {{ CLIPPY_REPORT }}
-FEATURES ?= {{ FEATURES }}
-INSTALL_DIR ?= {{ INSTALL_DIR }}
-LINTS ?= {{ LINTS }}
-PROFILE ?= {{ PROFILE }}
-PROFILE_DIR ?= {{ PROFILE_DIR }}
-TARGET_ARCH ?= {{ TARGET_ARCH }}
-TARGET_DIR ?= {{ TARGET_DIR }}
+BINS ?= {{ BINS | default('', true) }}
+CARGO_TOML ?= {{ CARGO_TOML }}
+CLIPPY_FORMAT ?= {{ CLIPPY_FORMAT | default('human', true) }}
+CLIPPY_REPORT ?= {{ CLIPPY_REPORT | default('&1', true) }}
+FEATURES ?= {{ FEATURES | default('', true) }}
+LINTS ?= {{ LINTS | default('', true) }}
+PROFILE ?= {{ PROFILE | default(d.CARGO_PROFILE, true) }}
+TARGET_ARCH ?= {{ TARGET_ARCH | default(d.RUST_TARGET_ARCH, true) }}
+TARGET_DIR ?= {{ TARGET_DIR | default(d.CARGO_TARGET_DIR, true) }}
 
-{% set e = [] -%}
-{% if ENVS -%}
-{% for item in ENVS.split(' ') -%}
-{{ item }} = {{ env[item] }}
-{% endfor -%}
-{% for item in ENVS.split(' ') -%}
-{% do e.append("{}='$({})'".format(item, item)) -%}
-{% endfor -%}
-{% endif -%}
+# LIB
+{% include 'common/lib.mk' %}
+{% include 'common/envs.jinja2' %}
 
-{% if e %}
-ENVS ?= \
-    {{ e|join(' \\\n    ') }}
-{% endif %}
 # OPT_BINS
 ifdef BINS
     OPT_BINS = $(foreach BIN,$(BINS), --bin $(BIN))
@@ -78,17 +65,6 @@ fmt:
 
 fmt-check:
 	$(CMD_FMT) -- --check
-
-install:
-ifdef BINS
-	install -d $(INSTALL_DIR)
-	$(foreach BIN,$(BINS),install -m 755 -t $(INSTALL_DIR) $(BINS_DIR)/$(BIN) ${LF})
-endif
-
-uninstall:
-ifdef BINS
-	$(foreach BIN,$(BINS),rm $(INSTALL_DIR)/$(BIN))
-endif
 
 clean:
 

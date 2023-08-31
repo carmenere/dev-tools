@@ -1,20 +1,34 @@
-import argparse
 from pathlib import Path
+import os
 
 from .log import LOG
-from .settings import args
-from .cli import reparse, parse
+from .cli import args, get_tvars, parse
 from .render import Template
 
 
 settings = parse(args)
-tmpl = Template(settings.get('tmpl_dir'), settings.get('tmpl'))
+LOG.debug(f"cli_args = { {k:v for k,v in settings.items()} }")
+
+tmpl = Template(settings.get('tmpl'))
 
 LOG.info(f"Template: '{tmpl.path.absolute()}'.")
-LOG.debug(f"tmpl={tmpl.path}, tvars = {tmpl.vars}")
 
-parsed: argparse.Namespace = reparse(args, tmpl.vars)
+tvars = get_tvars(tmpl.vars)
 
-LOG.debug(f"cli_args = { {k:v for k,v in vars(parsed).items()} }")
+LOG.debug(f"tvars = {tvars}")
 
-tmpl.render(out=Path(parsed.out_dir).joinpath(parsed.out), tvars={k:v for k,v in vars(parsed).items() if k in tmpl.vars})
+DEFAULTS = os.environ.get('DEFAULTS', [])
+if DEFAULTS:
+    DEFAULTS = DEFAULTS.split(' ')
+
+LOG.debug(f"DEFAULTS = {DEFAULTS}")
+
+defaults = {}
+for k in DEFAULTS:
+    val = os.environ.get(k)
+    if val is not None:
+        defaults[k] = val
+
+LOG.debug(f"defaults = {defaults}")
+
+tmpl.render(out=Path(settings.get('out')), tvars=tvars, defaults=defaults, all_envs=dict(os.environ))

@@ -614,8 +614,24 @@ PACKAGE_URL=''
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
-WITH_PYTHON
-WITH_PYTHON_DEFAULTS
+VPYTHON
+PYTHON
+PREFIX
+VENV_PROMT
+VENV_DIR
+USERBASE
+SUDO
+REQUIREMENTS
+OWNER
+RC
+MINOR
+MAJOR
+LDFLAGS
+INSTALL_SCHEMA
+DL
+CXX
+CPPFLAGS
+CC
 OUT
 IN
 target_alias
@@ -660,16 +676,30 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
-with_python
-with_default_python
 '
       ac_precious_vars='build_alias
 host_alias
 target_alias
 IN
 OUT
-WITH_PYTHON_DEFAULTS
-WITH_PYTHON'
+CC
+CPPFLAGS
+CXX
+DL
+INSTALL_SCHEMA
+LDFLAGS
+MAJOR
+MINOR
+RC
+OWNER
+REQUIREMENTS
+SUDO
+USERBASE
+VENV_DIR
+VENV_PROMT
+PREFIX
+PYTHON
+VPYTHON'
 
 
 # Initialize some variables set by options.
@@ -1284,18 +1314,29 @@ if test -n "$ac_init_help"; then
    esac
   cat <<\_ACEOF
 
-Optional Packages:
-  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
-  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-python           Enable python
-  --with-default-python   Use default settings while configuring python
-
 Some influential environment variables:
   IN          default=$(pwd)/Makefile.in
   OUT         default=$(pwd)/Makefile
-  WITH_PYTHON_DEFAULTS
-              default=$with_default_python
-  WITH_PYTHON default=yes
+  CC          default=${CC}
+  CPPFLAGS    default=${CPPFLAGS}
+  CXX         default=${CXX}
+  DL          default=.dl
+  INSTALL_SCHEMA
+              default=""
+  LDFLAGS     default=${LDFLAGS}
+  MAJOR       default=3.11
+  MINOR       default=4
+  RC          default=
+  OWNER       default=${USER}
+  REQUIREMENTS
+              default=$(pwd)/../../render/requirements.txt
+  SUDO        default=$(which sudo)
+  USERBASE    default=""
+  VENV_DIR    default=".venv/${MAJOR}.${MINOR}"
+  VENV_PROMT  default="[toolchain]"
+  PREFIX      default="$(echo ~/.py/${MAJOR}.${MINOR})"
+  PYTHON      default="${PREFIX}/bin/python${MAJOR}"
+  VPYTHON     default="${VENV_DIR}/bin/python"
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -1755,48 +1796,100 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-# Check whether --with-python was given.
-if test ${with_python+y}
-then :
-  withval=$with_python; with_python=yes
-else $as_nop
-  with_python=no
-fi
 
-
-
-# Check whether --with-default_python was given.
-if test ${with_default_python+y}
-then :
-  withval=$with_default_python; with_default_python=yes
-else $as_nop
-  with_default_python=no
-fi
+: "${CC:=${CC}}"
 
 
 
 
-: "${WITH_PYTHON_DEFAULTS:=$with_default_python}"
+: "${CPPFLAGS:=${CPPFLAGS}}"
 
 
 
-if test "$with_default_python" == yes
-then :
+
+: "${CXX:=${CXX}}"
 
 
-: "${WITH_PYTHON:=yes}"
 
 
-else $as_nop
+: "${DL:=.dl}"
 
 
-: "${WITH_PYTHON:=$with_python}"
 
 
-fi
+: "${INSTALL_SCHEMA:=""}"
+
+
+
+
+: "${LDFLAGS:=${LDFLAGS}}"
+
+
+
+
+: "${MAJOR:=3.11}"
+
+
+
+
+: "${MINOR:=4}"
+
+
+
+
+: "${RC:=}"
+
+
+
+
+: "${OWNER:=${USER}}"
+
+
+
+
+: "${REQUIREMENTS:=$(pwd)/../../render/requirements.txt}"
+
+
+
+
+: "${SUDO:=$(which sudo)}"
+
+
+
+
+: "${USERBASE:=""}"
+
+
+
+
+: "${VENV_DIR:=".venv/${MAJOR}.${MINOR}"}"
+
+
+
+
+: "${VENV_PROMT:="toolchain"}"
+
+
+
+
+
+: "${PREFIX:="$(echo ~/.py/${MAJOR}.${MINOR})"}"
+
+
+
+
+: "${PYTHON:="${PREFIX}/bin/python${MAJOR}"}"
+
+
+
+
+: "${VPYTHON:="${VENV_DIR}/bin/python"}"
+
 
 
 ac_config_files="$ac_config_files $OUT:$IN"
+
+ac_config_files="$ac_config_files $(pwd)/defaults.mk:$(pwd)/defaults.in"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -2499,6 +2592,7 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "$OUT") CONFIG_FILES="$CONFIG_FILES $OUT:$IN" ;;
+    "$(pwd)/defaults.mk") CONFIG_FILES="$CONFIG_FILES $(pwd)/defaults.mk:$(pwd)/defaults.in" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

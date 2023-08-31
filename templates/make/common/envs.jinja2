@@ -1,0 +1,15 @@
+
+{% set e = [] -%}
+{% if ENVS -%}
+{% for item in ENVS.split(' ') -%}
+{{ item }} = {{ env['env_' + item] }}
+{% endfor -%}
+{% for item in ENVS.split(' ') -%}
+{% do e.append("{}='$({})'".format(item, item)) -%}
+{% endfor -%}
+{% endif -%}
+
+{% if e %}
+ENVS ?= \
+    {{ e|join(' \\\n    ') }}
+{% endif %}

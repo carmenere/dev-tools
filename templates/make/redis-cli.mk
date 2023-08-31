@@ -1,21 +1,22 @@
-ADMIN ?= {{ ADMIN }}
-ADMIN_DB ?= {{ ADMIN_DB }}
-ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD }}
-CNT = {{ CNT }}
-CONFIG_REWRITE ?= {{ CONFIG_REWRITE }}
-EXIT_IF_CREATE_EXISTED_USER = {{ EXIT_IF_CREATE_EXISTED_USER }}
-HOST ?= {{ HOST }}
-PORT ?= {{ PORT }}
-REQUIREPASS ?= {{ REQUIREPASS }}
-USER_DB ?= {{ USER_DB }}
-USER_NAME := {{ USER_NAME }}
-USER_PASSWORD ?= {{ USER_PASSWORD }}
+{% import "common/defaults.j2" as d %}
+ADMIN ?= {{ ADMIN | default(d.REDIS_ADMIN, true) }}
+ADMIN_DB ?= {{ ADMIN_DB | default(d.REDIS_ADMIN_DB, true) }}
+ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default(d.REDIS_ADMIN_PASSWORD, true) }}
+CNT = {{ CNT | default('', true) }}
+CONFIG_REWRITE ?= {{ CONFIG_REWRITE | default('yes', true) }}
+EXIT_IF_CREATE_EXISTED_USER = {{ EXIT_IF_CREATE_EXISTED_USER | default(d.EXIT_IF_CREATE_EXISTED_USER, true) }}
+HOST ?= {{ HOST | default(d.REDIS_HOST, true) }}
+PORT ?= {{ PORT | default(d.REDIS_PORT, true) }}
+REQUIREPASS ?= {{ REQUIREPASS | default('yes', true) }}
+USER_DB ?= {{ USER_DB | default(d.REDIS_ADMIN_DB, true) }}
+USER_NAME := {{ USER_NAME | default(d.SERVICE_USER, true) }}
+USER_PASSWORD ?= {{ USER_PASSWORD | default(d.SERVICE_PASSWORD, true) }}
 
 CONN_URL ?= redis://$(ADMIN):$(ADMIN_PASSWORD)@$(HOST):$(PORT)/$(ADMIN_DB)
 USER_CONN_URL ?= redis://$(USER_NAME):$(USER_PASSWORD)@$(HOST):$(PORT)/$(USER_DB)
 
 define check_user
-$(REDIS_CLI) ACL DRYRUN $1 ACL WHOAMI
+$(REDIS_CLI) ACL DRYRUN $1 PING
 endef
 
 #
@@ -64,3 +65,7 @@ endif
 clean: rm-user flush save
 
 distclean: clean
+
+lsof:
+	sudo lsof -nP -i4TCP@0.0.0.0:$(PORT) || true
+	sudo lsof -nP -i4TCP@localhost:$(PORT)  || true

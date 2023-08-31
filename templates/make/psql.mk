@@ -1,24 +1,28 @@
-LIB := {{ LIB }}
-include $(LIB)/common.mk
-
-ADMIN ?= {{ ADMIN }}
-ADMIN_DB ?= {{ ADMIN_DB }}
-ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD }}
-AUTH_METHOD ?= {{ AUTH_METHOD }}
-CNT = {{ CNT }}
-EXIT_IF_CREATE_EXISTED_DB = {{ EXIT_IF_CREATE_EXISTED_DB }}
-EXIT_IF_CREATE_EXISTED_USER = {{ EXIT_IF_CREATE_EXISTED_USER }}
-HOST ?= {{ HOST }}
-PORT ?= {{ PORT }}
-SUDO_BIN = {{ SUDO_BIN }}
-SUDO_USER = {{ SUDO_USER }}
-USER_ATTRIBUTES ?= {{ USER_ATTRIBUTES }}
-USER_DB ?= {{ USER_DB }}
-USER_NAME ?= {{ USER_NAME }}
-USER_PASSWORD ?= {{ USER_PASSWORD }}
+{% import "common/defaults.j2" as d %}
+ADMIN ?= {{ ADMIN | default(d.PG_ADMIN, true) }}
+ADMIN_DB ?= {{ ADMIN_DB | default(d.PG_ADMIN_DB, true) }}
+ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default(d.PG_ADMIN_PASSWORD, true) }}
+AUTH_METHOD ?= {{ AUTH_METHOD | default('remote', true) }}
+CNT = {{ CNT | default('', true) }}
+EXIT_IF_CREATE_EXISTED_DB = {{ EXIT_IF_CREATE_EXISTED_DB | default(d.EXIT_IF_CREATE_EXISTED_DB, true) }}
+EXIT_IF_CREATE_EXISTED_USER = {{ EXIT_IF_CREATE_EXISTED_USER | default(d.EXIT_IF_CREATE_EXISTED_USER, true) }}
+HOST ?= {{ HOST | default(d.PG_HOST, true) }}
+PORT ?= {{ PORT | default(d.PG_PORT, true) }}
+USER_ATTRIBUTES ?= {{ USER_ATTRIBUTES | default('SUPERUSER CREATEDB', true) }}
+USER_DB ?= {{ USER_DB | default(d.SERVICE_DB, true) }}
+USER_NAME ?= {{ USER_NAME | default(d.SERVICE_USER, true) }}
+USER_PASSWORD ?= {{ USER_PASSWORD | default(d.SERVICE_PASSWORD, true) }}
 
 CONN_URL ?= postgresql://$(ADMIN):$(ADMIN_PASSWORD)@$(HOST):$(PORT)/$(ADMIN_DB)
 USER_CONN_URL ?= postgresql://$(USER_NAME):$(USER_PASSWORD)@$(HOST):$(PORT)/$(USER_DB)
+
+# LIB
+{% include 'common/lib.mk' %}
+
+# SUDO
+SUDO_BIN ?= {{ SUDO_BIN | default(d.SUDO_BIN, true) }}
+SUDO_USER ?= {{ SUDO_USER | default(d.SUDO_USER, true) }}
+{% include 'common/sudo.mk' %}
 
 define select_user
 SELECT '$1' FROM pg_roles WHERE rolname = '$1'
@@ -34,18 +38,6 @@ endef
 
 ATTRIBUTES ?= 
 PATH_TO_DUMP ?= 
-
-# $(and ..., ..., ...) 
-# - each argument is expanded, in order;
-# - if an argument expands to an empty string the processing stops and the result of the expansion is the empty string;
-# - if all arguments expand to a non-empty string then the result of the expansion is the expansion of the last argument;
-ifneq ($(strip $(and $(SUDO_BIN),$(SUDO_USER))),)
-    SUDO = $(SUDO_BIN) -u $(SUDO_USER)
-else ifneq ($(strip $(SUDO_BIN)),)
-    SUDO = $(SUDO_BIN)
-else
-    SUDO = 
-endif
 
 #
 ifdef CNT
@@ -91,6 +83,12 @@ connect-admin: override TI = -ti
 connect-admin:
 	$(PSQL)
 
+dump:
+	PGPASSWORD=$(USER_PASSWORD) pg_dump -h $(HOST) -p $(PORT) -U $(USER_NAME) -d $(USER_DB) --file=$(PATH_TO_DUMP)
+
+import: clean init
+	$(USER_URL) --set ON_ERROR_STOP=on -f "$(PATH_TO_DUMP)"
+
 clear:
 	$(PSQL_USER) -c "DROP SCHEMA IF EXISTS public CASCADE;"
 	$(PSQL_USER) -c "CREATE schema public;"
@@ -99,10 +97,8 @@ clean:
 	$(PSQL) -c "DROP DATABASE IF EXISTS $(USER_DB);"
 	$(PSQL) -c "DROP USER IF EXISTS $(USER_NAME);"
 
-dump:
-	PGPASSWORD=$(USER_PASSWORD) pg_dump -h $(HOST) -p $(PORT) -U $(USER_NAME) -d $(USER_DB) --file=$(PATH_TO_DUMP)
-
 distclean: clean
 
-import: clean init
-	$(USER_URL) --set ON_ERROR_STOP=on -f "$(PATH_TO_DUMP)"
+lsof:
+	sudo lsof -nP -i4TCP@0.0.0.0:$(PORT) || true
+	sudo lsof -nP -i4TCP@localhost:$(PORT)  || true

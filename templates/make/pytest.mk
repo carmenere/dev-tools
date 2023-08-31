@@ -1,28 +1,17 @@
-LIB := {{ LIB }}
-include $(LIB)/common.mk
+{% import "common/defaults.j2" as d %}
+SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
 
-LOG_FILE ?= {{ LOG_FILE }}
-REPORTS_DIR ?= {{ REPORTS_DIR }}
-TEST_CASES ?= {{ TEST_CASES }}
-TEST_CASES_DIR ?= {{ TEST_CASES_DIR }}
-PYTHON ?= {{ PYTHON }}
-TMUX_START_CMD ?= {{ TMUX_START_CMD }}
-MODE ?= {{ MODE }}
+LOG_FILE ?= {{ LOG_FILE | default('$(SELFDIR)/.logs', true) }}
+REPORTS_DIR ?= {{ REPORTS_DIR | default('$(SELFDIR)/.reports', true) }}
+TEST_CASES ?= {{ TEST_CASES | default('', true) }}
+TEST_CASES_DIR ?= {{ TEST_CASES_DIR | default('tests', true) }}
+PYTHON ?= {{ PYTHON | default(d.PYTHON, true) }}
+TMUX_START_CMD ?= {{ TMUX_START_CMD | default('', true) }}
+MODE ?= {{ MODE | default('tee', true) }}
 
-{% set e = [] -%}
-{% if ENVS -%}
-{% for item in ENVS.split(' ') -%}
-{{ item }} = {{ env[item] }}
-{% endfor -%}
-{% for item in ENVS.split(' ') -%}
-{% do e.append("{}=$({})".format(item, item)) -%}
-{% endfor -%}
-{% endif -%}
+{% include 'common/lib.mk' %}
+{% include 'common/envs.jinja2' %}
 
-{% if e %}
-ENVS ?= \
-    {{ e|join(' \\\n    ') }}
-{% endif %}
 ifdef TEST_CASES
     TCASES = $(foreach T,$(TEST_CASES),$(TEST_CASES_DIR)/$(T))
 else
