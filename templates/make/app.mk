@@ -1,13 +1,17 @@
 {%- import "common/defaults.j2" as d -%}
 SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
+OUT := {{ OUT }}
 
+APP ?= {{ APP }}
 BIN_PATH ?= {{ BIN_PATH }}
 LOG_FILE ?= {{ LOG_FILE | default('$(SELFDIR)/.logs', true) }}
 OPTS ?= {{ OPTS | default('', true) }}
 PID_FILE ?= {{ PID_FILE | default('$(SELFDIR)/.pid', true) }}
-PKILL_PATTERN ?= {{ PKILL_PATTERN | default('', true) }}
-TMUX_START_CMD ?= {{ TMUX_START_CMD | default('', true) }}
+PKILL_PATTERN ?= {{ PKILL_PATTERN | default('$(BIN_PATH)', true) }}
+TMUX ?= {{ TMUX }}
 MODE ?= {{ MODE | default('tee', true) }}
+
+TMUX_START_CMD = $(MAKE) -f $(TMUX) exec CMD='$(MAKE) -f $(OUT) tee' WINDOW_NAME=$(APP)
 
 # LIB
 {% include 'common/lib.mk' %}

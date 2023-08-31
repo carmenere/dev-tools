@@ -1,7 +1,7 @@
 TOOLCHAIN := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
 # WITH section
-WITH_PYTHON_DEFAULTS = no
+WITH_PYTHON_DEFAULTS = yes
 WITH_PYTHON = yes
 
 # Paths

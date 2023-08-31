@@ -7,18 +7,18 @@ CXX =
 DL = $(abspath .dl)
 INSTALL_SCHEMA = 
 LDFLAGS = 
-MAJOR = 3.12
-MINOR = 0
-RC=rc1
+MAJOR = 3.11
+MINOR = 4
+RC=
 OWNER = an.romanov
-PREFIX = /Users/an.romanov/.py/3.12.0
-PYTHON = $(abspath /Users/an.romanov/.py/3.12.0/bin/python3.12)
+PREFIX = /Users/an.romanov/.py/3.11.4
+PYTHON = $(abspath /Users/an.romanov/.py/3.11.4/bin/python3.11)
 REQUIREMENTS = $(abspath /Users/an.romanov/Projects/ololo/dev-tools/toolchain/python/../../render/requirements.txt)
 SUDO = /usr/bin/sudo
 USERBASE = 
-VENV_DIR = $(abspath .venv/3.12.0)
+VENV_DIR = $(abspath .venv/3.11.4)
 VENV_PROMT = toolchain
-VPYTHON = $(abspath .venv/3.12.0/bin/python)
+VPYTHON = $(abspath .venv/3.11.4/bin/python)
 
 .PHONY: all python vpython requirements rm-vpython distclean
 

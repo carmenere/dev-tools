@@ -2,7 +2,7 @@ DEVTOOLS_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 TOOLCHAIN := $(DEVTOOLS_DIR)/toolchain
 CONF = $(DEVTOOLS_DIR)/configure/configure.mk
 STAGES = $(DEVTOOLS_DIR)/configure/stages.mk
-VENV_DIR ?= $(abspath $(TOOLCHAIN)/python/.venv)
+TPYTHON ?= $(abspath $(TOOLCHAIN)/python/.venv)/bin/python
 
 WITH ?= --with-python-defaults
 
@@ -16,7 +16,7 @@ endif
 export SEVERITY ?= info
 export DRY_RUN ?= no
 
-.PHONY: toolchain configure init build schemas upgrade stop start stop-services tests reports clean-services \
+.PHONY: toolchain configure deps init build schemas upgrade stop start stop-services tests reports clean-services \
 clean distclean kill ctxes
 
 toolchain:
@@ -25,12 +25,12 @@ toolchain:
 		$(MAKE) -f Makefile init
 
 configure:
-	make -f $(CONF) all VENV_DIR=$(VENV_DIR) SETTINGS=$(SETTINGS)
+	make -f $(CONF) all TPYTHON=$(TPYTHON) SETTINGS=$(SETTINGS)
 
 init: configure
-	make -f $(STAGES) extensions venvs stop-disabled services init
+	make -f $(STAGES) deps venvs stop-disabled services init
 
-build: 
+build:
 	make -f $(STAGES) schemas build
 
 schemas: stop

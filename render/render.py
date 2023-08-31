@@ -41,4 +41,4 @@ class Template:
         
         with open(out, mode="w", encoding="utf-8") as message:
             message.write(content)
-            LOG.info(f"Rendered file: '{out.absolute()}'.")
+            LOG.warning(f"Rendered file: '{out.absolute()}'.")

@@ -1,7 +1,6 @@
 {%- import "common/defaults.j2" as d -%}
 ADMIN ?= {{ ADMIN | default(d.CH_ADMIN, true) }}
 ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default(d.CH_ADMIN_PASSWORD, true) }}
-
 MAJOR ?= {{ MAJOR | default('23.5', true) }}
 MINOR ?= {{ MINOR | default('', true) }}
 OS ?= {{ OS | default(d.OS, true) }}

@@ -10,9 +10,8 @@ ifdef SETTINGS
     include $(shell realpath $(SETTINGS))
 endif
 
-VENV_DIR ?= $(abspath .venv)
-RENDER ?= $(VENV_DIR)/bin/python -m render.main
-SHELL ?= $(shell which bash)
+TPYTHON ?= $(d__PYTHON)
+RENDER ?= $(TPYTHON) -m render.main
 
 .PHONY: all
 

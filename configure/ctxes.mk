@@ -205,8 +205,8 @@ ctx_postgresql__ENABLED = $(d_HOST_SERVICES_ENABLED)
 ctx_postgresql__STAGE = services
 
 postgresql__IN = $(MK)/postgresql.mk
-postgresql__OUT_DIR = $(d__OUTDIR)/services
-postgresql__OUT = $(postgresql__OUT_DIR)/pg.mk
+postgresql__OUT_DIR = $(d__OUTDIR)/postgresql
+postgresql__OUT = $(postgresql__OUT_DIR)/Makefile
 
 CTXES := $(CTXES) postgresql
 
@@ -217,8 +217,8 @@ ctx_redis__ENABLED = $(d_HOST_SERVICES_ENABLED)
 ctx_redis__STAGE = services
 
 redis__IN = $(MK)/redis.mk
-redis__OUT_DIR = $(d__OUTDIR)/services
-redis__OUT = $(redis__OUT_DIR)/redis.mk
+redis__OUT_DIR = $(d__OUTDIR)/redis
+redis__OUT = $(redis__OUT_DIR)/Makefile
 
 CTXES := $(CTXES) redis
 
@@ -229,8 +229,8 @@ ctx_clickhouse__ENABLED = $(d_HOST_SERVICES_ENABLED)
 ctx_clickhouse__STAGE = services
 
 clickhouse__IN = $(MK)/clickhouse.mk
-clickhouse__OUT_DIR = $(d__OUTDIR)/services
-clickhouse__OUT = $(clickhouse__OUT_DIR)/clickhouse.mk
+clickhouse__OUT_DIR = $(d__OUTDIR)/clickhouse
+clickhouse__OUT = $(clickhouse__OUT_DIR)/Makefile
 
 CTXES := $(CTXES) clickhouse
 
@@ -241,8 +241,8 @@ ctx_pg_ctl__ENABLED = no
 ctx_pg_ctl__STAGE = services
 
 pg_ctl__IN = $(MK)/pg_ctl.mk
-pg_ctl__OUT_DIR = $(d__OUTDIR)/services
-pg_ctl__OUT = $(pg_ctl__OUT_DIR)/pg_ctl.mk
+pg_ctl__OUT_DIR = $(d__OUTDIR)/pg_ctl
+pg_ctl__OUT = $(pg_ctl__OUT_DIR)/Makefile
 
 CTXES := $(CTXES) pg_ctl
 
@@ -254,7 +254,7 @@ ctx_psql__STAGE = init
 
 psql__IN = $(MK)/psql.mk
 psql__OUT_DIR = $(d__OUTDIR)/psql
-psql__OUT = $(psql__OUT_DIR)/psql.mk
+psql__OUT = $(psql__OUT_DIR)/Makefile
 
 CTXES := $(CTXES) psql
 
@@ -265,8 +265,8 @@ ctx_redis_cli__ENABLED = yes
 ctx_redis_cli__STAGE = init
 
 redis_cli__IN = $(MK)/redis-cli.mk
-redis_cli__OUT_DIR = $(d__OUTDIR)/redis
-redis_cli__OUT = $(redis_cli__OUT_DIR)/redis.mk
+redis_cli__OUT_DIR = $(d__OUTDIR)/redis-cli
+redis_cli__OUT = $(redis_cli__OUT_DIR)/Makefile
 
 CTXES := $(CTXES) redis_cli
 
@@ -277,10 +277,57 @@ ctx_clickhouse_cli__ENABLED = yes
 ctx_clickhouse_cli__STAGE = init
 
 clickhouse_cli__IN = $(MK)/clickhouse-cli.mk
-clickhouse_cli__OUT_DIR = $(d__OUTDIR)/clickhouse
-clickhouse_cli__OUT = $(clickhouse_cli__OUT_DIR)/clickhouse.mk
+clickhouse_cli__OUT_DIR = $(d__OUTDIR)/clickhouse-cli
+clickhouse_cli__OUT = $(clickhouse_cli__OUT_DIR)/Makefile
 
 CTXES := $(CTXES) clickhouse_cli
+
+########################################################################################################################
+CTX := venv_alembic_baz
+########################################################################################################################
+ctx_venv_alembic_baz__ENABLED = yes
+ctx_venv_alembic_baz__STAGE = venvs
+
+venv_alembic_baz__IN = $(MK)/venv.mk
+venv_alembic_baz__OUT_DIR = $(d__OUTDIR)/venv/alembic/baz
+venv_alembic_baz__OUT = $(venv_alembic_baz__OUT_DIR)/Makefile
+
+CTXES := $(CTXES) venv_alembic_baz
+
+########################################################################################################################
+CTX := pip_alembic_baz
+########################################################################################################################
+ctx_pip_alembic_baz__ENABLED = yes
+ctx_pip_alembic_baz__STAGE = pip
+
+pip_alembic_baz__IN = $(MK)/pip.mk
+pip_alembic_baz__OUT_DIR = $(d__OUTDIR)/pip/alembic/baz
+pip_alembic_baz__OUT = $(pip_alembic_baz__OUT_DIR)/Makefile
+
+pip_alembic_baz__PYTHON = $(venv_alembic_baz__OUT_DIR)/.venv/bin/python
+pip_alembic_baz__REQUIREMENTS = $(d__PROJECT_ROOT)/examples/baz/migrator/requirements.txt
+
+CTXES := $(CTXES) pip_alembic_baz
+
+########################################################################################################################
+CTX := pytest_bar
+########################################################################################################################
+ctx_pytest_bar__ENABLED = yes
+ctx_pytest_bar__STAGE = tests
+
+pytest_bar__IN = $(MK)/pytest.mk
+pytest_bar__OUT_DIR = $(d__OUTDIR)/pytest/bar
+pytest_bar__OUT = $(pytest_bar__OUT_DIR)/Makefile
+
+pytest_bar__TEST_CASES_DIR = $(d__PROJECT_ROOT)/examples/bar/tests
+pytest_bar__PYTHON = $(venv_pytest_bar__OUT_DIR)/.venv/bin/python
+
+pytest_bar__MODE = tmux
+pytest_bar__TMUX_START_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(pytest_bar__OUT) run' WINDOW_NAME=tests_bar
+
+pytest_bar__ENVS = 
+
+CTXES := $(CTXES) pytest_bar
 
 ########################################################################################################################
 CTX := venv_pytest_bar
@@ -292,9 +339,6 @@ venv_pytest_bar__IN = $(MK)/venv.mk
 venv_pytest_bar__OUT_DIR = $(d__OUTDIR)/venv/pytest/bar
 venv_pytest_bar__OUT = $(venv_pytest_bar__OUT_DIR)/Makefile
 
-venv_pytest_bar__VENV_DIR = $(venv_pytest_bar__OUT_DIR)/.venv
-venv_pytest_bar__VENV_PROMT = [VENV]
-
 CTXES := $(CTXES) venv_pytest_bar
 
 ########################################################################################################################
@@ -303,14 +347,33 @@ CTX := pip_pytest_bar
 ctx_pip_pytest_bar__ENABLED = yes
 ctx_pip_pytest_bar__STAGE = pip
 
+pip_pytest_bar__APP = tests_bar
+
 pip_pytest_bar__IN = $(MK)/pip.mk
 pip_pytest_bar__OUT_DIR = $(d__OUTDIR)/pip/pytest/bar
 pip_pytest_bar__OUT = $(pip_pytest_bar__OUT_DIR)/Makefile
 
-pip_pytest_bar__PYTHON = $(venv_pytest_bar__VENV_DIR)/bin/python
+pip_pytest_bar__PYTHON = $(venv_pytest_bar__OUT_DIR)/.venv/bin/python
 pip_pytest_bar__REQUIREMENTS = $(d__PROJECT_ROOT)/examples/bar/tests/requirements.txt
 
 CTXES := $(CTXES) pip_pytest_bar
+
+########################################################################################################################
+CTX := pytest_foo
+########################################################################################################################
+ctx_pytest_foo__ENABLED = yes
+ctx_pytest_foo__STAGE = tests
+
+pytest_foo__IN = $(MK)/pytest.mk
+pytest_foo__OUT_DIR = $(d__OUTDIR)/pytest/foo
+pytest_foo__OUT = $(pytest_foo__OUT_DIR)/Makefile
+
+pytest_foo__TEST_CASES_DIR = $(d__PROJECT_ROOT)/examples/foo/tests
+pytest_foo__PYTHON = $(venv_pytest_foo__OUT_DIR)/.venv/bin/python
+
+pytest_foo__ENVS = 
+
+CTXES := $(CTXES) pytest_foo
 
 ########################################################################################################################
 CTX := venv_pytest_foo
@@ -319,10 +382,9 @@ ctx_venv_pytest_foo__ENABLED = yes
 ctx_venv_pytest_foo__STAGE = venvs
 
 venv_pytest_foo__IN = $(MK)/venv.mk
-venv_pytest_foo__OUT_DIR = $(d__OUTDIR)/pytest/foo
+venv_pytest_foo__OUT_DIR = $(d__OUTDIR)/venv/pytest/foo
 venv_pytest_foo__OUT = $(venv_pytest_foo__OUT_DIR)/Makefile
 
-venv_pytest_foo__VENV_DIR = $(venv_pytest_foo__OUT_DIR)/.venv
 venv_pytest_foo__VENV_PROMT = [VENV]
 
 CTXES := $(CTXES) venv_pytest_foo
@@ -337,7 +399,7 @@ pip_pytest_foo__IN = $(MK)/pip.mk
 pip_pytest_foo__OUT_DIR = $(d__OUTDIR)/pip/pytest/foo
 pip_pytest_foo__OUT = $(pip_pytest_foo__OUT_DIR)/Makefile
 
-pip_pytest_foo__PYTHON = $(venv_pytest_foo__VENV_DIR)/bin/python
+pip_pytest_foo__PYTHON = $(venv_pytest_foo__OUT_DIR)/.venv/bin/python
 pip_pytest_foo__REQUIREMENTS = $(d__PROJECT_ROOT)/examples/foo/tests/requirements.txt
 
 CTXES := $(CTXES) pip_pytest_foo
@@ -347,7 +409,7 @@ CTX := python
 ########################################################################################################################
 python__IN = $(MK)/python.mk
 python__OUT_DIR = $(d__OUTDIR)/python
-python__OUT = $(python__OUT_DIR)/python.mk
+python__OUT = $(python__OUT_DIR)/Makefile
 
 CTXES := $(CTXES) python
 
@@ -356,7 +418,7 @@ CTX := rustup
 ########################################################################################################################
 rustup__IN = $(MK)/rustup.mk
 rustup__OUT_DIR = $(d__OUTDIR)/rustup
-rustup__OUT = $(rustup__OUT_DIR)/rustup.mk
+rustup__OUT = $(rustup__OUT_DIR)/Makefile
 
 CRATES += cargo-cache
 rustup__CARGO_CACHE_VERSION = 0.8.3
@@ -372,13 +434,15 @@ CTX := app_sqlx_bar
 ctx_app_sqlx_bar__ENABLED = yes
 ctx_app_sqlx_bar__STAGE = schemas
 
+app_sqlx_bar__APP = sqlx_bar
+
 app_sqlx_bar__IN = $(MK)/app.mk
-app_sqlx_bar__OUT_DIR = $(d__OUTDIR)/sqlx
-app_sqlx_bar__OUT = $(app_sqlx_bar__OUT_DIR)/bar.mk
+app_sqlx_bar__OUT_DIR = $(d__OUTDIR)/app/sqlx/bar
+app_sqlx_bar__OUT = $(app_sqlx_bar__OUT_DIR)/Makefile
 
 app_sqlx_bar__BIN_PATH = sqlx migrate run
 app_sqlx_bar__OPTS = --source "$(d__PROJECT_ROOT)/examples/bar/$(SCHEMAS_DIR)"
-app_sqlx_bar__TMUX_START_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(app_sqlx_bar__OUT) tee' WINDOW_NAME=schemas_foo
+app_sqlx_bar__TMUX = $(tmux__OUT)
 
 # sqlx envs
 app_sqlx_bar__env_DATABASE_URL = $(d__PG_DATABASE_URL)
@@ -388,55 +452,23 @@ app_sqlx_bar__ENVS = $(call list_by_prefix,app_sqlx_bar__env_)
 CTXES := $(CTXES) app_sqlx_bar
 
 ########################################################################################################################
-CTX := venv_alembic_baz
-########################################################################################################################
-ctx_venv_alembic_baz__ENABLED = yes
-ctx_venv_alembic_baz__STAGE = venvs
-
-venv_alembic_baz__IN = $(MK)/venv.mk
-venv_alembic_baz__OUT_DIR = $(d__OUTDIR)/alembic/baz
-venv_alembic_baz__OUT = $(venv_alembic_baz__OUT_DIR)/Makefile
-
-venv_alembic_baz__VENV_DIR = $(venv_alembic_baz__OUT_DIR)/.venv
-venv_alembic_baz__VENV_PROMT = [VENV]
-
-CTXES := $(CTXES) venv_alembic_baz
-
-########################################################################################################################
-CTX := pip_alembic_baz
-########################################################################################################################
-ctx_pip_alembic_baz__ENABLED = yes
-ctx_pip_alembic_baz__STAGE = pip
-
-pip_alembic_baz__IN = $(MK)/pip.mk
-pip_alembic_baz__OUT_DIR = $(d__OUTDIR)/alembic/baz
-pip_alembic_baz__OUT = $(pip_alembic_baz__OUT_DIR)/Makefile
-
-pip_alembic_baz__PYTHON = $(venv_alembic_baz__VENV_DIR)/bin/python
-pip_alembic_baz__REQUIREMENTS = $(d__PROJECT_ROOT)/examples/baz/migrator/requirements.txt
-
-CTXES := $(CTXES) pip_alembic_baz
-
-########################################################################################################################
 CTX := app_foo
 ########################################################################################################################
 ctx_app_foo__ENABLED = $(d_HOST_APPS_ENABLED)
 ctx_app_foo__STAGE = apps
 
+app_foo__APP = foo
+
 app_foo__IN = $(MK)/app.mk
-app_foo__OUT_DIR = $(d__OUTDIR)/app/foo
+app_foo__OUT_DIR = $(d__OUTDIR)/app/$(app_foo__APP)
 app_foo__OUT = $(app_foo__OUT_DIR)/Makefile
 
-app_foo__BIN_PATH = $(d__PROJECT_ROOT)/examples/foo/$(call cargo_bins,dev,$(d__CARGO_TARGET_DIR),$(d__RUST_TARGET_ARCH))
-app_foo__LOG_FILE = $(app_foo__OUT_DIR)/.foo.logs
-app_foo__PID_FILE = $(app_foo__OUT_DIR)/.foo.pid
-app_foo__PKILL_PATTERN = $(app_foo__BIN_PATH)
+app_foo__BIN_PATH = $(d__PROJECT_ROOT)/examples/$(app_foo__APP)/$(call cargo_bins,dev,$(d__CARGO_TARGET_DIR),$(d__RUST_TARGET_ARCH))
 app_foo__MODE = tmux
-app_foo__TMUX_START_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(app_foo__OUT) tee' WINDOW_NAME=foo
-# app_foo__TMUX_STOP_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(app_foo__OUT) stop' WINDOW_NAME=foo
+app_foo__TMUX = $(tmux__OUT)
 
 # foo envs
-app_foo__env_RUST_LOG = foo=debug
+app_foo__env_RUST_LOG = $(app_foo__APP)=debug
 
 app_foo__ENVS = $(call list_by_prefix,app_foo__env_)
 
@@ -448,61 +480,22 @@ CTX := app_bar
 ctx_app_bar__ENABLED = $(d_HOST_APPS_ENABLED)
 ctx_app_bar__STAGE = apps
 
+app_bar__APP = bar
+
 app_bar__IN = $(MK)/app.mk
-app_bar__OUT_DIR = $(d__OUTDIR)/app/bar
+app_bar__OUT_DIR = $(d__OUTDIR)/app/$(app_bar__APP)
 app_bar__OUT = $(app_bar__OUT_DIR)/Makefile
 
-app_bar__BIN_PATH = $(d__PROJECT_ROOT)/examples/bar/$(call cargo_bins,dev,$(d__CARGO_TARGET_DIR),$(d__RUST_TARGET_ARCH))
-app_bar__LOG_FILE = $(app_bar__OUT_DIR)/.foo.logs
-app_bar__PID_FILE = $(app_bar__OUT_DIR)/foo.pid
-app_bar__PKILL_PATTERN = $(app_bar__BIN_PATH)
+app_bar__BIN_PATH = $(d__PROJECT_ROOT)/examples/$(app_bar__APP)/$(call cargo_bins,dev,$(d__CARGO_TARGET_DIR),$(d__RUST_TARGET_ARCH))
 app_bar__MODE = tee
-app_bar__TMUX_START_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(app_bar__OUT) tee' WINDOW_NAME=bar
-# app_bar__TMUX_STOP_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(app_bar__OUT) stop' WINDOW_NAME=foo
+app_bar__TMUX = $(tmux__OUT)
 
 # bar envs
-app_bar__env_RUST_LOG = bar=debug
+app_bar__env_RUST_LOG = $(app_bar__APP)=debug
 
 app_bar__ENVS = $(call list_by_prefix,app_bar__env_)
 
 CTXES := $(CTXES) app_bar
-
-########################################################################################################################
-CTX := pytest_bar
-########################################################################################################################
-ctx_pytest_bar__ENABLED = yes
-ctx_pytest_bar__STAGE = tests
-
-pytest_bar__IN = $(MK)/pytest.mk
-pytest_bar__OUT_DIR = $(d__OUTDIR)/pytest/bar
-pytest_bar__OUT = $(pytest_bar__OUT_DIR)/Makefile
-
-pytest_bar__TEST_CASES_DIR = $(d__PROJECT_ROOT)/examples/bar/tests
-pytest_bar__PYTHON = $(venv_pytest_bar__VENV_DIR)/bin/python
-
-pytest_bar__MODE = tmux
-pytest_bar__TMUX_START_CMD = make -f $(tmux__OUT) exec CMD='$(MAKE) -f $(pytest_bar__OUT) run' WINDOW_NAME=tests_bar
-
-pytest_bar__ENVS = 
-
-CTXES := $(CTXES) pytest_bar
-
-########################################################################################################################
-CTX := pytest_foo
-########################################################################################################################
-ctx_pytest_foo__ENABLED = yes
-ctx_pytest_foo__STAGE = tests
-
-pytest_foo__IN = $(MK)/pytest.mk
-pytest_foo__OUT_DIR = $(d__OUTDIR)/pytest/foo
-pytest_foo__OUT = $(pytest_foo__OUT_DIR)/Makefile
-
-pytest_foo__TEST_CASES_DIR = $(d__PROJECT_ROOT)/examples/foo/tests
-pytest_foo__PYTHON = $(venv_pytest_foo__VENV_DIR)/bin/python
-
-pytest_foo__ENVS = 
-
-CTXES := $(CTXES) pytest_foo
 
 ########################################################################################################################
 CTX := tmux
