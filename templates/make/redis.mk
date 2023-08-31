@@ -1,4 +1,4 @@
-{%- import "common/defaults.j2" as d -%}
+{% import "common/defaults.j2" as d %}
 MAJOR ?= {{ MAJOR | default('7', true) }}
 MINOR ?= {{ MINOR | default('0.1', true) }}
 OS ?= {{ OS | default(d.OS, true) }}

@@ -1,4 +1,4 @@
-{%- import "common/defaults.j2" as d -%}
+{% import "common/defaults.j2" as d %}
 SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
 
 LOG_FILE ?= {{ LOG_FILE | default('$(SELFDIR)/.logs', true) }}

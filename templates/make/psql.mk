@@ -1,4 +1,4 @@
-{%- import "common/defaults.j2" as d -%}
+{% import "common/defaults.j2" as d %}
 ADMIN ?= {{ ADMIN | default(d.PG_ADMIN, true) }}
 ADMIN_DB ?= {{ ADMIN_DB | default(d.PG_ADMIN_DB, true) }}
 ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default(d.PG_ADMIN_PASSWORD, true) }}

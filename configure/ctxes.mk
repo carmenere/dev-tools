@@ -201,7 +201,7 @@ CTXES := $(CTXES) cargo_bar
 ########################################################################################################################
 CTX := postgresql
 ########################################################################################################################
-ctx_postgresql__ENABLED = $(d_HOST_SERVICES_ENABLED)
+ctx_postgresql__ENABLED = $(d__HOST_SERVICES_ENABLED)
 ctx_postgresql__STAGE = services
 
 postgresql__IN = $(MK)/postgresql.mk
@@ -213,7 +213,7 @@ CTXES := $(CTXES) postgresql
 ########################################################################################################################
 CTX := redis
 ########################################################################################################################
-ctx_redis__ENABLED = $(d_HOST_SERVICES_ENABLED)
+ctx_redis__ENABLED = $(d__HOST_SERVICES_ENABLED)
 ctx_redis__STAGE = services
 
 redis__IN = $(MK)/redis.mk
@@ -225,7 +225,7 @@ CTXES := $(CTXES) redis
 ########################################################################################################################
 CTX := clickhouse
 ########################################################################################################################
-ctx_clickhouse__ENABLED = $(d_HOST_SERVICES_ENABLED)
+ctx_clickhouse__ENABLED = $(d__HOST_SERVICES_ENABLED)
 ctx_clickhouse__STAGE = services
 
 clickhouse__IN = $(MK)/clickhouse.mk
@@ -454,7 +454,7 @@ CTXES := $(CTXES) app_sqlx_bar
 ########################################################################################################################
 CTX := app_foo
 ########################################################################################################################
-ctx_app_foo__ENABLED = $(d_HOST_APPS_ENABLED)
+ctx_app_foo__ENABLED = $(d__HOST_APPS_ENABLED)
 ctx_app_foo__STAGE = apps
 
 app_foo__APP = foo
@@ -463,7 +463,7 @@ app_foo__IN = $(MK)/app.mk
 app_foo__OUT_DIR = $(d__OUTDIR)/app/$(app_foo__APP)
 app_foo__OUT = $(app_foo__OUT_DIR)/Makefile
 
-app_foo__BIN_PATH = $(d__PROJECT_ROOT)/examples/$(app_foo__APP)/$(call cargo_bins,dev,$(d__CARGO_TARGET_DIR),$(d__RUST_TARGET_ARCH))
+app_foo__BIN_PATH = $(call cargo_bins,dev,$(d__CARGO_TARGET_DIR),$(d__RUST_TARGET_ARCH))/foo
 app_foo__MODE = tmux
 app_foo__TMUX = $(tmux__OUT)
 
@@ -477,7 +477,7 @@ CTXES := $(CTXES) app_foo
 ########################################################################################################################
 CTX := app_bar
 ########################################################################################################################
-ctx_app_bar__ENABLED = $(d_HOST_APPS_ENABLED)
+ctx_app_bar__ENABLED = $(d__HOST_APPS_ENABLED)
 ctx_app_bar__STAGE = apps
 
 app_bar__APP = bar
@@ -486,7 +486,7 @@ app_bar__IN = $(MK)/app.mk
 app_bar__OUT_DIR = $(d__OUTDIR)/app/$(app_bar__APP)
 app_bar__OUT = $(app_bar__OUT_DIR)/Makefile
 
-app_bar__BIN_PATH = $(d__PROJECT_ROOT)/examples/$(app_bar__APP)/$(call cargo_bins,dev,$(d__CARGO_TARGET_DIR),$(d__RUST_TARGET_ARCH))
+app_bar__BIN_PATH = $(call cargo_bins,dev,$(d__CARGO_TARGET_DIR),$(d__RUST_TARGET_ARCH))/bar
 app_bar__MODE = tee
 app_bar__TMUX = $(tmux__OUT)
 
@@ -512,7 +512,7 @@ CTXES := $(CTXES) tmux
 ########################################################################################################################
 CTX := docker_pg
 ########################################################################################################################
-ctx_docker_pg__ENABLED = $(d_DOCKER_SERVICES_ENABLED)
+ctx_docker_pg__ENABLED = $(d__DOCKER_SERVICES_ENABLED)
 ctx_docker_pg__STAGE = services
 
 docker_pg__IN = $(MK)/docker.mk
@@ -541,7 +541,7 @@ CTXES := $(CTXES) docker_pg
 ########################################################################################################################
 CTX := docker_redis
 ########################################################################################################################
-ctx_docker_redis__ENABLED = $(d_DOCKER_SERVICES_ENABLED)
+ctx_docker_redis__ENABLED = $(d__DOCKER_SERVICES_ENABLED)
 ctx_docker_redis__STAGE = services
 
 docker_redis__IN = $(MK)/docker.mk
@@ -565,7 +565,7 @@ CTXES := $(CTXES) docker_redis
 ########################################################################################################################
 CTX := docker_rust
 ########################################################################################################################
-ctx_docker_rust__ENABLED = $(d_DOCKER_SERVICES_ENABLED)
+ctx_docker_rust__ENABLED = $(d__DOCKER_SERVICES_ENABLED)
 ctx_docker_rust__STAGE = build
 
 docker_rust__IN = $(MK)/docker.mk
@@ -594,7 +594,7 @@ CTXES := $(CTXES) docker_rust
 ########################################################################################################################
 CTX := docker_bar
 ########################################################################################################################
-ctx_docker_bar__ENABLED = $(d_DOCKER_APPS_ENABLED)
+ctx_docker_bar__ENABLED = $(d__DOCKER_APPS_ENABLED)
 ctx_docker_bar__STAGE = apps
 
 docker_bar__IN = $(MK)/docker.mk
@@ -627,7 +627,7 @@ CTXES := $(CTXES) docker_bar
 ########################################################################################################################
 CTX := docker_foo
 ########################################################################################################################
-ctx_docker_foo__ENABLED = $(d_DOCKER_APPS_ENABLED)
+ctx_docker_foo__ENABLED = $(d__DOCKER_APPS_ENABLED)
 ctx_docker_foo__STAGE = apps
 
 docker_foo__IN = $(MK)/docker.mk

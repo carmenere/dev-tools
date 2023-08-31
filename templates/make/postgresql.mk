@@ -1,4 +1,4 @@
-{%- import "common/defaults.j2" as d -%}
+{% import "common/defaults.j2" as d %}
 AUTH_POLICY ?= {{ AUTH_POLICY | default('host  all  all  0.0.0.0/0  md5', true) }}
 MAJOR ?= {{ MAJOR | default('12', true) }}
 MINOR ?= {{ MINOR | default('15_2', true) }}

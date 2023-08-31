@@ -27,11 +27,12 @@ endif
 tests reports clean distclean
 
 define runner
-@echo ">-----> STAGE: $1 <-----<" ${LF}
+@echo ">-------------------------> BEGIN <-------------------------<" ${LF}
+@echo "STAGE: $1 ACTION: $3"
 $(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),$2),$(CTX)))))
 $(eval ECTXES = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$1),$(CTX)))))
 $(foreach CTX,$(ECTXES),$(MAKE) -$(DR)f $($(CTX)__OUT) $3 ${LF})
-@echo "<----- STAGE: $1 ----->" ${LF}
+@echo "<--------------------------  END  -------------------------->" ${LF}
 endef
 
 deps:
@@ -48,7 +49,8 @@ tmux:
 	$(call runner,$@,yes,init)
 
 stop-disabled:
-	$(call runner,services apps,no,stop)
+	$(call runner,services,no,stop)
+	$(call runner,services,no,stop)
 
 services:
 	$(call runner,$@,yes,start)
