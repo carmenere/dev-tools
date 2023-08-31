@@ -24,4 +24,5 @@ SET_ARG_VAR([PYTHON], ["${PREFIX}/bin/python${MAJOR}"])
 SET_ARG_VAR([VPYTHON], ["${VENV_DIR}/bin/python"])
 
 AC_CONFIG_FILES([$OUT:$IN])
+AC_CONFIG_FILES([$(pwd)/defaults.mk:$(pwd)/defaults.in])
 AC_OUTPUT

@@ -138,11 +138,7 @@ d__SUDO_BIN = $(shell which sudo)
 d__SUDO_USER = 
 
 # toolchain's python
-d__PY_MAJOR = 3.11
-d__PY_MINOR = 4
-d__PY_OWNER = $(USER)
-d__PY_DIR = $(shell echo ~/.py/{PY_MAJOR}.{PY_MAJOR})
-d__PYTHON = {PY_DIR}/bin/python
+include $(DEVTOOLS_DIR)/toolchain/python/defaults.mk
 
 # cargo
 d__CARGO_TARGET_DIR = target
@@ -276,7 +272,7 @@ ctx_pip_pytest_bar__ENABLED = yes
 ctx_pip_pytest_bar__STAGE = pip
 
 pip_pytest_bar__IN = $(MK)/pip.mk
-pip_pytest_bar__OUT_DIR = $(d__OUTDIR)/venv/pytest/bar
+pip_pytest_bar__OUT_DIR = $(d__OUTDIR)/pip/pytest/bar
 pip_pytest_bar__OUT = $(pip_pytest_bar__OUT_DIR)/Makefile
 
 pip_pytest_bar__PYTHON = $(venv_pytest_bar__VENV_DIR)/bin/python
@@ -306,7 +302,7 @@ ctx_pip_pytest_foo__ENABLED = yes
 ctx_pip_pytest_foo__STAGE = pip
 
 pip_pytest_foo__IN = $(MK)/pip.mk
-pip_pytest_foo__OUT_DIR = $(d__OUTDIR)/pytest/foo
+pip_pytest_foo__OUT_DIR = $(d__OUTDIR)/pip/pytest/foo
 pip_pytest_foo__OUT = $(pip_pytest_foo__OUT_DIR)/Makefile
 
 pip_pytest_foo__PYTHON = $(venv_pytest_foo__VENV_DIR)/bin/python

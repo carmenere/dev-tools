@@ -1,4 +1,4 @@
-{%- import "common/defaults.j2" as d -%}
+# {%- import "common/defaults.j2" as d -%}
 SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
 
 DL ?= {{ DL | default('.dl', true)}}
@@ -12,7 +12,7 @@ DOWNLOAD_URL = https://www.python.org/ftp/python/$(VERSION)/Python-$(VERSION).tg
 VERSION ?= $(MAJOR).$(MINOR)
 PYTHON ?= $(PREFIX)/bin/python$(MAJOR)
 
-{% include 'common/sudo.mk' %}
+# {% include 'common/sudo.mk' %}
 
 ifdef VARS
     VARS_OPT = VARS=$(realpath $(shell realpath $(VARS)))

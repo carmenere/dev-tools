@@ -1,4 +1,4 @@
-{%- import "common/defaults.j2" as d -%}
+# {%- import "common/defaults.j2" as d -%}
 SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
 
 PYTHON ?= {{ PYTHON | default(d.PYTHON, true) }}
