@@ -65,3 +65,7 @@ endif
 clean: rm-user flush save
 
 distclean: clean
+
+lsof:
+	sudo lsof -nP -i4TCP@0.0.0.0:$(PORT) || true
+	sudo lsof -nP -i4TCP@localhost:$(PORT)  || true

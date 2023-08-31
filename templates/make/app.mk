@@ -9,8 +9,10 @@ PKILL_PATTERN ?= {{ PKILL_PATTERN | default('', true) }}
 TMUX_START_CMD ?= {{ TMUX_START_CMD | default('', true) }}
 MODE ?= {{ MODE | default('tee', true) }}
 
-{% include 'common/sudo.mk' %}
+# LIB
 {% include 'common/lib.mk' %}
+
+# ENVS
 {% include 'common/envs.jinja2' %}
 
 ifdef BIN_PATH

@@ -42,3 +42,13 @@ IMAGE = $1
 endif)$(IMAGE)
 endef
 
+# EXAMPLE = $(call docker_image,MAJOR,MINOR)
+# EXAMPLE = $(call docker_image,MAJOR)
+define version
+$(eval 
+ifneq ($2,)
+VERSION = $1.$2
+else
+VERSION = $1
+endif)$(VERSION)
+endef

@@ -11,6 +11,7 @@ PROFILE ?= {{ PROFILE | default(d.CARGO_PROFILE, true) }}
 TARGET_ARCH ?= {{ TARGET_ARCH | default(d.RUST_TARGET_ARCH, true) }}
 TARGET_DIR ?= {{ TARGET_DIR | default(d.CARGO_TARGET_DIR, true) }}
 
+# LIB
 {% include 'common/lib.mk' %}
 {% include 'common/envs.jinja2' %}
 

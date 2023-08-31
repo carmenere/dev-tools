@@ -8,8 +8,6 @@ EXIT_IF_CREATE_EXISTED_DB = {{ EXIT_IF_CREATE_EXISTED_DB | default(d.EXIT_IF_CRE
 EXIT_IF_CREATE_EXISTED_USER = {{ EXIT_IF_CREATE_EXISTED_USER | default(d.EXIT_IF_CREATE_EXISTED_USER, true) }}
 HOST ?= {{ HOST | default(d.PG_HOST, true) }}
 PORT ?= {{ PORT | default(d.PG_PORT, true) }}
-SUDO_BIN ?= {{ SUDO_BIN | default(d.SUDO_BIN, true) }}
-SUDO_USER ?= {{ SUDO_USER | default(d.SUDO_USER, true) }}
 USER_ATTRIBUTES ?= {{ USER_ATTRIBUTES | default('SUPERUSER CREATEDB', true) }}
 USER_DB ?= {{ USER_DB | default(d.SERVICE_DB, true) }}
 USER_NAME ?= {{ USER_NAME | default(d.SERVICE_USER, true) }}
@@ -18,8 +16,13 @@ USER_PASSWORD ?= {{ USER_PASSWORD | default(d.SERVICE_PASSWORD, true) }}
 CONN_URL ?= postgresql://$(ADMIN):$(ADMIN_PASSWORD)@$(HOST):$(PORT)/$(ADMIN_DB)
 USER_CONN_URL ?= postgresql://$(USER_NAME):$(USER_PASSWORD)@$(HOST):$(PORT)/$(USER_DB)
 
-{% include 'common/sudo.mk' %}
+# LIB
 {% include 'common/lib.mk' %}
+
+# SUDO
+SUDO_BIN ?= {{ SUDO_BIN | default(d.SUDO_BIN, true) }}
+SUDO_USER ?= {{ SUDO_USER | default(d.SUDO_USER, true) }}
+{% include 'common/sudo.mk' %}
 
 define select_user
 SELECT '$1' FROM pg_roles WHERE rolname = '$1'
@@ -80,6 +83,12 @@ connect-admin: override TI = -ti
 connect-admin:
 	$(PSQL)
 
+dump:
+	PGPASSWORD=$(USER_PASSWORD) pg_dump -h $(HOST) -p $(PORT) -U $(USER_NAME) -d $(USER_DB) --file=$(PATH_TO_DUMP)
+
+import: clean init
+	$(USER_URL) --set ON_ERROR_STOP=on -f "$(PATH_TO_DUMP)"
+
 clear:
 	$(PSQL_USER) -c "DROP SCHEMA IF EXISTS public CASCADE;"
 	$(PSQL_USER) -c "CREATE schema public;"
@@ -88,10 +97,8 @@ clean:
 	$(PSQL) -c "DROP DATABASE IF EXISTS $(USER_DB);"
 	$(PSQL) -c "DROP USER IF EXISTS $(USER_NAME);"
 
-dump:
-	PGPASSWORD=$(USER_PASSWORD) pg_dump -h $(HOST) -p $(PORT) -U $(USER_NAME) -d $(USER_DB) --file=$(PATH_TO_DUMP)
-
 distclean: clean
 
-import: clean init
-	$(USER_URL) --set ON_ERROR_STOP=on -f "$(PATH_TO_DUMP)"
+lsof:
+	sudo lsof -nP -i4TCP@0.0.0.0:$(PORT) || true
+	sudo lsof -nP -i4TCP@localhost:$(PORT)  || true

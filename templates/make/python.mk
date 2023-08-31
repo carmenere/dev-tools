@@ -4,14 +4,17 @@ SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
 DL ?= {{ DL | default('.dl', true)}}
 MAJOR ?= {{ MAJOR | default(d.PY_MAJOR, true)}}
 MINOR ?= {{ MINOR | default(d.PY_MINOR, true)}}
+RC ?= {{ RC | default('', true)}}
 OWNER ?= {{ OWNER | default(d.PY_OWNER, true)}}
 PREFIX ?= {{ PREFIX | default('$(SELFDIR)/.python', true)}}
-SUDO_BIN ?= {{ SUDO_BIN | default(d.SUDO_BIN, true) }}
 
-DOWNLOAD_URL = https://www.python.org/ftp/python/$(VERSION)/Python-$(VERSION).tgz 
-VERSION ?= $(MAJOR).$(MINOR)
+DOWNLOAD_URL = https://www.python.org/ftp/python/$(MAJOR).$(MINOR)/Python-$(VERSION).tgz 
+VERSION ?= $(MAJOR).$(MINOR)$(RC)
 PYTHON ?= $(PREFIX)/bin/python$(MAJOR)
 
+# SUDO
+SUDO_BIN ?= {{ SUDO_BIN | default(d.SUDO_BIN, true) }}
+SUDO_USER ?= {{ SUDO_USER | default(d.SUDO_USER, true) }}
 # {% include 'common/sudo.mk' %}
 
 ifdef VARS

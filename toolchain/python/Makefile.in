@@ -9,6 +9,7 @@ INSTALL_SCHEMA = @INSTALL_SCHEMA@
 LDFLAGS = @LDFLAGS@
 MAJOR = @MAJOR@
 MINOR = @MINOR@
+RC=@RC@
 OWNER = @OWNER@
 PREFIX = @PREFIX@
 PYTHON = $(abspath @PYTHON@)
@@ -28,6 +29,7 @@ $(PYTHON):
 		DL='$(DL)' \
 		MAJOR='$(MAJOR)' \
 		MINOR='$(MINOR)' \
+        RC='$(RC)' \
 		OWNER='$(OWNER)' \
 		PREFIX='$(PREFIX)' \
 		SUDO='$(SUDO)'

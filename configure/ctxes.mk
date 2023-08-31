@@ -91,6 +91,14 @@ d__OS = ubuntu
 d__FIXTURES_DIR = migrations/fixtures
 d__SCHEMAS_DIR = migrations/schemas
 
+# CLICKHOUSE
+d__CH_ADMIN = admin
+d__CH_ADMIN_DB = default
+d__CH_ADMIN_PASSWORD = 12345
+d__CH_HOST = $(d__LOCALHOST)
+d__CH_PORT = 9000
+d__CH_USER_XML ?= /opt/homebrew/etc/clickhouse-server/users.d/$(d__CH_ADMIN).xml
+
 # POSTGRESQ
 d__PG_ADMIN = postgres
 d__PG_ADMIN_DB = postgres
@@ -215,6 +223,18 @@ redis__OUT = $(redis__OUT_DIR)/redis.mk
 CTXES := $(CTXES) redis
 
 ########################################################################################################################
+CTX := clickhouse
+########################################################################################################################
+ctx_clickhouse__ENABLED = $(d_HOST_SERVICES_ENABLED)
+ctx_clickhouse__STAGE = services
+
+clickhouse__IN = $(MK)/clickhouse.mk
+clickhouse__OUT_DIR = $(d__OUTDIR)/services
+clickhouse__OUT = $(clickhouse__OUT_DIR)/clickhouse.mk
+
+CTXES := $(CTXES) clickhouse
+
+########################################################################################################################
 CTX := pg_ctl
 ########################################################################################################################
 ctx_pg_ctl__ENABLED = no
@@ -249,6 +269,18 @@ redis_cli__OUT_DIR = $(d__OUTDIR)/redis
 redis_cli__OUT = $(redis_cli__OUT_DIR)/redis.mk
 
 CTXES := $(CTXES) redis_cli
+
+########################################################################################################################
+CTX := clickhouse_cli
+########################################################################################################################
+ctx_clickhouse_cli__ENABLED = yes
+ctx_clickhouse_cli__STAGE = init
+
+clickhouse_cli__IN = $(MK)/clickhouse-cli.mk
+clickhouse_cli__OUT_DIR = $(d__OUTDIR)/clickhouse
+clickhouse_cli__OUT = $(clickhouse_cli__OUT_DIR)/clickhouse.mk
+
+CTXES := $(CTXES) clickhouse_cli
 
 ########################################################################################################################
 CTX := venv_pytest_bar

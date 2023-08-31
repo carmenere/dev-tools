@@ -7,13 +7,14 @@ SERVICE ?= {{ SERVICE | default('redis', true) }}
 CMD_PREFIX ?= {{ CMD_PREFIX | default(d.SERVICE_CMD_PREFIX, true) }}
 START_CMD ?= {{ START_CMD | default('$(CMD_PREFIX) start $(SERVICE)', true) }}
 STOP_CMD ?= {{ STOP_CMD | default('$(CMD_PREFIX) stop $(SERVICE)', true) }}
-SUDO_BIN ?= {{ SUDO_BIN | default(d.SUDO_BIN, true) }}
-SUDO_USER ?= {{ SUDO_USER | default(d.SUDO_USER, true) }}
 VERSION ?= {{ VERSION | default('$(MAJOR).$(MINOR)', true) }}
 
+# SUDO
+SUDO_BIN ?= {{ SUDO_BIN | default(d.SUDO_BIN, true) }}
+SUDO_USER ?= {{ SUDO_USER | default(d.SUDO_USER, true) }}
 {% include 'common/sudo.mk' %}
 
-.PHONY: install-ubuntu install-debian install-alpine install-macos install start stop restart
+.PHONY: install-ubuntu install-debian install-alpine install-macos install start stop restart clean distclean
 
 install-ubuntu install-debian:
 	$(SUDO) apt-get update

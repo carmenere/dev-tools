@@ -11,9 +11,16 @@ RM_AFTER_STOP ?= {{ RM_AFTER_STOP | default('yes', true) }}
 SUBNET ?= {{ SUBNET | default('192.168.100.0/24', true) }}
 TAG ?= {{ TAG | default('latest', true) }}
 
+# LIB
 {% include 'common/lib.mk' %}
+
+# ENVS
 {% include 'common/envs.jinja2' %}
+
+# BUILD ARGS
 {% include 'common/build_args.jinja2' %}
+
+# PUBLUSH
 {% include 'common/publish.jinja2' %}
 
 ifeq ($(DAEMONIZE),yes)

@@ -623,6 +623,7 @@ USERBASE
 SUDO
 REQUIREMENTS
 OWNER
+RC
 MINOR
 MAJOR
 LDFLAGS
@@ -689,6 +690,7 @@ INSTALL_SCHEMA
 LDFLAGS
 MAJOR
 MINOR
+RC
 OWNER
 REQUIREMENTS
 SUDO
@@ -1324,6 +1326,7 @@ Some influential environment variables:
   LDFLAGS     default=${LDFLAGS}
   MAJOR       default=3.11
   MINOR       default=4
+  RC          default=
   OWNER       default=${USER}
   REQUIREMENTS
               default=$(pwd)/../../render/requirements.txt
@@ -1830,6 +1833,11 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 : "${MINOR:=4}"
+
+
+
+
+: "${RC:=}"
 
 
 
