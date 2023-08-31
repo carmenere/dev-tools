@@ -42,27 +42,26 @@ endif
 
 .PHONY: upgrade install requirements init clean distclean
 
-$(SITE_PACKAGES)/.upgrade:
+$(SITE_PACKAGES)/.upgrade: $(PYTHON)
 	$(PYTHONUSERBASE) $(PIP) install $(PIP_OPTS) --upgrade $(UPGRADE)
 	touch $@
 
-$(SITE_PACKAGES)/.requirements: $(REQUIREMENTS)
+$(SITE_PACKAGES)/.requirements: $(SITE_PACKAGES)/.upgrade $(REQUIREMENTS)
 ifdef REQUIREMENTS
 	$(PYTHONUSERBASE) $(PIP) install $(PIP_OPTS) -r $(REQUIREMENTS)
 endif
-	cp -f $(REQUIREMENTS) $(SITE_PACKAGES)/.requirements && touch $@
+	cp -f $(REQUIREMENTS) $(SITE_PACKAGES)/.requirements
+	touch $@
 
-$(SITE_PACKAGES)/.package-$(PACKAGE):
-ifdef REQUIREMENTS
+$(SITE_PACKAGES)/.package-$(PACKAGE): $(SITE_PACKAGES)/.upgrade
 	$(PYTHONUSERBASE) $(PIP) install $(PIP_OPTS) $(PACKAGE)
-endif
 	touch $@
 
 upgrade: $(SITE_PACKAGES)/.upgrade
 
-install: upgrade $(SITE_PACKAGES)/.package-$(PACKAGE)
+install: $(SITE_PACKAGES)/.package-$(PACKAGE)
 
-requirements: upgrade $(SITE_PACKAGES)/.requirements
+requirements: $(SITE_PACKAGES)/.requirements
 
 init: requirements
 

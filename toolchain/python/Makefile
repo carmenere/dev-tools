@@ -16,46 +16,25 @@ PYTHON = $(abspath /Users/an.romanov/.py/3.12.0/bin/python3.12)
 REQUIREMENTS = $(abspath /Users/an.romanov/Projects/ololo/dev-tools/toolchain/python/../../render/requirements.txt)
 SUDO = /usr/bin/sudo
 USERBASE = 
-VENV_DIR = $(abspath .venv)
+VENV_DIR = $(abspath .venv/3.12.0)
 VENV_PROMT = toolchain
-VPYTHON = $(abspath .venv/bin/python)
+VPYTHON = $(abspath .venv/3.12.0/bin/python)
 
-.PHONY: init python vpython requirements rm-vpython distclean
+.PHONY: all python vpython requirements rm-vpython distclean
 
-init: python vpython requirements
+all: python vpython requirements
 
-$(PYTHON):
-	make -f $(MK)/python.mk install \
-		DL='$(DL)' \
-		MAJOR='$(MAJOR)' \
-		MINOR='$(MINOR)' \
-        RC='$(RC)' \
-		OWNER='$(OWNER)' \
-		PREFIX='$(PREFIX)' \
-		SUDO='$(SUDO)'
-	touch $@
+python:
+	make -f $(MK)/python.mk install DL='$(DL)' MAJOR='$(MAJOR)' MINOR='$(MINOR)' RC='$(RC)' \
+        OWNER='$(OWNER)' PREFIX='$(PREFIX)' SUDO='$(SUDO)'
 
-python: $(PYTHON)
+vpython:
+	make -f $(MK)/venv.mk init PYTHON='$(PYTHON)' VENV_DIR='$(VENV_DIR)' VENV_PROMT='[toolchain]'
 
-$(VPYTHON): python
-	make -f $(MK)/venv.mk init \
-		PYTHON='$(PYTHON)' \
-		VENV_DIR='$(VENV_DIR)' \
-		VENV_PROMT='[toolchain]'
-	touch $@
-
-vpython: $(VPYTHON)
-
-requirements: vpython
-	make -f $(MK)/pip.mk requirements \
-		INSTALL_SCHEMA='$(INSTALL_SCHEMA)' \
-		USERBASE='$(USERBASE)' \
-		PYTHON='$(VPYTHON)' \
-		REQUIREMENTS='$(REQUIREMENTS)' \
-		CC='$(CC)' \
-		CPPFLAGS='$(CPPFLAGS)' \
-		CXX='$(CXX)' \
-		LDFLAGS='$(LDFLAGS)'
+requirements:
+	make -f $(MK)/pip.mk requirements INSTALL_SCHEMA='$(INSTALL_SCHEMA)' USERBASE='$(USERBASE)' \
+		PYTHON='$(VPYTHON)' REQUIREMENTS='$(REQUIREMENTS)' \
+		CC='$(CC)' CPPFLAGS='$(CPPFLAGS)' CXX='$(CXX)' LDFLAGS='$(LDFLAGS)'
 
 rm-vpython:
 	make -f $(MK)/venv.mk clean VENV_DIR='$(VENV_DIR)'

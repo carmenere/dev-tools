@@ -17,7 +17,7 @@ ifeq ($(WITH_PYTHON_DEFAULTS),yes)
 endif
 ifeq ($(WITH_PYTHON),yes)
 	cd $(PYTHON) && \
-	$(MAKE) -f Makefile init
+	$(MAKE) -f Makefile all
 endif
 
 distclean:

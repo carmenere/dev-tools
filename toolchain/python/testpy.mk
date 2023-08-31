@@ -20,21 +20,42 @@ VENV_DIR = $(abspath @VENV_DIR@)
 VENV_PROMT = @VENV_PROMT@
 VPYTHON = $(abspath @VPYTHON@)
 
-.PHONY: all python vpython requirements rm-vpython distclean
+.PHONY: init python vpython requirements rm-vpython distclean
 
-all: python vpython requirements
+init: python vpython requirements
 
-python:
-	make -f $(MK)/python.mk install DL='$(DL)' MAJOR='$(MAJOR)' MINOR='$(MINOR)' RC='$(RC)' \
-        OWNER='$(OWNER)' PREFIX='$(PREFIX)' SUDO='$(SUDO)'
+$(PYTHON):
+	make -f $(MK)/python.mk install \
+		DL='$(DL)' \
+		MAJOR='$(MAJOR)' \
+		MINOR='$(MINOR)' \
+        RC='$(RC)' \
+		OWNER='$(OWNER)' \
+		PREFIX='$(PREFIX)' \
+		SUDO='$(SUDO)'
+	touch $@
 
-vpython:
-	make -f $(MK)/venv.mk init PYTHON='$(PYTHON)' VENV_DIR='$(VENV_DIR)' VENV_PROMT='[toolchain]'
+python: $(PYTHON)
 
-requirements:
-	make -f $(MK)/pip.mk requirements INSTALL_SCHEMA='$(INSTALL_SCHEMA)' USERBASE='$(USERBASE)' \
-		PYTHON='$(VPYTHON)' REQUIREMENTS='$(REQUIREMENTS)' \
-		CC='$(CC)' CPPFLAGS='$(CPPFLAGS)' CXX='$(CXX)' LDFLAGS='$(LDFLAGS)'
+$(VPYTHON): python
+	make -f $(MK)/venv.mk init \
+		PYTHON='$(PYTHON)' \
+		VENV_DIR='$(VENV_DIR)' \
+		VENV_PROMT='[toolchain]'
+	touch $@
+
+vpython: $(VPYTHON)
+
+requirements: vpython
+	make -f $(MK)/pip.mk requirements \
+		INSTALL_SCHEMA='$(INSTALL_SCHEMA)' \
+		USERBASE='$(USERBASE)' \
+		PYTHON='$(VPYTHON)' \
+		REQUIREMENTS='$(REQUIREMENTS)' \
+		CC='$(CC)' \
+		CPPFLAGS='$(CPPFLAGS)' \
+		CXX='$(CXX)' \
+		LDFLAGS='$(LDFLAGS)'
 
 rm-vpython:
 	make -f $(MK)/venv.mk clean VENV_DIR='$(VENV_DIR)'

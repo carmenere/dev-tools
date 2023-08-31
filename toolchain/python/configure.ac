@@ -17,7 +17,7 @@ SET_ARG_VAR([OWNER], [${USER}])
 SET_ARG_VAR([REQUIREMENTS], [$(pwd)/../../render/requirements.txt])
 SET_ARG_VAR([SUDO], [$(which sudo)])
 SET_ARG_VAR([USERBASE], [""])
-SET_ARG_VAR([VENV_DIR], [".venv"])
+SET_ARG_VAR([VENV_DIR], [".venv/${MAJOR}.${MINOR}"])
 SET_ARG_VAR([VENV_PROMT], ["[toolchain]"])
 
 SET_ARG_VAR([PREFIX], ["$(echo ~/.py/${MAJOR}.${MINOR})"])

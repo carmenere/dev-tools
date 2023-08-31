@@ -9,14 +9,14 @@ AC_ARG_WITH([python],
 [with_python=yes],
 [with_python=no])
 
-AC_ARG_WITH([python_defaults],
-[AS_HELP_STRING([--with-python-defaults], [Use default settings while configuring python])],
-[with_python_defaults=yes],
-[with_python_defaults=no])
+AC_ARG_WITH([default_python],
+[AS_HELP_STRING([--with-default-python], [Use default settings while configuring python])],
+[with_default_python=yes],
+[with_default_python=no])
 
-SET_ARG_VAR([WITH_PYTHON_DEFAULTS], [$with_python_defaults])
+SET_ARG_VAR([WITH_PYTHON_DEFAULTS], [$with_default_python])
 
-AS_IF([test "$with_python_defaults" == yes],
+AS_IF([test "$with_default_python" == yes],
 [SET_ARG_VAR([WITH_PYTHON], [yes])],
 [SET_ARG_VAR([WITH_PYTHON], [$with_python])])
 

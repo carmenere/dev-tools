@@ -41,18 +41,21 @@ all: download build install
 $(DL)/Python-$(VERSION).tgz:
 	[ -d $(DL) ] || mkdir -p $(DL)
 	cd $(DL) && wget $(DOWNLOAD_URL) && tar -xf Python-$(VERSION).tgz
-	touch $@
 
 download: $(DL)/Python-$(VERSION).tgz
 
-build: download
+$(DL)/Python-$(VERSION)/python.exe: $(DL)/Python-$(VERSION).tgz
 	[ -d $(PREFIX) ] || mkdir -p $(PREFIX)
 	cd $(DL)/Python-$(VERSION) && \
 		./configure $(BUILD_OPTS) && \
 		make -j $(nproc)
 
-install: build
+build: $(DL)/Python-$(VERSION)/python.exe
+
+$(PREFIX)/bin/python$(MAJOR): $(DL)/Python-$(VERSION)/python.exe
 	cd $(DL)/Python-$(VERSION) && sudo make altinstall
 ifdef OWNER
 	$(SUDO) chown -R $(OWNER) $(PREFIX)
 endif
+
+install: $(PREFIX)/bin/python$(MAJOR)

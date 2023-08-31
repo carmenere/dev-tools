@@ -7,7 +7,7 @@ VENV_PROMT ?= {{ VENV_PROMT | default('[VENV]', true) }}
 
 .PHONY: init clean distclean
 
-$(VENV_DIR)/bin/python:
+$(VENV_DIR)/bin/python: $(PYTHON)
 	[ -d $(VENV_DIR) ] || mkdir -p $(VENV_DIR)
 	$(PYTHON) -m venv --prompt='$(VENV_PROMT)' $(VENV_DIR)
 
