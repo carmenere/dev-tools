@@ -1,16 +1,21 @@
-{% import "common/defaults.j2" as d %}
-SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
+SELFDIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+
+DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
+
+include $(DEVTOOLS_DIR)/configure/defaults.mk
+include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
+
+include {{ SETTINGS }}
 
 LOG_FILE ?= {{ LOG_FILE | default('$(SELFDIR)/.logs', true) }}
 REPORTS_DIR ?= {{ REPORTS_DIR | default('$(SELFDIR)/.reports', true) }}
 TEST_CASES ?= {{ TEST_CASES | default('', true) }}
 TEST_CASES_DIR ?= {{ TEST_CASES_DIR | default('tests', true) }}
-PYTHON ?= {{ PYTHON | default(d.PYTHON, true) }}
+PYTHON ?= {{ PYTHON | default('$(d__PYTHON)', true) }}
 TMUX_START_CMD ?= {{ TMUX_START_CMD | default('', true) }}
 MODE ?= {{ MODE | default('tee', true) }}
 
-{% include 'common/lib.mk' %}
-{% include 'common/envs.jinja2' %}
+{% include 'common/j2/envs.jinja2' %}
 
 ifdef TEST_CASES
     TCASES = $(foreach T,$(TEST_CASES),$(TEST_CASES_DIR)/$(T))

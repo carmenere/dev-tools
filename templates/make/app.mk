@@ -1,5 +1,12 @@
-{% import "common/defaults.j2" as d %}
-SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
+SELFDIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+
+DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
+
+include $(DEVTOOLS_DIR)/configure/defaults.mk
+include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
+
+include {{ SETTINGS }}
+
 OUT := {{ OUT }}
 
 APP ?= {{ APP }}
@@ -13,11 +20,8 @@ MODE ?= {{ MODE | default('tee', true) }}
 
 TMUX_START_CMD = $(MAKE) -f $(TMUX) exec CMD='$(MAKE) -f $(OUT) tee' WINDOW_NAME=$(APP)
 
-# LIB
-{% include 'common/lib.mk' %}
-
 # ENVS
-{% include 'common/envs.jinja2' %}
+{% include 'common/j2/envs.jinja2' %}
 
 ifdef BIN_PATH
     START_BIN ?= $(ENVS) $(BIN_PATH) $(OPTS)

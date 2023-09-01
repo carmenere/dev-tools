@@ -1,3 +1,10 @@
+DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
+
+include $(DEVTOOLS_DIR)/configure/defaults.mk
+include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
+
+include {{ SETTINGS }}
+
 DAEMONIZE ?= {{ DAEMONIZE | default ('yes', true) }}
 FORCE_RECREATE ?= {{ FORCE_RECREATE | default ('no', true) }}
 NO_CACHE ?= {{ NO_CACHE | default ('yes', true) }}

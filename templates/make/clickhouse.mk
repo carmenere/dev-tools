@@ -1,20 +1,26 @@
-{%- import "common/defaults.j2" as d -%}
-ADMIN ?= {{ ADMIN | default(d.CH_ADMIN, true) }}
-ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default(d.CH_ADMIN_PASSWORD, true) }}
+DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
+
+include $(DEVTOOLS_DIR)/configure/defaults.mk
+include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
+
+include {{ SETTINGS }}
+
+ADMIN ?= {{ ADMIN | default('$(d__CH_ADMIN)', true) }}
+ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default('$(d__CH_ADMIN_PASSWORD)', true) }}
 MAJOR ?= {{ MAJOR | default('23.5', true) }}
 MINOR ?= {{ MINOR | default('', true) }}
-OS ?= {{ OS | default(d.OS, true) }}
-OS_CODENAME ?= {{ OS_CODENAME | default(d.OS_CODENAME, true) }}
+OS ?= {{ OS | default('$(d__OS)', true) }}
+OS_CODENAME ?= {{ OS_CODENAME | default('$(d__OS_CODENAME)', true) }}
 SERVICE ?= {{ SERVICE | default('clickhouse@$(MAJOR)', true) }}
-CMD_PREFIX ?= {{ CMD_PREFIX | default(d.SERVICE_CMD_PREFIX, true) }}
+CMD_PREFIX ?= {{ CMD_PREFIX | default('$(d__SERVICE_CMD_PREFIX)', true) }}
 START_CMD ?= {{ START_CMD | default('$(CMD_PREFIX) start $(SERVICE)', true) }}
 STOP_CMD ?= {{ STOP_CMD | default('$(CMD_PREFIX) stop $(SERVICE)', true) }}
-USER_XML ?= {{ USER_XML | default(d.CH_USER_XML, true) }}
+USER_XML ?= {{ USER_XML | default('$(d__CH_USER_XML)', true) }}
 
 # SUDO
-SUDO_BIN ?= {{ SUDO_BIN | default(d.SUDO_BIN, true) }}
-SUDO_USER ?= {{ SUDO_USER | default(d.SUDO_USER, true) }}
-{% include 'common/sudo.mk' %}
+SUDO_BIN ?= {{ SUDO_BIN | default('$(d__SUDO_BIN)', true) }}
+SUDO_USER ?= {{ SUDO_USER | default('$(d__SUDO_USER)', true) }}
+include $(DEVTOOLS_DIR)/templates/make/common/sudo.mk
 
 .PHONY: install-ubuntu install-debian install-alpine install-macos install init-user start stop restart clean distclean init
 

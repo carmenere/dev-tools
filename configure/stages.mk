@@ -1,6 +1,13 @@
-DEVTOOLS_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))/..
-TOPDIR ?= $(shell pwd)
-LIB ?= $(DEVTOOLS_DIR)/lib
+DEVTOOLS_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST)))/..)
+
+# Default vars
+include $(DEVTOOLS_DIR)/configure/defaults.mk
+
+# Customized vars
+ifdef SETTINGS
+    # Use '$(shell realpath ...)' because make's $(realpath ...) doesn't expand tilde '~'.
+    include $(shell realpath $(SETTINGS))
+endif
 
 ALL_STAGES += apps
 ALL_STAGES += build
@@ -12,10 +19,6 @@ ALL_STAGES += schemas
 ALL_STAGES += services
 ALL_STAGES += tests
 ALL_STAGES += venvs
-
-# Default vars
-include $(DEVTOOLS_DIR)/configure/ctxes.mk
-include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
 
 ifeq ($(DRY_RUN),yes)
 DR = n

@@ -1,3 +1,10 @@
+DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
+
+include $(DEVTOOLS_DIR)/configure/defaults.mk
+include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
+
+include {{ SETTINGS }}
+
 BRIDGE ?= {{ BRIDGE | default('dev-tools', true) }}
 CONTAINER ?= {{ CONTAINER }}
 CTX ?= {{ CTX | default('.', true) }}
@@ -10,19 +17,15 @@ RESTART_POLICY ?= {{ RESTART_POLICY | default('no', true) }}
 RM_AFTER_STOP ?= {{ RM_AFTER_STOP | default('yes', true) }}
 SUBNET ?= {{ SUBNET | default('192.168.100.0/24', true) }}
 TAG ?= {{ TAG | default('latest', true) }}
-PUBLISH ?= {{ PUBLISH | default('', true) }}
-
-# LIB
-{% include 'common/lib.mk' %}
 
 # ENVS
-{% include 'common/envs.jinja2' %}
+{% include 'common/j2/envs.jinja2' %}
 
 # BUILD ARGS
-{% include 'common/build_args.jinja2' %}
+{% include 'common/j2/build_args.jinja2' %}
 
 # PUBLUSH
-{% include 'common/publish.jinja2' %}
+{% include 'common/j2/publish.jinja2' %}
 
 ifeq ($(DAEMONIZE),yes)
 RUN_OPTS += -d

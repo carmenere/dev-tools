@@ -1,3 +1,5 @@
+PUBLISH ?= {{ PUBLISH | default('', true) }}
+
 {% set p = [] -%}
 {% if PUBLISH -%}
 {% for item in PUBLISH.split(' ') -%}

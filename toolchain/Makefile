@@ -1,24 +1,22 @@
 TOOLCHAIN := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
 # WITH section
-WITH_PYTHON_DEFAULTS = yes
 WITH_PYTHON = yes
 
 # Paths
-PYTHON = $(TOOLCHAIN)/python
+PYTHON_DIR = $(TOOLCHAIN)/python
 
 .PHONY: init python
 
 init: python
 
-python:
-ifeq ($(WITH_PYTHON_DEFAULTS),yes)
-	cd $(PYTHON) && ./configure
-endif
+$(PYTHON_DIR)/Makefile:
 ifeq ($(WITH_PYTHON),yes)
-	cd $(PYTHON) && \
-	$(MAKE) -f Makefile all
+	cd $(PYTHON_DIR) && ./configure
 endif
+
+python: $(PYTHON_DIR)/Makefile
+	cd $(PYTHON_DIR) && $(MAKE) -f $(PYTHON_DIR)/Makefile all
 
 distclean:
 	rm -Rf {$(TOOLCHAIN),$(TOOLCHAIN)/*}/config.log
@@ -26,3 +24,4 @@ distclean:
 	rm -Rf {$(TOOLCHAIN),$(TOOLCHAIN)/*}/config.status
 	rm -Rf {$(TOOLCHAIN),$(TOOLCHAIN)/*}/configure~
 	rm -Rf {$(TOOLCHAIN),$(TOOLCHAIN)/*}/autom4te.cache
+	rm -Rf {$(TOOLCHAIN),$(TOOLCHAIN)/*}/Makefile

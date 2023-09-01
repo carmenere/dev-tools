@@ -2,7 +2,6 @@ DEVTOOLS_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 TOOLCHAIN := $(DEVTOOLS_DIR)/toolchain
 CONF = $(DEVTOOLS_DIR)/configure/configure.mk
 STAGES = $(DEVTOOLS_DIR)/configure/stages.mk
-TPYTHON ?= $(abspath $(TOOLCHAIN)/python/.venv)/bin/python
 
 WITH ?= --with-python-defaults
 
@@ -25,7 +24,7 @@ toolchain:
 		$(MAKE) -f Makefile init
 
 configure:
-	make -f $(CONF) all TPYTHON=$(TPYTHON) SETTINGS=$(SETTINGS)
+	make -f $(CONF) all SETTINGS=$(SETTINGS)
 
 init: configure
 	make -f $(STAGES) deps venvs stop-disabled services init
