@@ -1,28 +1,31 @@
-{% import "common/defaults.j2" as d %}
-ADMIN ?= {{ ADMIN | default(d.PG_ADMIN, true) }}
-ADMIN_DB ?= {{ ADMIN_DB | default(d.PG_ADMIN_DB, true) }}
-ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default(d.PG_ADMIN_PASSWORD, true) }}
+DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
+
+include $(DEVTOOLS_DIR)/configure/defaults.mk
+include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
+
+include {{ SETTINGS }}
+
+ADMIN ?= {{ ADMIN | default('$(d__PG_ADMIN)', true) }}
+ADMIN_DB ?= {{ ADMIN_DB | default('$(d__PG_ADMIN_DB)', true) }}
+ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default('$(d__PG_ADMIN_PASSWORD)', true) }}
 AUTH_METHOD ?= {{ AUTH_METHOD | default('remote', true) }}
 CNT = {{ CNT | default('', true) }}
-EXIT_IF_CREATE_EXISTED_DB = {{ EXIT_IF_CREATE_EXISTED_DB | default(d.EXIT_IF_CREATE_EXISTED_DB, true) }}
-EXIT_IF_CREATE_EXISTED_USER = {{ EXIT_IF_CREATE_EXISTED_USER | default(d.EXIT_IF_CREATE_EXISTED_USER, true) }}
-HOST ?= {{ HOST | default(d.PG_HOST, true) }}
-PORT ?= {{ PORT | default(d.PG_PORT, true) }}
+EXIT_IF_CREATE_EXISTED_DB = {{ EXIT_IF_CREATE_EXISTED_DB | default('$(d__EXIT_IF_CREATE_EXISTED_DB)', true) }}
+EXIT_IF_CREATE_EXISTED_USER = {{ EXIT_IF_CREATE_EXISTED_USER | default('$(d__EXIT_IF_CREATE_EXISTED_USER)', true) }}
+HOST ?= {{ HOST | default('$(d__PG_HOST)', true) }}
+PORT ?= {{ PORT | default('$(d__PG_PORT)', true) }}
 USER_ATTRIBUTES ?= {{ USER_ATTRIBUTES | default('SUPERUSER CREATEDB', true) }}
-USER_DB ?= {{ USER_DB | default(d.SERVICE_DB, true) }}
-USER_NAME ?= {{ USER_NAME | default(d.SERVICE_USER, true) }}
-USER_PASSWORD ?= {{ USER_PASSWORD | default(d.SERVICE_PASSWORD, true) }}
+USER_DB ?= {{ USER_DB | default('$(d__SERVICE_DB)', true) }}
+USER_NAME ?= {{ USER_NAME | default('$(d__SERVICE_USER)', true) }}
+USER_PASSWORD ?= {{ USER_PASSWORD | default('$(d__SERVICE_PASSWORD)', true) }}
 
 CONN_URL ?= postgresql://$(ADMIN):$(ADMIN_PASSWORD)@$(HOST):$(PORT)/$(ADMIN_DB)
 USER_CONN_URL ?= postgresql://$(USER_NAME):$(USER_PASSWORD)@$(HOST):$(PORT)/$(USER_DB)
 
-# LIB
-{% include 'common/lib.mk' %}
-
 # SUDO
-SUDO_BIN ?= {{ SUDO_BIN | default(d.SUDO_BIN, true) }}
-SUDO_USER ?= {{ SUDO_USER | default(d.SUDO_USER, true) }}
-{% include 'common/sudo.mk' %}
+SUDO_BIN ?= {{ SUDO_BIN | default('$(d__SUDO_BIN)', true) }}
+SUDO_USER ?= {{ SUDO_USER | default('$(d__SUDO_USER)', true) }}
+include $(DEVTOOLS_DIR)/templates/make/common/sudo.mk
 
 define select_user
 SELECT '$1' FROM pg_roles WHERE rolname = '$1'
@@ -100,5 +103,11 @@ clean:
 distclean: clean
 
 lsof:
+ifneq ($(HOST),0.0.0.0)
 	sudo lsof -nP -i4TCP@0.0.0.0:$(PORT) || true
-	sudo lsof -nP -i4TCP@localhost:$(PORT)  || true
+endif
+ifneq ($(HOST),localhost)
+	sudo lsof -nP -i4TCP@localhost:$(PORT) || true
+endif
+	sudo lsof -nP -i4TCP@$(HOST):$(PORT) || true
+

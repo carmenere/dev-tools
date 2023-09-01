@@ -615,7 +615,6 @@ PACKAGE_URL=''
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 WITH_PYTHON
-WITH_PYTHON_DEFAULTS
 OUT
 IN
 target_alias
@@ -661,14 +660,12 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 with_python
-with_default_python
 '
       ac_precious_vars='build_alias
 host_alias
 target_alias
 IN
 OUT
-WITH_PYTHON_DEFAULTS
 WITH_PYTHON'
 
 
@@ -1288,14 +1285,11 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-python           Enable python
-  --with-default-python   Use default settings while configuring python
 
 Some influential environment variables:
   IN          default=$(pwd)/Makefile.in
   OUT         default=$(pwd)/Makefile
-  WITH_PYTHON_DEFAULTS
-              default=$with_default_python
-  WITH_PYTHON default=yes
+  WITH_PYTHON default=$with_python
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -1765,38 +1759,14 @@ fi
 
 
 
-# Check whether --with-default_python was given.
-if test ${with_default_python+y}
-then :
-  withval=$with_default_python; with_default_python=yes
-else $as_nop
-  with_default_python=no
-fi
-
-
-
-
-: "${WITH_PYTHON_DEFAULTS:=$with_default_python}"
-
-
-
-if test "$with_default_python" == yes
-then :
-
-
-: "${WITH_PYTHON:=yes}"
-
-
-else $as_nop
-
 
 : "${WITH_PYTHON:=$with_python}"
 
 
-fi
-
 
 ac_config_files="$ac_config_files $OUT:$IN"
+
+ac_config_files="$ac_config_files $(pwd)/defaults.mk:$(pwd)/defaults.in"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -2499,6 +2469,7 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "$OUT") CONFIG_FILES="$CONFIG_FILES $OUT:$IN" ;;
+    "$(pwd)/defaults.mk") CONFIG_FILES="$CONFIG_FILES $(pwd)/defaults.mk:$(pwd)/defaults.in" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

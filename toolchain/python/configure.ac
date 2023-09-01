@@ -17,11 +17,11 @@ SET_ARG_VAR([OWNER], [${USER}])
 SET_ARG_VAR([REQUIREMENTS], [$(pwd)/../../render/requirements.txt])
 SET_ARG_VAR([SUDO], [$(which sudo)])
 SET_ARG_VAR([USERBASE], [""])
-SET_ARG_VAR([VENV_DIR], [".venv/${MAJOR}.${MINOR}"])
+SET_ARG_VAR([VENV_DIR], ["$(pwd)/.venv/${MAJOR}.${MINOR}"])
 SET_ARG_VAR([VENV_PROMT], ["[toolchain]"])
 
 SET_ARG_VAR([PREFIX], ["$(echo ~/.py/${MAJOR}.${MINOR})"])
-SET_ARG_VAR([PYTHON], ["${PREFIX}/bin/python${MAJOR}"])
+SET_ARG_VAR([PYTHON], ["$(realpath ${PREFIX}/bin/python${MAJOR})"])
 SET_ARG_VAR([VPYTHON], ["${VENV_DIR}/bin/python"])
 
 AC_CONFIG_FILES([$OUT:$IN])

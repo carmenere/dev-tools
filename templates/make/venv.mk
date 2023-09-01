@@ -1,7 +1,16 @@
-# {% import "common/defaults.j2" as d %}
-SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
+SELFDIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
-PYTHON ?= {{ PYTHON | default(d.PYTHON, true) }}
+DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
+SETTINGS ?= {{ SETTINGS }}
+
+include $(DEVTOOLS_DIR)/configure/defaults.mk
+include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
+
+ifdef SETTINGS
+    include $(SETTINGS)
+endif
+
+PYTHON ?= {{ PYTHON | default('$(d__PYTHON)', true) }}
 VENV_DIR ?= {{ VENV_DIR | default('$(SELFDIR)/.venv', true) }}
 VENV_PROMT ?= {{ VENV_PROMT | default('[VENV]', true) }}
 

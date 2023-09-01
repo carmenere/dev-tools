@@ -1,15 +1,21 @@
-{% import "common/defaults.j2" as d %}
-ADMIN ?= {{ ADMIN | default(d.CH_ADMIN, true) }}
-ADMIN_DB ?= {{ ADMIN_DB | default(d.CH_ADMIN_DB, true) }}
-ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default(d.CH_ADMIN_PASSWORD, true) }}
+DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
+
+include $(DEVTOOLS_DIR)/configure/defaults.mk
+include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
+
+include {{ SETTINGS }}
+
+ADMIN ?= {{ ADMIN | default('$(d__CH_ADMIN)', true) }}
+ADMIN_DB ?= {{ ADMIN_DB | default('$(d__CH_ADMIN_DB)', true) }}
+ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default('$(d__CH_ADMIN_PASSWORD)', true) }}
 CNT = {{ CNT | default('', true) }}
-EXIT_IF_CREATE_EXISTED_DB = {{ EXIT_IF_CREATE_EXISTED_DB | default(d.EXIT_IF_CREATE_EXISTED_DB, true) }}
-EXIT_IF_CREATE_EXISTED_USER = {{ EXIT_IF_CREATE_EXISTED_USER | default(d.EXIT_IF_CREATE_EXISTED_USER, true) }}
-HOST ?= {{ HOST | default(d.CH_HOST, true) }}
-PORT ?= {{ PORT | default(d.CH_PORT, true) }}
-USER_DB ?= {{ USER_DB | default(d.SERVICE_DB, true) }}
-USER_NAME ?= {{ USER_NAME | default(d.SERVICE_USER, true) }}
-USER_PASSWORD ?= {{ USER_PASSWORD | default(d.SERVICE_PASSWORD, true) }}
+EXIT_IF_CREATE_EXISTED_DB = {{ EXIT_IF_CREATE_EXISTED_DB | default('$(d__EXIT_IF_CREATE_EXISTED_DB)', true) }}
+EXIT_IF_CREATE_EXISTED_USER = {{ EXIT_IF_CREATE_EXISTED_USER | default('$(d__EXIT_IF_CREATE_EXISTED_USER)', true) }}
+HOST ?= {{ HOST | default('$(d__CH_HOST)', true) }}
+PORT ?= {{ PORT | default('$(d__CH_PORT)', true) }}
+USER_DB ?= {{ USER_DB | default('$(d__SERVICE_DB)', true) }}
+USER_NAME ?= {{ USER_NAME | default('$(d__SERVICE_USER)', true) }}
+USER_PASSWORD ?= {{ USER_PASSWORD | default('$(d__SERVICE_PASSWORD)', true) }}
 
 # 
 ifdef CNT
@@ -58,6 +64,10 @@ clean:
 distclean: clean
 
 lsof:
+ifneq ($(HOST),0.0.0.0)
 	sudo lsof -nP -i4TCP@0.0.0.0:$(PORT) || true
-	sudo lsof -nP -i4TCP@localhost:$(PORT)  || true
-
+endif
+ifneq ($(HOST),localhost)
+	sudo lsof -nP -i4TCP@localhost:$(PORT) || true
+endif
+	sudo lsof -nP -i4TCP@$(HOST):$(PORT) || true

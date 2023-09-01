@@ -1332,7 +1332,7 @@ Some influential environment variables:
               default=$(pwd)/../../render/requirements.txt
   SUDO        default=$(which sudo)
   USERBASE    default=""
-  VENV_DIR    default=".venv/${MAJOR}.${MINOR}"
+  VENV_DIR    default="$(pwd)/.venv/${MAJOR}.${MINOR}"
   VENV_PROMT  default="[toolchain]"
   PREFIX      default="$(echo ~/.py/${MAJOR}.${MINOR})"
   PYTHON      default="${PREFIX}/bin/python${MAJOR}"
@@ -1862,7 +1862,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-: "${VENV_DIR:=".venv/${MAJOR}.${MINOR}"}"
+: "${VENV_DIR:="$(pwd)/.venv/${MAJOR}.${MINOR}"}"
 
 
 

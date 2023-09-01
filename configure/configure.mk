@@ -1,8 +1,7 @@
-DEVTOOLS_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))/..
+DEVTOOLS_DIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST)))/..)
 
 # Default vars
-include $(DEVTOOLS_DIR)/configure/ctxes.mk
-include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
+include $(DEVTOOLS_DIR)/configure/defaults.mk
 
 # Customized vars
 ifdef SETTINGS
@@ -10,7 +9,6 @@ ifdef SETTINGS
     include $(shell realpath $(SETTINGS))
 endif
 
-TPYTHON ?= $(d__PYTHON)
 RENDER ?= $(TPYTHON) -m render.main
 
 .PHONY: all
@@ -19,6 +17,7 @@ RENDER ?= $(TPYTHON) -m render.main
 all:
 	$(foreach CTX,$(CTXES),cd $(DEVTOOLS_DIR) && \
 		$(foreach V,$(filter $(CTX)__%,$(.VARIABLES)),$(subst $(CTX)__,,$(V))=$$'$(call escape,$($(V)))') \
+		DEVTOOLS_DIR='$(DEVTOOLS_DIR)' SETTINGS='$(SETTINGS)' \
 		$(RENDER) --in=$($(CTX)__IN) --out=$($(CTX)__OUT) \
 	$(LF))
 

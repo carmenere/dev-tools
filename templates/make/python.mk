@@ -1,11 +1,20 @@
-# {% import "common/defaults.j2" as d %}
-SELFDIR := {{ SELFDIR | default(d.SELFDIR, true) }}
+SELFDIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+
+DEVTOOLS_DIR ?= {{ DEVTOOLS_DIR }}
+SETTINGS ?= {{ SETTINGS }}
+
+include $(DEVTOOLS_DIR)/configure/defaults.mk
+include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
+
+ifdef SETTINGS
+    include $(SETTINGS)
+endif
 
 DL ?= {{ DL | default('.dl', true)}}
-MAJOR ?= {{ MAJOR | default(d.PY_MAJOR, true)}}
-MINOR ?= {{ MINOR | default(d.PY_MINOR, true)}}
+MAJOR ?= {{ MAJOR | default('$(d__PY_MAJOR)', true)}}
+MINOR ?= {{ MINOR | default('$(d__PY_MINOR)', true)}}
 RC ?= {{ RC | default('', true)}}
-OWNER ?= {{ OWNER | default(d.PY_OWNER, true)}}
+OWNER ?= {{ OWNER | default('$(d__PY_OWNER)', true)}}
 PREFIX ?= {{ PREFIX | default('$(SELFDIR)/.python', true)}}
 
 DOWNLOAD_URL = https://www.python.org/ftp/python/$(MAJOR).$(MINOR)/Python-$(VERSION).tgz 
@@ -13,9 +22,9 @@ VERSION ?= $(MAJOR).$(MINOR)$(RC)
 PYTHON ?= $(PREFIX)/bin/python$(MAJOR)
 
 # SUDO
-SUDO_BIN ?= {{ SUDO_BIN | default(d.SUDO_BIN, true) }}
-SUDO_USER ?= {{ SUDO_USER | default(d.SUDO_USER, true) }}
-# {% include 'common/sudo.mk' %}
+SUDO_BIN ?= {{ SUDO_BIN | default('$(d__SUDO_BIN)', true) }}
+SUDO_USER ?= {{ SUDO_USER | default('$(d__SUDO_USER)', true) }}
+include $(DEVTOOLS_DIR)/templates/make/common/sudo.mk
 
 ifdef VARS
     VARS_OPT = VARS=$(realpath $(shell realpath $(VARS)))

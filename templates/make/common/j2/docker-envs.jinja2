@@ -1,0 +1,20 @@
+{% if ENVS is not defined or ENVS.replace('"', '').replace("'",'') == '' -%}
+{% set ENVS = [] -%}
+{% else -%}
+{% set ENVS = ENVS.split(' ') -%}
+{% endif -%}
+
+{% set e = [] -%}
+{% if ENVS -%}
+{% for item in ENVS -%}
+{{ item }} = {{ env['env_' + item] }}
+{% endfor -%}
+{% for item in ENVS -%}
+{% do e.append("{}='$({})'".format(item, item)) -%}
+{% endfor -%}
+{% endif -%}
+
+{% if e %}
+ENVS ?= \
+    --env {{ e|join(' \\\n    --env ') }}
+{% endif %}
