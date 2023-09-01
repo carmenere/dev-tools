@@ -68,7 +68,7 @@ stand_example__REDIS_BRIDGE = $(stand_example__BRIDGE)
 
 # NETWORKS
 stand_example__BRIDGE = example
-stand_example__DRIVER = $(DOCKER_NETWORK_DRIVER)
+stand_example__DRIVER = $(d__DOCKER_NETWORK_DRIVER)
 stand_example__NETWORK = 192.168.200.0/24
 
 # PG_ENVS

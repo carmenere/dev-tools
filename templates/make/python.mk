@@ -1,11 +1,14 @@
 SELFDIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 
-DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
+DEVTOOLS_DIR ?= {{ DEVTOOLS_DIR }}
+SETTINGS ?= {{ SETTINGS }}
 
 include $(DEVTOOLS_DIR)/configure/defaults.mk
 include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
 
-include {{ SETTINGS }}
+ifdef SETTINGS
+    include $(SETTINGS)
+endif
 
 DL ?= {{ DL | default('.dl', true)}}
 MAJOR ?= {{ MAJOR | default('$(d__PY_MAJOR)', true)}}

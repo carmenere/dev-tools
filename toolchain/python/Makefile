@@ -25,16 +25,17 @@ VPYTHON = $(abspath /Users/an.romanov/Projects/ololo/dev-tools/toolchain/python/
 all: python vpython requirements
 
 python:
-	make -f $(MK)/python.mk install DEVTOOLS_DIR='$(DEVTOOLS_DIR)' DL='$(DL)' \
+	touch /tmp/settings.mk
+	make -f $(MK)/python.mk install DEVTOOLS_DIR='$(DEVTOOLS_DIR)' SETTINGS='/tmp/settings.mk' DL='$(DL)' \
 		MAJOR='$(MAJOR)' MINOR='$(MINOR)' RC='$(RC)' \
 		OWNER='$(OWNER)' PREFIX='$(PREFIX)' SUDO='$(SUDO)'
 
 vpython:
-	make -f $(MK)/venv.mk init DEVTOOLS_DIR='$(DEVTOOLS_DIR)' \
+	make -f $(MK)/venv.mk init DEVTOOLS_DIR='$(DEVTOOLS_DIR)' SETTINGS='/tmp/settings.mk' \
 		PYTHON='$(PYTHON)' VENV_DIR='$(VENV_DIR)' VENV_PROMT='[toolchain]'
 
 requirements:
-	make -f $(MK)/pip.mk requirements DEVTOOLS_DIR='$(DEVTOOLS_DIR)' INSTALL_SCHEMA='$(INSTALL_SCHEMA)' \
+	make -f $(MK)/pip.mk requirements DEVTOOLS_DIR='$(DEVTOOLS_DIR)' SETTINGS='/tmp/settings.mk' INSTALL_SCHEMA='$(INSTALL_SCHEMA)' \
 		USERBASE='$(USERBASE)' PYTHON='$(VPYTHON)' REQUIREMENTS='$(REQUIREMENTS)' \
 		CC='$(CC)' CPPFLAGS='$(CPPFLAGS)' CXX='$(CXX)' LDFLAGS='$(LDFLAGS)'
 

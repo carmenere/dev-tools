@@ -12,10 +12,11 @@ else
 SETTINGS =
 endif
 
+export SETTINGS
 export SEVERITY ?= info
 export DRY_RUN ?= no
 
-.PHONY: toolchain configure deps init build schemas upgrade stop start stop-services tests reports clean-services \
+.PHONY: toolchain configure deps init stop-disabled build schemas upgrade stop start stop-services tests reports clean-services \
 clean distclean kill ctxes
 
 toolchain:
@@ -24,10 +25,16 @@ toolchain:
 		$(MAKE) -f Makefile init
 
 configure:
-	make -f $(CONF) all SETTINGS=$(SETTINGS)
+	make -f $(CONF) all
 
 init: configure
-	make -f $(STAGES) deps venvs stop-disabled services init
+	make -f $(STAGES) deps venvs stop-disabled images services init
+
+stop-disabled:
+	make -f $(STAGES) stop-disabled
+
+start-services:
+	make -f $(STAGES) services
 
 build:
 	make -f $(STAGES) schemas build

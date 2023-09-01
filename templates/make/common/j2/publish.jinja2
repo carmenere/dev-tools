@@ -1,8 +1,12 @@
-PUBLISH ?= {{ PUBLISH | default('', true) }}
+{% if PUBLISH is not defined or PUBLISH.replace('"', '').replace("'",'') == '' -%}
+{% set PUBLISH = [] -%}
+{% else -%}
+{% set PUBLISH = PUBLISH.split(' ') -%}
+{% endif -%}
 
 {% set p = [] -%}
 {% if PUBLISH -%}
-{% for item in PUBLISH.split(' ') -%}
+{% for item in PUBLISH -%}
 {% do p.append("{}".format(item)) -%}
 {% endfor -%}
 {% endif %}

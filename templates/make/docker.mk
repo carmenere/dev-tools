@@ -11,15 +11,17 @@ CTX ?= {{ CTX | default('.', true) }}
 DAEMONIZE ?= {{ DAEMONIZE | default('yes', true) }}
 DOCKERFILE ?= {{ DOCKERFILE | default('', true) }}
 DRIVER ?= {{ DRIVER | default('bridge', true) }}
-ERR_IF_BRIDGE_EXISTS = {{ ERR_IF_BRIDGE_EXISTS | default('yes', true) }}
-IMAGE ?= {{ IMAGE | default('', true) }}
+ERR_IF_BRIDGE_EXISTS = {{ ERR_IF_BRIDGE_EXISTS | default('no', true) }}
+IMAGE ?= {{ IMAGE | default('$(BASE_IMAGE)', true) }}
 RESTART_POLICY ?= {{ RESTART_POLICY | default('no', true) }}
 RM_AFTER_STOP ?= {{ RM_AFTER_STOP | default('yes', true) }}
 SUBNET ?= {{ SUBNET | default('192.168.100.0/24', true) }}
 TAG ?= {{ TAG | default('latest', true) }}
 
+CHECK_DOCKER = docker ps >/dev/null 2>&1
+
 # ENVS
-{% include 'common/j2/envs.jinja2' %}
+{% include 'common/j2/docker-envs.jinja2' %}
 
 # BUILD ARGS
 {% include 'common/j2/build_args.jinja2' %}
@@ -46,12 +48,14 @@ RUN_OPTS += $(PUBLISH_OPT)
 .PHONY: network network-rm build run start stop rm rm-by-image rm-all prune purge
 
 network:
+	$(CHECK_DOCKER)
 ifeq ($(strip $(ERR_IF_BRIDGE_EXISTS)),yes)
 	[ -z "$$(docker network ls -q -f name=$(BRIDGE))" ] || false
 endif
 	[ -n "$$(docker network ls -q -f name=$(BRIDGE))" ] || docker network create --driver=$(DRIVER) --subnet=$(SUBNET) $(BRIDGE)
 
 network-rm:
+	$(CHECK_DOCKER)
 	[ -z "$$(docker network ls -q -f name=$(BRIDGE))" ] || docker network rm $(BRIDGE)
 
 build:
@@ -63,22 +67,28 @@ else
 	$(error Neither DOCKERFILE nor BASE_IMAGE are defined.)
 endif
 
-run: build network
-	docker run $(RUN_OPTS) $(ENVS) $(IMAGE)
+run:
+	$(CHECK_DOCKER)
+	[ -n "$$(docker ps -aq -f status=running -f name=$(CONTAINER))" ] || docker run $(RUN_OPTS) $(ENVS) $(IMAGE)
 
-start: 
+start:
+	$(CHECK_DOCKER)
 	[ -n "$$(docker ps -aq -f status=running -f name=$(CONTAINER))" ] || docker start $(CONTAINER)
 
 stop:
+	$(CHECK_DOCKER)
 	[ -z "$$(docker ps -aq -f status=running -f name=$(CONTAINER))" ] || docker stop $(CONTAINER)
 
 rm:
+	$(CHECK_DOCKER)
 	[ -z "$$(docker ps -aq -f name=$(CONTAINER))" ] || docker rm -f $(CONTAINER)
 
 rm-by-image:
+	$(CHECK_DOCKER)
 	[ -z "$$(docker ps -aq -f ancestor=$(IMAGE))" ] || docker rm -f "$$(docker ps -aq -f ancestor=$(IMAGE))"
 
 rm-all:
+	$(CHECK_DOCKER)
 	[ -z "$$(docker ps -aq)" ] || docker rm -f $$(docker ps -aq)
 
 prune: rm-all
@@ -100,6 +110,6 @@ status:
 connect:
 	docker exec -ti $(CONTAINER) /bin/sh
 
-clean: rm
+clean:
 
-distclean: rm
+distclean:

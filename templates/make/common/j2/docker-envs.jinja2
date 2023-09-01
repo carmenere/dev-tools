@@ -16,5 +16,5 @@
 
 {% if e %}
 ENVS ?= \
-    {{ e|join(' \\\n    ') }}
+    --env {{ e|join(' \\\n    --env ') }}
 {% endif %}

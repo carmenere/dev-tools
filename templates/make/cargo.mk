@@ -7,8 +7,13 @@ include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
 
 include {{ SETTINGS }}
 
-BINS ?= {{ BINS | default('', true) }}
+{% if CARGO_TOML is defined and CARGO_TOML.replace('"', '').replace("'",'') != '' -%}
 CARGO_TOML ?= {{ CARGO_TOML }}
+{% else %}
+{% include 'CARGO_TOML is required and cannot be empty string.' %}
+{% endif -%}
+
+BINS ?= {{ BINS | default('', true) }}
 CLIPPY_FORMAT ?= {{ CLIPPY_FORMAT | default('human', true) }}
 CLIPPY_REPORT ?= {{ CLIPPY_REPORT | default('&1', true) }}
 FEATURES ?= {{ FEATURES | default('', true) }}

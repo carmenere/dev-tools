@@ -2,7 +2,7 @@
 CTX := docker_rust
 ########################################################################################################################
 ctx_docker_rust__ENABLED = $(d__DOCKER_SERVICES_ENABLED)
-ctx_docker_rust__STAGE = build
+ctx_docker_rust__STAGE = images
 
 docker_rust__IN = $(MK)/docker.mk
 docker_rust__OUT_DIR = $(d__OUTDIR)/docker
@@ -31,7 +31,7 @@ CTXES := $(CTXES) docker_rust
 CTX := docker_bar
 ########################################################################################################################
 ctx_docker_bar__ENABLED = $(d__DOCKER_APPS_ENABLED)
-ctx_docker_bar__STAGE = apps
+ctx_docker_bar__STAGE = images docker-apps
 
 docker_bar__IN = $(MK)/docker.mk
 docker_bar__OUT_DIR = $(d__OUTDIR)/docker
@@ -64,7 +64,7 @@ CTXES := $(CTXES) docker_bar
 CTX := docker_foo
 ########################################################################################################################
 ctx_docker_foo__ENABLED = $(d__DOCKER_APPS_ENABLED)
-ctx_docker_foo__STAGE = apps
+ctx_docker_foo__STAGE = images docker-apps
 
 docker_foo__IN = $(MK)/docker.mk
 docker_foo__OUT_DIR = $(d__OUTDIR)/docker

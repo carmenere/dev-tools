@@ -11,7 +11,7 @@ app_sqlx_bar__OUT_DIR = $(d__OUTDIR)/app/sqlx/bar
 app_sqlx_bar__OUT = $(app_sqlx_bar__OUT_DIR)/Makefile
 
 app_sqlx_bar__BIN_PATH = sqlx migrate run
-app_sqlx_bar__OPTS = --source "$(d__PROJECT_ROOT)/examples/bar/$(SCHEMAS_DIR)"
+app_sqlx_bar__OPTS = --source "$(d__PROJECT_ROOT)/examples/bar/$(d__SCHEMAS_DIR)"
 app_sqlx_bar__TMUX = $(tmux__OUT)
 
 # sqlx envs

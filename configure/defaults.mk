@@ -61,6 +61,7 @@ d__DOCKER_NETWORK_DRIVER = bridge
 d__DOCKER_NETWORK_NAME = dev-tools
 d__DOCKER_NETWORK_SUBNET = 192.168.100.0/24
 d__DOCKER_PG_IMAGE = postgres:12.15-alpine3.18
+d__DOCKER_CLICKHOUSE_IMAGE = clickhouse/clickhouse-server:23.3.11.5-alpine
 d__DOCKER_REDIS_IMAGE = redis:7.2.0-alpine3.18
 d__DOCKER_RUST_TARGET_ARCH = aarch64-unknown-linux-musl
 d__DOCKER_RUST_VERSION = $(d__RUST_VERSION)

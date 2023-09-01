@@ -1,9 +1,15 @@
+{% if BUILD_ARGS is not defined or BUILD_ARGS.replace('"', '').replace("'",'') == '' -%}
+{% set BUILD_ARGS = [] -%}
+{% else -%}
+{% set BUILD_ARGS = BUILD_ARGS.split(' ') -%}
+{% endif -%}
+
 {% set args = [] -%}
 {% if BUILD_ARGS -%}
-{% for item in BUILD_ARGS.split(' ') -%}
+{% for item in BUILD_ARGS -%}
 {{ item }} = {{ env['arg_' + item] }}
 {% endfor -%}
-{% for item in BUILD_ARGS.split(' ') -%}
+{% for item in BUILD_ARGS -%}
 {% if env['arg_' + item] -%}
 {% do args.append("{}=$({})".format(item, item)) -%}
 {% endif -%}
