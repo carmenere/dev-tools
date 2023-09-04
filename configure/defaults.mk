@@ -160,8 +160,24 @@ d__CARGO_PROFILE = dev
 
 
 ########################################################################################################################
-include $(DEVTOOLS_DIR)/ctxes/*.mk
+# include $(DEVTOOLS_DIR)/ctxes/*.mk
 include $(DEVTOOLS_DIR)/toolchain/defaults.mk
+
+include $(DEVTOOLS_DIR)/ctxes/app.mk
+include $(DEVTOOLS_DIR)/ctxes/cargo.mk
+include $(DEVTOOLS_DIR)/ctxes/cli.mk
+include $(DEVTOOLS_DIR)/ctxes/pip.mk
+include $(DEVTOOLS_DIR)/ctxes/pytest.mk
+include $(DEVTOOLS_DIR)/ctxes/python.mk
+include $(DEVTOOLS_DIR)/ctxes/rustup.mk
+include $(DEVTOOLS_DIR)/ctxes/services.mk
+include $(DEVTOOLS_DIR)/ctxes/tmux.mk
+include $(DEVTOOLS_DIR)/ctxes/venv.mk
+
+include $(DEVTOOLS_DIR)/ctxes/docker-apps.mk
+include $(DEVTOOLS_DIR)/ctxes/docker-services.mk
+
+include $(DEVTOOLS_DIR)/ctxes/compose.mk
 ########################################################################################################################
 
 # Render

@@ -1,160 +1,19 @@
 version: '3.9'
 
+{% if SERVICES is not defined or SERVICES.replace('"', '').replace("'",'') == '' -%}
+{% set SERVICES = [] -%}
+{% else -%}
+{% set SERVICES = SERVICES.split(' ') -%}
+{% endif -%}
+
+{% set s = [] -%}
+{% if SERVICES -%}
 services:
-  {{ REDIS }}:
-    image: {{ REDIS_IMAGE }}
-    container_name: {{ REDIS }}
-    networks:
-      - {{ REDIS_BRIDGE }}
-    command: redis-server --requirepass "{{ REDIS_ADMIN_PASSWORD }}"
-{%- set p = [] -%}
-{% if REDIS_PUBLISH -%}
-{% for item in REDIS_PUBLISH.split(' ') -%}
-{% do p.append("\"{}\"".format(item)) -%}
+{% for item in SERVICES -%}
+{% include item %}
 {% endfor -%}
-{% endif -%}
-{% if p %}
-    ports:
-      - {{ p|join('\n      - ') }}
 {% endif %}
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100m"
-        max-file: "2"
-    restart: {{ REDIS_RESTART_POLICY }}
-  {{ PG }}:
-    image: {{ PG_IMAGE }}
-    container_name: {{ PG }}
-    networks:
-      - {{ PG_BRIDGE }}
-    volumes:
-      - postgres:/var/lib/postgresql/data
-{%- set p = [] -%}
-{% if PG_PUBLISH -%}
-{% for item in PG_PUBLISH.split(' ') -%}
-{% do p.append("\"{}\"".format(item)) -%}
-{% endfor -%}
-{% endif -%}
-{% if p %}
-    ports:
-      - {{ p|join('\n      - ') }}
-{% endif %}
-    command: ["postgres", "-c", "log_statement=all"]
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100m"
-        max-file: "2"
-    restart: {{ PG_RESTART_POLICY }}
-{%- set e = [] -%}
-{% if PG_ENVS -%}
-{% for item in PG_ENVS.split(' ') -%}
-{% do e.append("{}={}".format(item, env[item])) -%}
-{% endfor -%}
-{% endif -%}
-{% if e %}
-    environment:
-      - {{ e|join('\n      - ') }}
-{% endif %}
-  {{ RUST }}:
-    build:
-      context: {{ RUST_CTX }}
-      dockerfile: {{ RUST_DOCKERFILE }}
-      args:
-          BASE_IMAGE: {{ RUST_BASE_IMAGE }}
-          RUST_VERSION: {{ RUST_VERSION }}
-          TARGET_ARCH: {{ TARGET_ARCH }}
-          SQLX_VERSION: {{ SQLX_VERSION }}
-    image: {{ RUST_IMAGE }}
-  {{ FOO }}:
-    build:
-      context: {{ FOO_CTX }}
-      dockerfile: {{ FOO_DOCKERFILE }}
-      args:
-          APP: {{ FOO }}
-          BUILDER:  {{ FOO_BUILDER }}
-          BASE_IMAGE:  {{ FOO_BASE_IMAGE }}
-          BUILD_PROFILE: {{ FOO_BUILD_PROFILE }}
-          BUILD_VERSION: {{ FOO_BUILD_VERSION }}
-          TARGET_ARCH:  {{ FOO_TARGET_ARCH }}
-    depends_on:
-      - {{ RUST }}
-    image: {{ FOO_IMAGE }}
-    container_name: {{ FOO }}
-    networks:
-      - {{ FOO_BRIDGE }}
-{%- set p = [] -%}
-{% if FOO_PUBLISH -%}
-{% for item in FOO_PUBLISH.split(' ') -%}
-{% do p.append("\"{}\"".format(item)) -%}
-{% endfor -%}
-{% endif -%}
-{% if p %}
-    ports:
-      - {{ p|join('\n      - ') }}
-{% endif %}
-    command: /bin/sh -c 'echo "OK"'
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100m"
-        max-file: "2"
-    restart: {{ FOO_RESTART_POLICY }}
-{%- set e = [] -%}
-{% if FOO_ENVS -%}
-{% for item in FOO_ENVS.split(' ') -%}
-{% do e.append("{}={}".format(item, env[item])) -%}
-{% endfor -%}
-{% endif -%}
-{% if e %}
-    environment:
-      - {{ e|join('\n      - ') }}
-{% endif %}
-  {{ BAR }}:
-    build:
-      context: {{ BAR_CTX }}
-      dockerfile: {{ BAR_DOCKERFILE }}
-      args:
-          APP: {{ BAR }}
-          BUILDER:  {{ BAR_BUILDER }}
-          BASE_IMAGE:  {{ BAR_BASE_IMAGE }}
-          BUILD_PROFILE: {{ BAR_BUILD_PROFILE }}
-          BUILD_VERSION: {{ BAR_BUILD_VERSION }}
-          TARGET_ARCH:  {{ BAR_TARGET_ARCH }}
-    depends_on:
-      - {{ RUST }}
-    image: {{ BAR_IMAGE }}
-    container_name: {{ BAR }}
-    networks:
-      - {{ BAR_BRIDGE }}
-    command: /bin/sh -c 'echo "OK"'
-{%- set p = [] -%}
-{% if BAR_PUBLISH -%}
-{% for item in BAR_PUBLISH.split(' ') -%}
-{% do p.append("\"{}\"".format(item)) -%}
-{% endfor -%}
-{% endif -%}
-{% if p %}
-    ports:
-      - {{ p|join('\n      - ') }}
-{% endif %}
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100m"
-        max-file: "2"
-    restart: {{ BAR_RESTART_POLICY }}
-{%- set e = [] -%}
-{% if BAR_ENVS -%}
-{% for item in BAR_ENVS.split(' ') -%}
-{% do e.append("{}={}".format(item, env[item])) -%}
-{% endfor -%}
-{% endif -%}
-{% if e %}
-    environment:
-      - {{ e|join('\n      - ') }}
-{% endif %}
+
 networks:
   {{ BRIDGE }}:
     name: {{ BRIDGE }}

@@ -1,0 +1,12 @@
+
+
+
+{% if COMMAND is not defined or COMMAND.replace('"', '').replace("'",'') == '' -%}
+{% set COMMAND = [] -%}
+{% endif -%}
+
+{% if COMMAND -%}
+{% if COMMAND is defined or COMMAND.replace('"', '').replace("'",'') != '' -%}
+    command: {{ COMMAND }}
+{% endif %}
+{% endif %}

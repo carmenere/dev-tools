@@ -12,11 +12,12 @@ DAEMONIZE ?= {{ DAEMONIZE | default('yes', true) }}
 DOCKERFILE ?= {{ DOCKERFILE | default('', true) }}
 DRIVER ?= {{ DRIVER | default('bridge', true) }}
 ERR_IF_BRIDGE_EXISTS = {{ ERR_IF_BRIDGE_EXISTS | default('no', true) }}
-IMAGE ?= {{ IMAGE | default('$(BASE_IMAGE)', true) }}
+IMAGE ?= {{ IMAGE | default('', true) }}
 RESTART_POLICY ?= {{ RESTART_POLICY | default('no', true) }}
 RM_AFTER_STOP ?= {{ RM_AFTER_STOP | default('yes', true) }}
 SUBNET ?= {{ SUBNET | default('192.168.100.0/24', true) }}
 TAG ?= {{ TAG | default('latest', true) }}
+COMMAND ?= {{ COMMAND | default('', true) }}
 
 CHECK_DOCKER = docker ps 1>/dev/null
 
@@ -28,6 +29,14 @@ CHECK_DOCKER = docker ps 1>/dev/null
 
 # PUBLUSH
 {% include 'common/j2/publish.jinja2' %}
+
+ifdef IMAGE
+	IMG = $(IMAGE)
+else ifdef BASE_IMAGE
+	IMG = $(BASE_IMAGE)
+else
+	$(error Neither IMAGE nor BASE_IMAGE are defined.)
+endif
 
 ifeq ($(DAEMONIZE),yes)
 RUN_OPTS += -d
@@ -60,7 +69,7 @@ network-rm:
 
 build:
 ifdef DOCKERFILE
-	docker build -f $(DOCKERFILE) $(BUILD_ARGS) -t $(IMAGE) $(CTX)
+	docker build -f $(DOCKERFILE) $(BUILD_ARGS) -t $(IMG) $(CTX)
 else ifdef BASE_IMAGE
 	docker pull $(BASE_IMAGE)
 else
@@ -69,7 +78,7 @@ endif
 
 run:
 	$(CHECK_DOCKER)
-	[ -n "$$(docker ps -aq -f status=running -f name=$(CONTAINER))" ] || docker run $(RUN_OPTS) $(ENVS) $(IMAGE)
+	[ -n "$$(docker ps -aq -f status=running -f name=$(CONTAINER))" ] || docker run $(RUN_OPTS) $(ENVS) $(IMG) $(COMMAND)
 
 start:
 	$(CHECK_DOCKER)
@@ -85,7 +94,7 @@ rm:
 
 rm-by-image:
 	$(CHECK_DOCKER)
-	[ -z "$$(docker ps -aq -f ancestor=$(IMAGE))" ] || docker rm -f "$$(docker ps -aq -f ancestor=$(IMAGE))"
+	[ -z "$$(docker ps -aq -f ancestor=$(IMG))" ] || docker rm -f "$$(docker ps -aq -f ancestor=$(IMG))"
 
 rm-all:
 	$(CHECK_DOCKER)

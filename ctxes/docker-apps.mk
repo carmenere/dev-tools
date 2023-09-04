@@ -13,7 +13,6 @@ docker_rust__CTX = $(d__PROJECT_ROOT)
 docker_rust__DOCKERFILE = $(DOCKERFILES)/Dockerfile.rust
 docker_rust__TAG = latest
 docker_rust__IMAGE = $(call docker_image,rust,$(docker_rust__TAG))
-docker_rust__PUBLISH = 8081:80/tcp
 
 # docker build_args
 docker_rust__arg_BASE_IMAGE = $(d__DOCKER_ALPINE_IMAGE)
@@ -73,7 +72,7 @@ docker_foo__OUT = $(docker_foo__OUT_DIR)/foo.mk
 docker_foo__CONTAINER = foo
 docker_foo__CTX = $(d__PROJECT_ROOT)
 docker_foo__DOCKERFILE = $(DOCKERFILES)/Dockerfile.rust_app
-docker_foo__PUBLISH = 8081:80/tcp
+docker_foo__PUBLISH = 9081:80/tcp
 docker_foo__IMAGE = $(call docker_image,foo,$(docker_foo__TAG))
 
 # docker build_args

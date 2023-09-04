@@ -13,6 +13,8 @@ docker_pg__CTX = $(d__PROJECT_ROOT)
 docker_pg__RESTART_POLICY = always
 docker_pg__RM_AFTER_STOP = no
 
+docker_pg__IMAGE = $(call docker_image,$(docker_pg__arg_BASE_IMAGE))
+
 # build args for docker build
 docker_pg__arg_BASE_IMAGE = $(d__DOCKER_PG_IMAGE)
 
@@ -42,6 +44,8 @@ docker_redis__CTX = $(d__PROJECT_ROOT)
 docker_redis__RESTART_POLICY = always
 docker_redis__RM_AFTER_STOP = no
 
+docker_redis__IMAGE = $(call docker_image,$(docker_redis__arg_BASE_IMAGE))
+
 # docker build_args
 docker_redis__arg_BASE_IMAGE = $(d__DOCKER_REDIS_IMAGE)
 
@@ -63,6 +67,8 @@ docker_clickhouse__CONTAINER = clickhouse
 docker_clickhouse__CTX = $(d__PROJECT_ROOT)
 docker_clickhouse__RESTART_POLICY = always
 docker_clickhouse__RM_AFTER_STOP = no
+
+docker_clickhouse__IMAGE = $(call docker_image,$(docker_clickhouse__arg_BASE_IMAGE))
 
 # docker build_args
 docker_clickhouse__arg_BASE_IMAGE = $(d__DOCKER_CLICKHOUSE_IMAGE)
