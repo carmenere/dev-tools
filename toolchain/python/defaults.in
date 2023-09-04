@@ -5,4 +5,4 @@ d__PY_DIR = @PREFIX@
 d__PYTHON = @PYTHON@
 
 # toolchain's vpython
-TPYTHON = @VPYTHON@
+d__TPYTHON = @VPYTHON@

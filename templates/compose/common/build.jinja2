@@ -1,0 +1,28 @@
+{% if DOCKERFILE is not defined or DOCKERFILE.replace('"', '').replace("'",'') == '' -%}
+{% set DOCKERFILE = '' -%}
+{% endif -%}
+
+{% if DOCKERFILE %}
+    build:
+      context: {{ CTX | default('.', true) }}
+      dockerfile: {{ DOCKERFILE | default('', true) }}
+{% if BUILD_ARGS is not defined or BUILD_ARGS.replace('"', '').replace("'",'') == '' -%}
+{% set BUILD_ARGS = [] -%}
+{% else -%}
+{% set BUILD_ARGS = BUILD_ARGS.split(' ') -%}
+{% endif -%}
+
+{% set args = [] -%}
+{% if BUILD_ARGS -%}
+{% for item in BUILD_ARGS -%}
+{% if env['arg_' + item] -%}
+{% do args.append("{}={}".format(item,env['arg_' + item])) -%}
+{% endif -%}
+{% endfor -%}
+{% endif %}
+
+{% if args %}
+      args:
+        - {{ args|join('\n        - ') }}
+{% endif %}
+{% endif %}

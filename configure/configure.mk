@@ -9,9 +9,12 @@ ifdef SETTINGS
     include $(shell realpath $(SETTINGS))
 endif
 
+$(foreach CTX,$(CTXES),$(eval $(CTX)__ENVS = $(call list_by_prefix,$(CTX)__env_)))
+$(foreach CTX,$(CTXES),$(eval $(CTX)__BUILD_ARGS = $(call list_by_prefix,$(CTX)__arg_)))
+
 RENDER ?= $(TPYTHON) -m render.main
 
-.PHONY: all
+.PHONY: all ctxes envs
 
 # 1. Put CTX's envs to Render's envs.
 all:
@@ -21,3 +24,11 @@ all:
 		$(RENDER) --in=$($(CTX)__IN) --out=$($(CTX)__OUT) \
 	$(LF))
 
+ctxes:
+	@echo SETTINGS = $(SETTINGS)
+	@$(foreach CTX,$(CTXES),echo "ctx_$(CTX)__ENABLED = $(ctx_$(CTX)__ENABLED); ctx_$(CTX)__STAGE = $(ctx_$(CTX)__STAGE)" $(LF))
+
+envs:
+	@echo SETTINGS = $(SETTINGS)
+	@$(foreach CTX,$(CTXES),echo "$(CTX): enabled = $(ctx_$(CTX)__ENABLED); stage = $(ctx_$(CTX)__STAGE)" $(LF) \
+	$(foreach V,$(filter $(CTX)__%,$(.VARIABLES)),echo "    $(subst $(CTX)__,,$(V))='$($(V))'" $(LF)))

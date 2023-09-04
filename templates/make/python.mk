@@ -22,8 +22,6 @@ VERSION ?= $(MAJOR).$(MINOR)$(RC)
 PYTHON ?= $(PREFIX)/bin/python$(MAJOR)
 
 # SUDO
-SUDO_BIN ?= {{ SUDO_BIN | default('$(d__SUDO_BIN)', true) }}
-SUDO_USER ?= {{ SUDO_USER | default('$(d__SUDO_USER)', true) }}
 include $(DEVTOOLS_DIR)/templates/make/common/sudo.mk
 
 ifdef VARS

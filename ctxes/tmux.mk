@@ -1,11 +1,11 @@
 ########################################################################################################################
-CTX := tmux
+# tmux
 ########################################################################################################################
-ctx_tmux__ENABLED = yes
+ctx_tmux__ENABLED = no
 ctx_tmux__STAGE = tmux
 
 tmux__IN = $(MK)/tmux.mk
 tmux__OUT_DIR = $(d__OUTDIR)/tmux
 tmux__OUT = $(tmux__OUT_DIR)/Makefile
 
-CTXES := $(CTXES) tmux
+CTXES += tmux

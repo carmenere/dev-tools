@@ -3,7 +3,9 @@ TMPL_DIR = $(DEVTOOLS_DIR)/templates
 MK = $(TMPL_DIR)/make
 DOCKER_COMPOSE = $(TMPL_DIR)/compose
 
-# LIB
+########################################################################################################################
+# Functions
+########################################################################################################################
 include $(DEVTOOLS_DIR)/lib.mk
 
 # Use 'abspath' instead 'realpath' because TARGET_DIR is not exists, but 'realpath' checks its existance
@@ -12,10 +14,10 @@ include $(DEVTOOLS_DIR)/lib.mk
 define cargo_bins
 $(eval 
 ifeq ($1,dev)
-PROFILE_DIR = debug
+x__PROFILE_DIR = debug
 else
-PROFILE_DIR = $1
-endif)$2/$3/$(PROFILE_DIR)
+x__PROFILE_DIR = $1
+endif)$2/$3/$(x__PROFILE_DIR)
 endef
 
 # $1:image_name,$2:tag
@@ -24,10 +26,10 @@ endef
 define docker_image
 $(eval 
 ifneq ($2,)
-IMAGE = $1:$2
+x__IMAGE = $1:$2
 else
-IMAGE = $1
-endif)$(IMAGE)
+x__IMAGE = $1
+endif)$(x__IMAGE)
 endef
 
 # $1:prefix
@@ -37,14 +39,29 @@ $(foreach V,$(filter $1%,$(.VARIABLES)),$(subst $1,,$(V)))
 endef
 
 # $1:src,$2:dst
-# EXAMPLE = $(call copy,pg_X__env_,pg_Y__env_)
-define copy
+# EXAMPLE = $(call copy_ctx,pg_X__env_,pg_Y__env_)
+define copy_ctx
 $(foreach V,$(filter $1%,$(.VARIABLES)), \
     $(eval $2$(subst $1,,$(V)) = $($(V))) \
 )
 endef
 
+# $1:src,$2:vars,$3:dst
+# EXAMPLE = $(call inherit,pg_X__env,ABC QWERTY,pg_Y__env_)
+define inherit_vars
+$(foreach V,$2,$(eval $3$(V) ?= $$($1$(V))))
+endef
+
+# $1:src,$2:dst
+# EXAMPLE = $(call inherit_ctx,pg_X__env_,pg_Y__env_)
+define inherit_ctx
+$(foreach V,$(filter $1%,$(.VARIABLES)), \
+    $(eval $2$(subst $1,,$(V)) ?= $$($(V))) \
+)
+endef
+
 ########################################################################################################################
+
 d__IN = $(MK)/common/defaults.jinja2
 d__OUT = $(MK)/common/defaults.j2
 
@@ -53,9 +70,12 @@ d__SELFDIR = $$(realpath $$(dir $$(lastword $$(MAKEFILE_LIST))))
 d__INSTALL_DIR = /usr/local/bin
 d__PROJECT_ROOT = $(shell pwd)
 
-# DOCKE
+#
+d__APPS_ENABLED = no
+d__SERVICES_ENABLED = no
+
+# DOCKER
 d__DOCKER_ALPINE_IMAGE = alpine:3.18.3
-d__DOCKER_APPS_ENABLED = no
 d__DOCKER_DAEMONIZE = yes
 d__DOCKER_NETWORK_DRIVER = bridge
 d__DOCKER_NETWORK_NAME = dev-tools
@@ -65,15 +85,12 @@ d__DOCKER_CLICKHOUSE_IMAGE = clickhouse/clickhouse-server:23.3.11.5-alpine
 d__DOCKER_REDIS_IMAGE = redis:7.2.0-alpine3.18
 d__DOCKER_RUST_TARGET_ARCH = aarch64-unknown-linux-musl
 d__DOCKER_RUST_VERSION = $(d__RUST_VERSION)
-d__DOCKER_SERVICES_ENABLED = no
 
 # ERROR
 d__EXIT_IF_CREATE_EXISTED_DB = no
 d__EXIT_IF_CREATE_EXISTED_USER = no
 
-# HOS
-d__HOST_APPS_ENABLED = yes
-d__HOST_SERVICES_ENABLED = yes
+# HOST
 d__LOCALHOST = localhost
 
 # LOCAL
@@ -144,7 +161,12 @@ d__SUDO_BIN = $(shell which sudo)
 d__SUDO_USER = 
 
 # toolchain's python
-include $(DEVTOOLS_DIR)/toolchain/python/defaults.mk
+d__PY_MAJOR = 3.11
+d__PY_MINOR = 4
+d__PY_OWNER = $(USER)
+d__PYTHON = $(shell which python3)
+d__TPYTHON = $(d__PYTHON)
+d__PY_DIR = $(dir $(d__PYTHON))
 
 # cargo
 d__CARGO_TARGET_DIR = target
@@ -152,6 +174,24 @@ d__CARGO_PROFILE = dev
 
 
 ########################################################################################################################
-include $(DEVTOOLS_DIR)/ctxes/*.mk
 include $(DEVTOOLS_DIR)/toolchain/defaults.mk
+
+include $(DEVTOOLS_DIR)/ctxes/app.mk
+include $(DEVTOOLS_DIR)/ctxes/cargo.mk
+include $(DEVTOOLS_DIR)/ctxes/cli.mk
+include $(DEVTOOLS_DIR)/ctxes/pip.mk
+include $(DEVTOOLS_DIR)/ctxes/pytest.mk
+include $(DEVTOOLS_DIR)/ctxes/python.mk
+include $(DEVTOOLS_DIR)/ctxes/rustup.mk
+include $(DEVTOOLS_DIR)/ctxes/services.mk
+include $(DEVTOOLS_DIR)/ctxes/tmux.mk
+include $(DEVTOOLS_DIR)/ctxes/venv.mk
+
+include $(DEVTOOLS_DIR)/ctxes/docker-apps.mk
+include $(DEVTOOLS_DIR)/ctxes/docker-services.mk
+
+include $(DEVTOOLS_DIR)/ctxes/compose.mk
 ########################################################################################################################
+
+# Render
+RENDER ?= $(d__TPYTHON) -m render.main
