@@ -16,8 +16,6 @@ STOP_CMD ?= {{ STOP_CMD | default('$(CMD_PREFIX) stop $(SERVICE)', true) }}
 VERSION ?= {{ VERSION | default('$(MAJOR).$(MINOR)', true) }}
 
 # SUDO
-SUDO_BIN ?= {{ SUDO_BIN | default('$(d__SUDO_BIN)', true) }}
-SUDO_USER ?= {{ SUDO_USER | default('$(d__SUDO_USER)', true) }}
 include $(DEVTOOLS_DIR)/templates/make/common/sudo.mk
 
 .PHONY: install-ubuntu install-debian install-alpine install-macos install start stop restart clean distclean

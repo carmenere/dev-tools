@@ -16,11 +16,10 @@ CMD_PREFIX ?= {{ CMD_PREFIX | default('$(d__SERVICE_CMD_PREFIX)', true) }}
 START_CMD ?= {{ START_CMD | default('$(CMD_PREFIX) start $(SERVICE)', true) }}
 STOP_CMD ?= {{ STOP_CMD | default('$(CMD_PREFIX) stop $(SERVICE)', true) }}
 USER_XML ?= {{ USER_XML | default('$(d__CH_USER_XML)', true) }}
+RENDER ?= {{ RENDER }}
 
 # SUDO
-SUDO_BIN ?= {{ SUDO_BIN | default('$(d__SUDO_BIN)', true) }}
-SUDO_USER ?= {{ SUDO_USER | default('$(d__SUDO_USER)', true) }}
-include $(DEVTOOLS_DIR)/templates/make/common/sudo.mk
+{% include 'common/sudo.mk' %}
 
 .PHONY: install-ubuntu install-debian install-alpine install-macos install init-user start stop restart clean distclean init
 
@@ -37,23 +36,9 @@ install-macos:
 install: install-$(OS)
 
 init-user:
-	echo '<?xml version="1.0"?>'                                      > $(USER_XML)
-	echo '<yandex>'                                                   >> $(USER_XML)
-	echo '    <profiles>'                                             >> $(USER_XML)
-	echo '        <default>'                                          >> $(USER_XML)
-	echo '            <union_default_mode>ALL</union_default_mode>'   >> $(USER_XML)
-	echo '        </default>'                                         >> $(USER_XML)
-	echo '    </profiles>'                                            >> $(USER_XML)
-	echo '    <users>'                                                >> $(USER_XML)
-	echo '        <default>'                                          >> $(USER_XML)
-	echo '            <access_management>1</access_management>'       >> $(USER_XML)
-	echo '        </default>'                                         >> $(USER_XML)
-	echo '        <$(ADMIN)>'                                         >> $(USER_XML)
-	echo '            <password>$(ADMIN_PASSWORD)</password>'         >> $(USER_XML)
-	echo '            <access_management>1</access_management>'       >> $(USER_XML)
-	echo '        </$(ADMIN)>'                                        >> $(USER_XML)
-	echo '</users>'                                                   >> $(USER_XML)
-	echo '</yandex>'                                                  >> $(USER_XML)
+	$(SUDO) \
+	ADMIN=$(ADMIN) ADMIN_PASSWORD=$(ADMIN_PASSWORD) \
+		$(RENDER) --in=$(DEVTOOLS_DIR)/templates/make/user.xml --out=$(USER_XML)
 
 init: init-user stop start
 

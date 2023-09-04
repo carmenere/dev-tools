@@ -33,7 +33,7 @@ tests reports clean distclean ctxes
 
 define runner
 @echo "--------------------------- STAGE ---------------------------" ${LF}
-@echo "STAGE: $1 ACTION: $3"
+@echo "Stage: $1; action: $3."
 @echo "--------------------------- BEGIN ---------------------------" ${LF}
 $(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ctx_$(CTX)__ENABLED),$2),$(CTX)))))
 $(eval ECTXES = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $(ctx_$(CTX)__STAGE),$1),$(CTX)))))

@@ -31,6 +31,7 @@ ctx_clickhouse__STAGE = services
 clickhouse__IN = $(MK)/clickhouse.mk
 clickhouse__OUT_DIR = $(d__OUTDIR)/clickhouse
 clickhouse__OUT = $(clickhouse__OUT_DIR)/Makefile
+clickhouse__RENDER = $(RENDER)
 
 CTXES := $(CTXES) clickhouse
 

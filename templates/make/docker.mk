@@ -18,7 +18,7 @@ RM_AFTER_STOP ?= {{ RM_AFTER_STOP | default('yes', true) }}
 SUBNET ?= {{ SUBNET | default('192.168.100.0/24', true) }}
 TAG ?= {{ TAG | default('latest', true) }}
 
-CHECK_DOCKER = docker ps >/dev/null 2>&1
+CHECK_DOCKER = docker ps 1>/dev/null
 
 # ENVS
 {% include 'common/j2/docker-envs.jinja2' %}

@@ -1,8 +1,0 @@
-d__PY_MAJOR = @MAJOR@
-d__PY_MINOR = @MINOR@
-d__PY_OWNER = @OWNER@
-d__PY_DIR = @PREFIX@
-d__PYTHON = @PYTHON@
-
-# toolchain's vpython
-TPYTHON = @VPYTHON@

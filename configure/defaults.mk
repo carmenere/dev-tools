@@ -3,7 +3,9 @@ TMPL_DIR = $(DEVTOOLS_DIR)/templates
 MK = $(TMPL_DIR)/make
 DOCKER_COMPOSE = $(TMPL_DIR)/compose
 
-# LIB
+########################################################################################################################
+# Functions
+########################################################################################################################
 include $(DEVTOOLS_DIR)/lib.mk
 
 # Use 'abspath' instead 'realpath' because TARGET_DIR is not exists, but 'realpath' checks its existance
@@ -45,6 +47,7 @@ $(foreach V,$(filter $1%,$(.VARIABLES)), \
 endef
 
 ########################################################################################################################
+
 d__IN = $(MK)/common/defaults.jinja2
 d__OUT = $(MK)/common/defaults.j2
 
@@ -144,7 +147,12 @@ d__SUDO_BIN = $(shell which sudo)
 d__SUDO_USER = 
 
 # toolchain's python
-include $(DEVTOOLS_DIR)/toolchain/python/defaults.mk
+d__PY_MAJOR = 3.11
+d__PY_MINOR = 4
+d__PY_OWNER = $(USER)
+d__PYTHON = $(shell which python3)
+d__TPYTHON = $(d__PYTHON)
+d__PY_DIR = $(dir $(d__PYTHON))
 
 # cargo
 d__CARGO_TARGET_DIR = target
@@ -155,3 +163,6 @@ d__CARGO_PROFILE = dev
 include $(DEVTOOLS_DIR)/ctxes/*.mk
 include $(DEVTOOLS_DIR)/toolchain/defaults.mk
 ########################################################################################################################
+
+# Render
+RENDER ?= $(d__TPYTHON) -m render.main

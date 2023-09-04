@@ -30,3 +30,6 @@
 
 # Jinja2
 templates/make/common/defaults.j2
+
+# Toolchain
+toolchain/**/defaults.mk
