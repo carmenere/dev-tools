@@ -1,5 +1,5 @@
 ########################################################################################################################
-CTX := rustup
+# rustup
 ########################################################################################################################
 rustup__IN = $(MK)/rustup.mk
 rustup__OUT_DIR = $(d__OUTDIR)/rustup
@@ -11,4 +11,4 @@ rustup__CARGO_CACHE_VERSION = 0.8.3
 CRATES += sqlx-cli
 rustup__SQLX_CLI_VERSION = 0.7.1
 
-CTXES := $(CTXES) rustup
+CTXES += rustup

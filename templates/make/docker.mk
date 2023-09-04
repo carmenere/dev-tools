@@ -31,11 +31,11 @@ CHECK_DOCKER = docker ps 1>/dev/null
 {% include 'common/j2/publish.jinja2' %}
 
 ifdef IMAGE
-	IMG = $(IMAGE)
+    IMG = $(IMAGE)
 else ifdef BASE_IMAGE
-	IMG = $(BASE_IMAGE)
+    IMG = $(BASE_IMAGE)
 else
-	$(error Neither IMAGE nor BASE_IMAGE are defined.)
+    $(error Neither IMAGE nor BASE_IMAGE are defined.)
 endif
 
 ifeq ($(DAEMONIZE),yes)
@@ -76,7 +76,7 @@ else
 	$(error Neither DOCKERFILE nor BASE_IMAGE are defined.)
 endif
 
-run:
+run: network
 	$(CHECK_DOCKER)
 	[ -n "$$(docker ps -aq -f status=running -f name=$(CONTAINER))" ] || docker run $(RUN_OPTS) $(ENVS) $(IMG) $(COMMAND)
 

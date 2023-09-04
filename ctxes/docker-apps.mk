@@ -1,7 +1,7 @@
 ########################################################################################################################
-CTX := docker_rust
+# docker_rust
 ########################################################################################################################
-ctx_docker_rust__ENABLED = $(d__DOCKER_SERVICES_ENABLED)
+ctx_docker_rust__ENABLED = no
 ctx_docker_rust__STAGE = images
 
 docker_rust__IN = $(MK)/docker.mk
@@ -20,16 +20,14 @@ docker_rust__arg_RUST_VERSION = $(d__DOCKER_RUST_VERSION)
 docker_rust__arg_TARGET_ARCH = $(d__DOCKER_RUST_TARGET_ARCH)
 docker_rust__arg_SQLX_VERSION = 0.7.1
 
-docker_rust__BUILD_ARGS = $(call list_by_prefix,docker_rust__arg_)
+# docker_rust__BUILD_ARGS = $(call list_by_prefix,docker_rust__arg_)
 
-docker_rust__ENVS = 
-
-CTXES := $(CTXES) docker_rust
+CTXES += docker_rust
 
 ########################################################################################################################
-CTX := docker_bar
+# docker_bar
 ########################################################################################################################
-ctx_docker_bar__ENABLED = $(d__DOCKER_APPS_ENABLED)
+ctx_docker_bar__ENABLED = no
 ctx_docker_bar__STAGE = images docker-apps
 
 docker_bar__IN = $(MK)/docker.mk
@@ -50,19 +48,15 @@ docker_bar__arg_BUILD_VERSION = $(d__BUILD_VERSION)
 docker_bar__arg_TARGET_ARCH = $(d__DOCKER_RUST_TARGET_ARCH)
 docker_bar__arg_BASE_IMAGE = $(d__DOCKER_ALPINE_IMAGE)
 
-docker_bar__BUILD_ARGS = $(call list_by_prefix,docker_bar__arg_)
-
 # docker envs
-$(call copy,app_bar__env_,docker_bar__env_)
+$(call inherit_ctx,bar__env_,docker_bar__env_)
 
-docker_bar__ENVS = $(call list_by_prefix,docker_bar__env_)
-
-CTXES := $(CTXES) docker_bar
+CTXES += docker_bar
 
 ########################################################################################################################
-CTX := docker_foo
+# docker_foo
 ########################################################################################################################
-ctx_docker_foo__ENABLED = $(d__DOCKER_APPS_ENABLED)
+ctx_docker_foo__ENABLED = no
 ctx_docker_foo__STAGE = images docker-apps
 
 docker_foo__IN = $(MK)/docker.mk
@@ -76,18 +70,15 @@ docker_foo__PUBLISH = 9081:80/tcp
 docker_foo__IMAGE = $(call docker_image,foo,$(docker_foo__TAG))
 
 # docker build_args
+$(call copy_ctx,docker_bar__arg_,docker_foo__arg_)
 docker_foo__arg_APP = foo
-docker_foo__arg_BUILDER = $(docker_rust__IMAGE)
-docker_foo__arg_BUILD_PROFILE = $(d__CARGO_PROFILE)
-docker_foo__arg_BUILD_VERSION = $(d__BUILD_VERSION)
-docker_foo__arg_TARGET_ARCH = $(d__DOCKER_RUST_TARGET_ARCH)
-docker_foo__arg_BASE_IMAGE = $(d__DOCKER_ALPINE_IMAGE)
+# docker_foo__arg_BUILDER = $(docker_rust__IMAGE)
+# docker_foo__arg_BUILD_PROFILE = $(d__CARGO_PROFILE)
+# docker_foo__arg_BUILD_VERSION = $(d__BUILD_VERSION)
+# docker_foo__arg_TARGET_ARCH = $(d__DOCKER_RUST_TARGET_ARCH)
+# docker_foo__arg_BASE_IMAGE = $(d__DOCKER_ALPINE_IMAGE)
 
-docker_foo__BUILD_ARGS = $(call list_by_prefix,docker_foo__arg_)
+# # docker envs
+$(call inherit_ctx,foo__env_,docker_foo__env_)
 
-# docker envs
-$(call copy,app_foo__env_,docker_foo__env_)
-
-docker_foo__ENVS = $(call list_by_prefix,docker_foo__env_)
-
-CTXES := $(CTXES) docker_foo
+CTXES += docker_foo

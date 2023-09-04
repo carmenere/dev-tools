@@ -27,8 +27,11 @@ toolchain:
 configure:
 	make -f $(CONF) all
 
+deps:
+	make -f $(STAGES) deps
+
 init: configure
-	make -f $(STAGES) deps venvs stop-disabled images services init
+	make -f $(STAGES) deps venvs stop-apps stop-disabled stop-services docker-rm images services init
 
 stop-disabled:
 	make -f $(STAGES) stop-disabled
@@ -39,17 +42,17 @@ start-services:
 build:
 	make -f $(STAGES) schemas build
 
-schemas: stop
+schemas: stop-apps
 	make -f $(STAGES) schemas
 
-upgrade: stop
+upgrade: stop-apps
 	make -f $(STAGES) schemas build fixtures upgrade
 
-stop:
-	make -f $(STAGES) stop
+stop-apps:
+	make -f $(STAGES) stop-apps
 	make -f $(STAGES) tmux-kill-server
 
-start: stop build
+start: stop-apps build
 	make -f $(STAGES) fixtures upgrade tmux apps
 
 stop-services:
@@ -61,17 +64,23 @@ tests: start
 reports: tests
 	make -f $(STAGES) reports
 
-clean-services: stop
+clean-services: stop-apps
 	make -f $(STAGES) clean-services
 
-clean: stop
+docker-rm:
+	make -f $(STAGES) docker-rm
+
+clean: stop-apps
 	make -f $(STAGES) clean
 
-distclean: stop
+distclean: stop-apps
 	make -f $(STAGES) distclean
 
 kill:
 	make -f $(STAGES) tmux-kill-server
 
 ctxes:
-	make -f $(STAGES) ctxes
+	make -f $(CONF) ctxes
+
+envs:
+	make -f $(CONF) envs
