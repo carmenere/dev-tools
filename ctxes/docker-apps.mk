@@ -38,7 +38,7 @@ docker_bar__CONTAINER = bar
 docker_bar__CTX = $(PROJECT_ROOT)
 docker_bar__DOCKERFILE = $(DOCKERFILES)/Dockerfile.rust_app
 docker_bar__PUBLISH = 8081:80/tcp
-docker_bar__IMAGE = $(call docker_image,bar,$(docker_bar__TAG))
+docker_bar__IMAGE = $(call docker_image,apps,$(docker_bar__TAG))
 
 # docker build_args
 docker_bar__arg_APP = bar
@@ -67,16 +67,11 @@ docker_foo__CONTAINER = foo
 docker_foo__CTX = $(PROJECT_ROOT)
 docker_foo__DOCKERFILE = $(DOCKERFILES)/Dockerfile.rust_app
 docker_foo__PUBLISH = 9081:80/tcp
-docker_foo__IMAGE = $(call docker_image,foo,$(docker_foo__TAG))
+docker_foo__IMAGE = $(call docker_image,apps,$(docker_foo__TAG))
 
 # docker build_args
 $(call copy_ctx,docker_bar__arg_,docker_foo__arg_)
 docker_foo__arg_APP = foo
-# docker_foo__arg_BUILDER = $(docker_rust__IMAGE)
-# docker_foo__arg_BUILD_PROFILE = $(CARGO_PROFILE)
-# docker_foo__arg_BUILD_VERSION = $(BUILD_VERSION)
-# docker_foo__arg_TARGET_ARCH = $(DOCKER_RUST_TARGET_ARCH)
-# docker_foo__arg_BASE_IMAGE = $(DOCKER_ALPINE_IMAGE)
 
 # # docker envs
 $(call inherit_ctx,foo__env_,docker_foo__env_)

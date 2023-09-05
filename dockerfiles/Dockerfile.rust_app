@@ -28,6 +28,9 @@ RUN source "$HOME/.cargo/env" && make configure init build install \
         TARGET_ARCH=${TARGET_ARCH} \
         PG_CONFIG=/usr/libexec/postgresql12/pg_config
 
+# /root/.cargo/bin/sqlx --source ./examples/bar/migrations
+# /root/.cargo/bin/sqlx --source ./examples/foo/migrations
+
 ########################################################################################################################
 FROM ${BASE_IMAGE} AS runtime
 ########################################################################################################################
@@ -35,4 +38,3 @@ ARG INSTALL_DIR=${INSTALL_DIR}
 
 COPY --from=core /etc/version /etc/version
 COPY --from=core ${INSTALL_DIR} ${INSTALL_DIR}
-COPY --from=core /root/.cargo/bin/sqlx /usr/local/bin
