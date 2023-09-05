@@ -6,23 +6,12 @@ ARG RUST_VERSION=1.71.1
 ARG TARGET_ARCH=aarch64-unknown-linux-musl
 ARG SQLX_VERSION=
 
-WORKDIR /opt/dev-tools
-
-COPY ./configure ./configure 
-COPY ./ctxes ./ctxes 
-COPY ./examples ./examples
-COPY ./render ./render
-COPY ./templates ./templates
-COPY ./toolchain ./toolchain 
-
-COPY ./lib.mk ./lib.mk
-COPY ./Makefile ./Makefile
-
 RUN apk update --no-cache && apk add \
     bash \
     bsd-compat-headers \
     build-base \
     curl \
+    git \
     findutils \
     jq \
     libev \
@@ -43,9 +32,27 @@ RUN apk update --no-cache && apk add \
     texinfo \
     tzdata
 
-# RUN make all \
-#         RUST_VERSION=${RUST_VERSION} \
-#         TARGET_ARCH=${TARGET_ARCH} \
-#         SQLX_VERSION=${SQLX_VERSION} && \
-#     make -f .output/rustup/Makefile all && \
-#     make -f .output/postgresql/Makefile install OS=alpine MAJOR=12
+WORKDIR /opt/dev-tools
+
+COPY ./configure ./configure
+COPY ./ctxes ./ctxes
+COPY ./examples ./examples
+COPY ./render ./render
+COPY ./templates ./templates
+COPY ./toolchain ./toolchain 
+
+COPY ./lib.mk ./lib.mk
+COPY ./Makefile ./Makefile
+
+RUN cd ./toolchain && make distclean && ./configure --with-python && make python
+
+RUN make configure \
+        BUILD_PROFILE=${BUILD_PROFILE} \
+        BUILD_VERSION=${BUILD_VERSION} \
+        TARGET_ARCH=${TARGET_ARCH} \
+        OS=alpine \
+        rustup__CRATES=sqlx-cli__0.7.1
+
+RUN make -f .output/rustup/Makefile all
+
+RUN make -f .output/postgresql/Makefile install

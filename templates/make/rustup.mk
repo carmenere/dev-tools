@@ -3,14 +3,11 @@ DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
 include $(DEVTOOLS_DIR)/lib.mk
 
-CRATES ?= {{ CRATES | default('cargo-cache sqlx-cli', true) }}
+CRATES ?= {{ CRATES | default('cargo-cache__0.8.3 sqlx-cli__0.7.1', true) }}
 RUST_VERSION ?= {{ RUST_VERSION | default(d['RUST_VERSION'], true) }}
 RUSTFLAGS ?= {{ RUSTFLAGS | default(d['RUSTFLAGS'], true) }}
 SOURCE_ENV ?= {{ SOURCE_ENV | default('source "$${HOME}/.cargo/env"', true) }}
 TARGET_ARCH ?= {{ TARGET_ARCH | default(d['RUST_TARGET_ARCH'], true) }}
-
-CARGO_CACHE_VERSION = 0.8.3
-SQLX_CLI_VERSION = 0.7.1
 
 COMPONENTS += clippy
 COMPONENTS += rustfmt
@@ -30,7 +27,7 @@ components:
 
 install: 
 	$(foreach CRATE,$(CRATES),$(SOURCE_ENV) && \
-		cargo install --target=$(TARGET_ARCH) --version=$($(call uppercase,$(subst -,_,$(CRATE)))_VERSION) --force $(CRATE) \
+		RUSTFLAGS='$(RUSTFLAGS)' cargo install --target=$(TARGET_ARCH) --version=$(lastword $(subst __, ,$(CRATE))) --force $(firstword $(subst __, ,$(CRATE))) \
 	$(LF))
 
 clean:

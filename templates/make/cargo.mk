@@ -17,6 +17,7 @@ LINTS ?= {{ LINTS | default('', true) }}
 PROFILE ?= {{ PROFILE | default(d['CARGO_PROFILE'], true) }}
 TARGET_ARCH ?= {{ TARGET_ARCH | default(d['RUST_TARGET_ARCH'], true) }}
 TARGET_DIR ?= {{ TARGET_DIR | default(d['CARGO_TARGET_DIR'], true) }}
+INSTALL_DIR ?= {{ INSTALL_DIR | default(d['INSTALL_DIR'], true) }}
 
 # ENVS
 {% include 'common/j2/envs.jinja2' %}
@@ -76,3 +77,14 @@ clean:
 
 distclean: 
 	$(CMD_CLEAN)
+
+install:
+ifdef BINS
+	install -d $(INSTALL_DIR)
+	$(foreach BIN,$(BINS),install -m 755 -t $(INSTALL_DIR) $(call cargo_bins,dev,$(TARGET_DIR),$(TARGET_ARCH))/$(BIN) ${LF})
+endif
+
+uninstall:
+ifdef BINS
+	$(foreach BIN,$(BINS),rm $(INSTALL_DIR)/$(BIN))
+endif

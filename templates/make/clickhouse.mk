@@ -16,7 +16,9 @@ USER_XML ?= {{ USER_XML | default(d['CH_USER_XML'], true) }}
 RENDER ?= {{ RENDER }}
 
 # SUDO
-{% include 'common/sudo.mk' %}
+SUDO_BIN ?= {{ SUDO_BIN | default(d['SUDO_BIN'], true) }}
+SUDO_USER ?= {{ SUDO_USER | default(d['SUDO_USER'], true) }}
+include $(DEVTOOLS_DIR)/templates/make/common/sudo.mk
 
 .PHONY: install-ubuntu install-debian install-alpine install-macos install init-user start stop restart clean distclean init
 

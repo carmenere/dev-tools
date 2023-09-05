@@ -15,14 +15,14 @@ $(foreach CTX,$(CTXES),$(eval $(CTX)__BUILD_ARGS = $(call list_by_prefix,$(CTX)_
 
 RENDER ?= $(TPYTHON) -m render.main
 
-PATH_TO_DEFAULTS = $(OUTDIR)/.tmp/.defaults
+PATH_TO_DEFAULTS = $(OUTDIR)/.tmp/.defaults.env
 
 .PHONY: all ctxes envs
 
 # 1. Put CTX's envs to Render's envs.
 defaults:
 	[ ! -f $(PATH_TO_DEFAULTS) ] || rm -f $(PATH_TO_DEFAULTS)
-	[ -d $(OUTDIR)/.tmp ] || mkdir $(OUTDIR)/.tmp
+	[ -d $(abspath $(dir $(PATH_TO_DEFAULTS))) ] || mkdir -p $(abspath $(dir $(PATH_TO_DEFAULTS)))
 ifeq ($(SEVERITY),debug)
 	$(foreach D,$(DEFAULTS),echo $(D)=$$'$(call escape,$($(D)))' >> $(PATH_TO_DEFAULTS) $(LF))
 	echo DEFAULTS=$(DEFAULTS) >> $(PATH_TO_DEFAULTS)
