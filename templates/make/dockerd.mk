@@ -1,12 +1,6 @@
 DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
-SETTINGS := {{ SETTINGS }}
 
-include $(DEVTOOLS_DIR)/configure/defaults.mk
-include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
-
-ifdef SETTINGS
-    include $(SETTINGS)
-endif
+include $(DEVTOOLS_DIR)/lib.mk
 
 OS ?= {{ OS | default('$(OS)', true) }}
 OS_CODENAME ?= {{ OS_CODENAME | default('$(OS_CODENAME)', true) }}

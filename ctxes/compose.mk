@@ -12,11 +12,11 @@ INHERIT_VARS += BRIDGE
 # example
 ########################################################################################################################
 example__IN = $(MK)/compose.mk
-example__OUT_DIR = $(d__OUTDIR)/compose
+example__OUT_DIR = $(OUTDIR)/compose
 example__OUT = $(example__OUT_DIR)/example.mk
-example__BRIDGE = $(d__DOCKER_NETWORK_NAME)
-example__DRIVER = $(d__DOCKER_NETWORK_DRIVER)
-example__SUBNET = $(d__DOCKER_NETWORK_SUBNET)
+example__BRIDGE = $(DOCKER_NETWORK_NAME)
+example__DRIVER = $(DOCKER_NETWORK_DRIVER)
+example__SUBNET = $(DOCKER_NETWORK_SUBNET)
 
 CTXES += example
 
@@ -120,7 +120,7 @@ example_yaml__SERVICES += .tmp/bar.yaml
 # example_yaml
 ########################################################################################################################
 example_yaml__IN = $(TMPL_DIR)/compose/stand.yaml
-example_yaml__OUT_DIR = $(d__OUTDIR)/compose
+example_yaml__OUT_DIR = $(OUTDIR)/compose
 example_yaml__OUT = $(example_yaml__OUT_DIR)/example.yaml
 
 CTXES += example_yaml

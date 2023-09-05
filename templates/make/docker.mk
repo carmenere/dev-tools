@@ -1,9 +1,6 @@
 DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
-include $(DEVTOOLS_DIR)/configure/defaults.mk
-include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
-
-include {{ SETTINGS }}
+include $(DEVTOOLS_DIR)/lib.mk
 
 BRIDGE ?= {{ BRIDGE | default('dev-tools', true) }}
 CONTAINER ?= {{ CONTAINER }}

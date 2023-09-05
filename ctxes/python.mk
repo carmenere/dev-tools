@@ -2,7 +2,7 @@
 # python
 ########################################################################################################################
 python__IN = $(MK)/python.mk
-python__OUT_DIR = $(d__OUTDIR)/python
+python__OUT_DIR = $(OUTDIR)/python
 python__OUT = $(python__OUT_DIR)/Makefile
 
 CTXES += python

@@ -1,16 +1,13 @@
 DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
-include $(DEVTOOLS_DIR)/configure/defaults.mk
-include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
-
-include {{ SETTINGS }}
+include $(DEVTOOLS_DIR)/lib.mk
 
 MAJOR ?= {{ MAJOR | default('7', true) }}
 MINOR ?= {{ MINOR | default('0.1', true) }}
-OS ?= {{ OS | default('$(d__OS)', true) }}
-OS_CODENAME ?= {{ OS_CODENAME | default('$(d__OS_CODENAME)', true) }}
+OS ?= {{ OS | default(d['OS'], true) }}
+OS_CODENAME ?= {{ OS_CODENAME | default(d['OS_CODENAME'], true) }}
 SERVICE ?= {{ SERVICE | default('redis', true) }}
-CMD_PREFIX ?= {{ CMD_PREFIX | default('$(d__SERVICE_CMD_PREFIX)', true) }}
+CMD_PREFIX ?= {{ CMD_PREFIX | default(d['SERVICE_CMD_PREFIX'], true) }}
 START_CMD ?= {{ START_CMD | default('$(CMD_PREFIX) start $(SERVICE)', true) }}
 STOP_CMD ?= {{ STOP_CMD | default('$(CMD_PREFIX) stop $(SERVICE)', true) }}
 VERSION ?= {{ VERSION | default('$(MAJOR).$(MINOR)', true) }}

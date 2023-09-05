@@ -1,20 +1,13 @@
 SELFDIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
-
 DEVTOOLS_DIR ?= {{ DEVTOOLS_DIR }}
-SETTINGS ?= {{ SETTINGS }}
 
-include $(DEVTOOLS_DIR)/configure/defaults.mk
-include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
-
-ifdef SETTINGS
-    include $(SETTINGS)
-endif
+include $(DEVTOOLS_DIR)/lib.mk
 
 DL ?= {{ DL | default('.dl', true)}}
-MAJOR ?= {{ MAJOR | default('$(d__PY_MAJOR)', true)}}
-MINOR ?= {{ MINOR | default('$(d__PY_MINOR)', true)}}
+MAJOR ?= {{ MAJOR | default(d['PY_MAJOR'], true)}}
+MINOR ?= {{ MINOR | default(d['PY_MINOR'], true)}}
 RC ?= {{ RC | default('', true)}}
-OWNER ?= {{ OWNER | default('$(d__PY_OWNER)', true)}}
+OWNER ?= {{ OWNER | default(d['PY_OWNER'], true)}}
 PREFIX ?= {{ PREFIX | default('$(SELFDIR)/.python', true)}}
 
 DOWNLOAD_URL = https://www.python.org/ftp/python/$(MAJOR).$(MINOR)/Python-$(VERSION).tgz 
