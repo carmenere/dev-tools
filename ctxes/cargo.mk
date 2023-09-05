@@ -2,7 +2,7 @@
 # cargo_foo
 ########################################################################################################################
 ENABLE_cargo_foo = $(ENABLE_CARGO)
-cargo_foo__STAGE = cargo
+cargo_foo__STAGE = cargo install uninstall
 
 cargo_foo__IN = $(MK)/cargo.mk
 cargo_foo__OUT_DIR = $(OUTDIR)/cargo/foo
@@ -21,7 +21,7 @@ CTXES += cargo_foo
 # cargo_bar
 ########################################################################################################################
 ENABLE_cargo_bar = $(ENABLE_CARGO)
-cargo_bar__STAGE = cargo
+cargo_bar__STAGE = cargo install uninstall
 
 cargo_bar__IN = $(MK)/cargo.mk
 cargo_bar__OUT_DIR = $(OUTDIR)/cargo/bar

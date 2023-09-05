@@ -18,10 +18,19 @@ endif
 python: $(PYTHON_DIR)/Makefile
 	cd $(PYTHON_DIR) && $(MAKE) -f $(PYTHON_DIR)/Makefile all
 
+clean:
+	rm -Rf $(TOOLCHAIN)/config.log
+	rm -Rf $(TOOLCHAIN)/aclocal.m4
+	rm -Rf $(TOOLCHAIN)/config.status
+	rm -Rf $(TOOLCHAIN)/configure~
+	rm -Rf $(TOOLCHAIN)/autom4te.cache
+ifeq ($(WITH_PYTHON),yes)
+	cd $(PYTHON_DIR) && make clean
+endif
+	rm -Rf $(TOOLCHAIN)/Makefile
+
 distclean:
-	rm -Rf {$(TOOLCHAIN),$(TOOLCHAIN)/*}/config.log
-	rm -Rf {$(TOOLCHAIN),$(TOOLCHAIN)/*}/aclocal.m4
-	rm -Rf {$(TOOLCHAIN),$(TOOLCHAIN)/*}/config.status
-	rm -Rf {$(TOOLCHAIN),$(TOOLCHAIN)/*}/configure~
-	rm -Rf {$(TOOLCHAIN),$(TOOLCHAIN)/*}/autom4te.cache
-	rm -Rf {$(TOOLCHAIN),$(TOOLCHAIN)/*}/Makefile
+ifeq ($(WITH_PYTHON),yes)
+	cd $(PYTHON_DIR) && make clean-dl
+endif
+	$(MAKE) clean

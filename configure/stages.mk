@@ -179,3 +179,13 @@ tmux-kill-server:
 	$(call stage_header,$@)
 	$(call runner,tmux,$(YES),kill)
 	$(call stage_tail,$@)
+
+install:
+	$(call stage_header,$@)
+	$(call runner,$@,$(YES),install)
+	$(call stage_tail,$@)
+
+uninstall:
+	$(call stage_header,$@)
+	$(call runner,$@,$(YES),uninstall)
+	$(call stage_tail,$@)

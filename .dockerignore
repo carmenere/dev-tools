@@ -1,4 +1,7 @@
-target
-.output
-.vscode
-.dl
+**/.dl
+**/.output
+**/.tmp
+**/.venv
+**/.vscode
+**/pg_data
+**/target

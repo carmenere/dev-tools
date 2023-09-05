@@ -54,8 +54,15 @@ LOCALE_LC_CTYPE = en_US.UTF-8
 
 #
 OS = ubuntu
-# $(shell lsb_release -cs)
-OS_CODENAME = ubuntu
+
+ifeq ($(OS),ubuntu)
+OS_CODENAME = $(shell lsb_release -cs)
+else ifeq ($(OS),alpine)
+OS_CODENAME = $(shell cat /etc/os-release)
+else
+OS_CODENAME = unknown
+endif
+
 
 # 
 FIXTURES_DIR = migrations/fixtures

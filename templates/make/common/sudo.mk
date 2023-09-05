@@ -1,6 +1,3 @@
-SUDO_BIN ?= {{ SUDO_BIN | default(d['SUDO_BIN'], true) }}
-SUDO_USER ?= {{ SUDO_USER | default(d['SUDO_USER'], true) }}
-
 # $(and ..., ..., ...) 
 # - each argument is expanded, in order;
 # - if an argument expands to an empty string the processing stops and the result of the expansion is the empty string;

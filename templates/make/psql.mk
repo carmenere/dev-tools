@@ -20,6 +20,8 @@ CONN_URL ?= postgresql://$(ADMIN):$(ADMIN_PASSWORD)@$(HOST):$(PORT)/$(ADMIN_DB)
 USER_CONN_URL ?= postgresql://$(USER_NAME):$(USER_PASSWORD)@$(HOST):$(PORT)/$(USER_DB)
 
 # SUDO
+SUDO_BIN ?= {{ SUDO_BIN | default(d['SUDO_BIN'], true) }}
+SUDO_USER ?= {{ SUDO_USER | default(d['SUDO_USER'], true) }}
 include $(DEVTOOLS_DIR)/templates/make/common/sudo.mk
 
 define select_user

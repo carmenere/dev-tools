@@ -31,10 +31,7 @@ deps:
 	make -f $(STAGES) deps
 
 init: configure
-	make -f $(STAGES) deps venvs stop-all images start-services init-services
-
-stop-disabled:
-	make -f $(STAGES) stop-disabled
+	make -f $(STAGES) deps venvs images start-services init-services
 
 start-services:
 	make -f $(STAGES) start-services
@@ -42,11 +39,20 @@ start-services:
 stop-services:
 	make -f $(STAGES) stop-services
 
-build: schemas
+build:
 	make -f $(STAGES) schemas build
+
+install:
+	make -f $(STAGES) install
+
+uninstall:
+	make -f $(STAGES) uninstall
 
 schemas: stop-apps
 	make -f $(STAGES) schemas
+
+fixtures: stop-apps
+	make -f $(STAGES) schemas build fixtures
 
 upgrade: stop-apps
 	make -f $(STAGES) schemas build fixtures upgrade
@@ -57,6 +63,9 @@ start-apps: stop-apps build
 stop-apps:
 	make -f $(STAGES) stop-apps
 	make -f $(STAGES) tmux-kill-server
+
+stop-disabled:
+	make -f $(STAGES) stop-disabled
 
 stop-all:
 	make -f $(STAGES) stop-all

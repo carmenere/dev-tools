@@ -22,32 +22,39 @@ export LANG = {{ LANG | default(d['LOCALE_LANG'], true) }}
 export LC_ALL = {{ LC_ALL | default(d['LOCALE_LC_ALL'], true) }}
 export LC_CTYPE = {{ LC_CTYPE | default(d['LOCALE_LC_CTYPE'], true) }}
 
+# SUDO
+SUDO_BIN ?= {{ SUDO_BIN | default(d['SUDO_BIN'], true) }}
+SUDO_USER = $(OS_USER)
+include $(DEVTOOLS_DIR)/templates/make/common/sudo.mk
+
 PG_BINDIR ?= $(shell $(PG_CONFIG) --bindir)
 PG_CONF = $(DATADIR)/postgresql.conf
 PG_CTL ?= $(PG_BINDIR)/pg_ctl
 PG_INITDB ?= $(PG_BINDIR)/initdb
 POSTMASTER = $(DATADIR)/postmaster.pid
 
-CMD_INITDB ?= $(PG_INITDB) \
+CMD_INITDB ?= $(SUDO) $(PG_INITDB) \
         --pgdata=$(DATADIR) \
         --username=$(ADMIN) \
         --auth-local=$(INITDB_AUTH_LOCAL) \
         --auth-host=$(INITDB_AUTH_HOST) \
         --pwfile=$(INITDB_PWFILE)
 
-CMD_START ?= $(PG_CTL) -D $(DATADIR) -l $(PG_CTL_LOG) -o '\
+CMD_START ?= $(SUDO) $(PG_CTL) -D $(DATADIR) -l $(PG_CTL_LOG) -o '\
         -k $(DATADIR) \
         -c logging_collector=$(PG_CTL_LOGGING_COLLECTOR) \
         -c config_file=$(PG_CTL_CONF) \
         -p $(PORT) -h $(HOST)' \
     start
 
-CMD_STOP ?= $(PG_CTL) -D $(DATADIR) -o '-k $(DATADIR) -c config_file=$(PG_CTL_CONF)' stop
+CMD_STOP ?= $(SUDO) $(PG_CTL) -D $(DATADIR) -o '-k $(DATADIR) -c config_file=$(PG_CTL_CONF)' stop
 
 # Targets
 .PHONY: initdb start force-start stop clean distclean
 
 $(PG_CONF):
+	[ -d $(DATADIR) ] || mkdir -p $(DATADIR)
+	$(SUDO_BIN) chown -R $(OS_USER) $(DATADIR)
 	echo $(ADMIN_PASSWORD) > $(INITDB_PWFILE)
 	$(CMD_INITDB)
 	rm $(INITDB_PWFILE)

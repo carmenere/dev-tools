@@ -25,26 +25,35 @@ VPYTHON = $(abspath /Users/an.romanov/Projects/ololo/dev-tools/toolchain/python/
 all: python vpython requirements
 
 python:
-	touch /tmp/settings.mk
-	make -f $(MK)/python.mk install DEVTOOLS_DIR='$(DEVTOOLS_DIR)' SETTINGS='/tmp/settings.mk' DL='$(DL)' \
+	make -f $(MK)/python.mk install DEVTOOLS_DIR='$(DEVTOOLS_DIR)' DL='$(DL)' \
 		MAJOR='$(MAJOR)' MINOR='$(MINOR)' RC='$(RC)' \
 		OWNER='$(OWNER)' PREFIX='$(PREFIX)' SUDO='$(SUDO)'
 
 vpython:
-	make -f $(MK)/venv.mk init DEVTOOLS_DIR='$(DEVTOOLS_DIR)' SETTINGS='/tmp/settings.mk' \
+	make -f $(MK)/venv.mk init DEVTOOLS_DIR='$(DEVTOOLS_DIR)' \
 		PYTHON='$(PYTHON)' VENV_DIR='$(VENV_DIR)' VENV_PROMT='[toolchain]'
 
 requirements:
-	make -f $(MK)/pip.mk requirements DEVTOOLS_DIR='$(DEVTOOLS_DIR)' SETTINGS='/tmp/settings.mk' INSTALL_SCHEMA='$(INSTALL_SCHEMA)' \
+	make -f $(MK)/pip.mk requirements DEVTOOLS_DIR='$(DEVTOOLS_DIR)' INSTALL_SCHEMA='$(INSTALL_SCHEMA)' \
 		USERBASE='$(USERBASE)' PYTHON='$(VPYTHON)' REQUIREMENTS='$(REQUIREMENTS)' \
 		CC='$(CC)' CPPFLAGS='$(CPPFLAGS)' CXX='$(CXX)' LDFLAGS='$(LDFLAGS)'
 
 rm-vpython:
-	make -f $(MK)/venv.mk clean VENV_DIR='$(VENV_DIR)'
+	make -f $(MK)/venv.mk clean DEVTOOLS_DIR='$(DEVTOOLS_DIR)' VENV_DIR='$(VENV_DIR)'
 
-distclean: rm-vpython
-	rm -Rf $(DEVTOOLS_DIR)/toolchain/python/config.log
-	rm -Rf $(DEVTOOLS_DIR)/toolchain/python/aclocal.m4
-	rm -Rf $(DEVTOOLS_DIR)/toolchain/python/config.status
-	rm -Rf $(DEVTOOLS_DIR)/toolchain/python/configure~
-	rm -Rf $(DEVTOOLS_DIR)/toolchain/python/autom4te.cache
+clean:
+	rm -Rf config.log
+	rm -Rf aclocal.m4
+	rm -Rf config.status
+	rm -Rf configure~
+	rm -Rf autom4te.cache
+	rm -Rf defaults.mk
+	[ ! -d .venv ] || rm -Rf .venv
+	rm -Rf Makefile
+
+clean-dl:
+	[ ! -d .dl ] || $(SUDO) rm -Rf .dl
+
+distclean:
+	$(MAKE) clean-dl
+	$(MAKE) clean
