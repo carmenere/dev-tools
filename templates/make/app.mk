@@ -1,18 +1,13 @@
 SELFDIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
-
 DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
-include $(DEVTOOLS_DIR)/configure/defaults.mk
-include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
-
-include {{ SETTINGS }}
+include $(DEVTOOLS_DIR)/lib.mk
 
 OUT := {{ OUT }}
 
 APP ?= {{ APP }}
 BIN_PATH ?= {{ BIN_PATH }}
 LOG_FILE ?= {{ LOG_FILE | default('$(SELFDIR)/.logs', true) }}
-OPTS ?= {{ OPTS | default('', true) }}
 PID_FILE ?= {{ PID_FILE | default('$(SELFDIR)/.pid', true) }}
 PKILL_PATTERN ?= {{ PKILL_PATTERN | default('$(BIN_PATH)', true) }}
 TMUX ?= {{ TMUX }}
@@ -22,6 +17,9 @@ TMUX_START_CMD = $(MAKE) -f $(TMUX) exec CMD='$(MAKE) -f $(OUT) tee' WINDOW_NAME
 
 # ENVS
 {% include 'common/j2/envs.jinja2' %}
+
+# OPTS
+{% include 'common/j2/opts.jinja2' %}
 
 ifdef BIN_PATH
     START_BIN ?= $(ENVS) $(BIN_PATH) $(OPTS)

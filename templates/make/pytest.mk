@@ -1,17 +1,13 @@
 SELFDIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
-
 DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
-include $(DEVTOOLS_DIR)/configure/defaults.mk
-include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
-
-include {{ SETTINGS }}
+include $(DEVTOOLS_DIR)/lib.mk
 
 LOG_FILE ?= {{ LOG_FILE | default('$(SELFDIR)/.logs', true) }}
 REPORTS_DIR ?= {{ REPORTS_DIR | default('$(SELFDIR)/.reports', true) }}
 TEST_CASES ?= {{ TEST_CASES | default('', true) }}
 TEST_CASES_DIR ?= {{ TEST_CASES_DIR | default('tests', true) }}
-PYTHON ?= {{ PYTHON | default('$(d__PYTHON)', true) }}
+PYTHON ?= {{ PYTHON | default(d['PYTHON'], true) }}
 TMUX_START_CMD ?= {{ TMUX_START_CMD | default('', true) }}
 MODE ?= {{ MODE | default('tee', true) }}
 

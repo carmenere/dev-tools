@@ -1,24 +1,17 @@
 SELFDIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
-
 DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
-SETTINGS ?= {{ SETTINGS }}
 
-include $(DEVTOOLS_DIR)/configure/defaults.mk
-include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
+include $(DEVTOOLS_DIR)/lib.mk
 
-ifdef SETTINGS
-    include $(SETTINGS)
-endif
-
-PYTHON ?= {{ PYTHON | default('$(d__PYTHON)', true) }}
+PYTHON ?= {{ PYTHON | default(d['PYTHON'], true) }}
 INSTALL_SCHEMA ?= {{ INSTALL_SCHEMA | default('', true)}}
 USERBASE ?= {{ USERBASE | default('', true)}}
 REQUIREMENTS ?= {{ REQUIREMENTS | default('requirements.txt', true)}}
 
-export CC = {{ CC | default('$(d__CC)', true)}}
-export CPPFLAGS = {{ CPPFLAGS | default('$(d__CPPFLAGS)', true)}}
-export CXX = {{ CXX | default('$(d__CXX)', true)}}
-export LDFLAGS = {{ LDFLAGS | default('$(d__LDFLAGS)', true)}}
+export CC = {{ CC | default(d['CC'], true)}}
+export CPPFLAGS = {{ CPPFLAGS | default(d['CPPFLAGS'], true)}}
+export CXX = {{ CXX | default(d['CXX'], true)}}
+export LDFLAGS = {{ LDFLAGS | default(d['LDFLAGS'], true)}}
 
 SITE_PACKAGES = $(shell $(PYTHON) -m pip show pip | grep Location | cut -d':' -f 2)
 PIP ?= $(PYTHON) -m pip

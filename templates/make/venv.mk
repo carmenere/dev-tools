@@ -1,16 +1,9 @@
 SELFDIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
-
 DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
-SETTINGS ?= {{ SETTINGS }}
 
-include $(DEVTOOLS_DIR)/configure/defaults.mk
-include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
+include $(DEVTOOLS_DIR)/lib.mk
 
-ifdef SETTINGS
-    include $(SETTINGS)
-endif
-
-PYTHON ?= {{ PYTHON | default('$(d__PYTHON)', true) }}
+PYTHON ?= {{ PYTHON | default(d['PYTHON'], true) }}
 VENV_DIR ?= {{ VENV_DIR | default('$(SELFDIR)/.venv', true) }}
 VENV_PROMT ?= {{ VENV_PROMT | default('[VENV]', true) }}
 

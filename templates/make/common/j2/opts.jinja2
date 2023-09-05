@@ -1,0 +1,17 @@
+{% if OPTS is not defined or OPTS.replace('"', '').replace("'",'') == '' -%}
+{% set OPTS = [] -%}
+{% else -%}
+{% set OPTS = OPTS.split(' ') -%}
+{% endif -%}
+
+{% set o = [] -%}
+{% if OPTS -%}
+{% for item in OPTS -%}
+{% do o.append("{}".format(env['opt_' + item])) -%}
+{% endfor -%}
+{% endif -%}
+
+{% if o %}
+OPTS ?= \
+    {{ o|join(' \\\n    ') }}
+{% endif %}

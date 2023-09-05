@@ -1,13 +1,9 @@
 SELFDIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
-
 DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
-include $(DEVTOOLS_DIR)/configure/defaults.mk
-include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
+include $(DEVTOOLS_DIR)/lib.mk
 
-include {{ SETTINGS }}
-
-DEFAULT_CMD ?= {{ DEFAULT_CMD | default('$(d__SH)', true)}}
+DEFAULT_CMD ?= {{ DEFAULT_CMD | default(d['SH'], true)}}
 DEFAULT_TERM ?= {{ DEFAULT_TERM | default('xterm-256color', true)}}
 HISTORY_LIMIT ?= {{ HISTORY_LIMIT | default('1000000', true)}}
 LOGS_DIR ?= {{ LOGS_DIR | default('$(SELFDIR)/.logs', true)}}

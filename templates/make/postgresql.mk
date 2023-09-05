@@ -1,18 +1,15 @@
 DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
-include $(DEVTOOLS_DIR)/configure/defaults.mk
-include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
-
-include {{ SETTINGS }}
+include $(DEVTOOLS_DIR)/lib.mk
 
 AUTH_POLICY ?= {{ AUTH_POLICY | default('host  all  all  0.0.0.0/0  md5', true) }}
 MAJOR ?= {{ MAJOR | default('12', true) }}
 MINOR ?= {{ MINOR | default('15_2', true) }}
-OS ?= {{ OS | default('$(d__OS)', true) }}
-OS_CODENAME ?= {{ OS_CODENAME | default('$(d__OS_CODENAME)', true) }}
+OS ?= {{ OS | default(d['OS'], true) }}
+OS_CODENAME ?= {{ OS_CODENAME | default(d['OS_CODENAME'], true) }}
 PG_HBA ?= {{ PG_HBA | default('/opt/homebrew/var/$(SERVICE)/pg_hba.conf', true) }}
 SERVICE ?= {{ SERVICE | default('postgresql@$(MAJOR)', true) }}
-CMD_PREFIX ?= {{ CMD_PREFIX | default('$(d__SERVICE_CMD_PREFIX)', true) }}
+CMD_PREFIX ?= {{ CMD_PREFIX | default(d['SERVICE_CMD_PREFIX'], true) }}
 START_CMD ?= {{ START_CMD | default('$(CMD_PREFIX) start $(SERVICE)', true) }}
 STOP_CMD ?= {{ STOP_CMD | default('$(CMD_PREFIX) stop $(SERVICE)', true) }}
 

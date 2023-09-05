@@ -1,11 +1,7 @@
 SELFDIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
-
 DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
-include $(DEVTOOLS_DIR)/configure/defaults.mk
-include $(DEVTOOLS_DIR)/templates/make/common/lib.mk
-
-include {{ SETTINGS }}
+include $(DEVTOOLS_DIR)/lib.mk
 
 {% if CARGO_TOML is defined and CARGO_TOML.replace('"', '').replace("'",'') != '' -%}
 CARGO_TOML ?= {{ CARGO_TOML }}
@@ -18,9 +14,9 @@ CLIPPY_FORMAT ?= {{ CLIPPY_FORMAT | default('human', true) }}
 CLIPPY_REPORT ?= {{ CLIPPY_REPORT | default('&1', true) }}
 FEATURES ?= {{ FEATURES | default('', true) }}
 LINTS ?= {{ LINTS | default('', true) }}
-PROFILE ?= {{ PROFILE | default('$(d__CARGO_PROFILE)', true) }}
-TARGET_ARCH ?= {{ TARGET_ARCH | default('$(d__RUST_TARGET_ARCH)', true) }}
-TARGET_DIR ?= {{ TARGET_DIR | default('$(d__CARGO_TARGET_DIR)', true) }}
+PROFILE ?= {{ PROFILE | default(d['CARGO_PROFILE'], true) }}
+TARGET_ARCH ?= {{ TARGET_ARCH | default(d['RUST_TARGET_ARCH'], true) }}
+TARGET_DIR ?= {{ TARGET_DIR | default(d['CARGO_TARGET_DIR'], true) }}
 
 # ENVS
 {% include 'common/j2/envs.jinja2' %}

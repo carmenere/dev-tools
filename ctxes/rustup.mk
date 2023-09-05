@@ -2,7 +2,7 @@
 # rustup
 ########################################################################################################################
 rustup__IN = $(MK)/rustup.mk
-rustup__OUT_DIR = $(d__OUTDIR)/rustup
+rustup__OUT_DIR = $(OUTDIR)/rustup
 rustup__OUT = $(rustup__OUT_DIR)/Makefile
 
 CRATES += cargo-cache

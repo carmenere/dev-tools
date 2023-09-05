@@ -77,8 +77,8 @@ make -f .output/psql/Makefile connect
 ## ~/.dev-tools/vars.mk
 Create file `~/.dev-tools/vars.mk`, for instance:
 ```bash
-d__PG_ADMIN = an.romanov
-d__PG_CONFIG = /opt/homebrew/opt/postgresql@12/bin/pg_config
+PG_ADMIN = an.romanov
+PG_CONFIG = /opt/homebrew/opt/postgresql@12/bin/pg_config
 ```
 
 ## All on host
@@ -140,9 +140,9 @@ docker_bar__PUBLISH = 8080:80/tcp
 docker_foo__PUBLISH = 9081:80/tcp
 
 # PUBLISH SERVICES
-docker_clickhouse__PUBLISH = $(d__CH_PORT):$(d__CH_PORT)/tcp
-docker_pg__PUBLISH = $(d__PG_PORT):$(d__PG_PORT)/tcp
-docker_redis__PUBLISH = $(d__REDIS_PORT):$(d__REDIS_PORT)/tcp
+docker_clickhouse__PUBLISH = $(CH_PORT):$(CH_PORT)/tcp
+docker_pg__PUBLISH = $(PG_PORT):$(PG_PORT)/tcp
+docker_redis__PUBLISH = $(REDIS_PORT):$(REDIS_PORT)/tcp
 
 # Clients
 redis_cli__CONFIG_REWRITE = no
@@ -189,9 +189,9 @@ ctx_venv_pytest_bar__ENABLED = yes
 ctx_venv_pytest_foo__ENABLED = yes
 
 # PUBLISH SERVICES
-docker_clickhouse__PUBLISH = $(d__CH_PORT):$(d__CH_PORT)/tcp
-docker_pg__PUBLISH = $(d__PG_PORT):$(d__PG_PORT)/tcp
-docker_redis__PUBLISH = $(d__REDIS_PORT):$(d__REDIS_PORT)/tcp
+docker_clickhouse__PUBLISH = $(CH_PORT):$(CH_PORT)/tcp
+docker_pg__PUBLISH = $(PG_PORT):$(PG_PORT)/tcp
+docker_redis__PUBLISH = $(REDIS_PORT):$(REDIS_PORT)/tcp
 
 # Clients
 redis_cli__CONFIG_REWRITE = no

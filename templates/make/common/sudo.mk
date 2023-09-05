@@ -1,5 +1,5 @@
-SUDO_BIN ?= {{ SUDO_BIN | default('$(d__SUDO_BIN)', true) }}
-SUDO_USER ?= {{ SUDO_USER | default('$(d__SUDO_USER)', true) }}
+SUDO_BIN ?= {{ SUDO_BIN | default(d['SUDO_BIN'], true) }}
+SUDO_USER ?= {{ SUDO_USER | default(d['SUDO_USER'], true) }}
 
 # $(and ..., ..., ...) 
 # - each argument is expanded, in order;
