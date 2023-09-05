@@ -15,9 +15,8 @@ touch ~/.dev-tools/vars.mk
 ```
 3. Example of `~/.dev-tools/vars.mk`:
 ```bash
-# ctx_app_bar__ENABLED = yes
-
-PG_ADMIN = an.romanov
+# ENABLE_bar = yes
+PG_ADMIN = $(USER)
 PG_CONFIG = /opt/homebrew/opt/postgresql@12/bin/pg_config
 
 # Docker
@@ -77,39 +76,24 @@ make -f .output/psql/Makefile connect
 ## ~/.dev-tools/vars.mk
 Create file `~/.dev-tools/vars.mk`, for instance:
 ```bash
-PG_ADMIN = an.romanov
+PG_ADMIN = $(USER)
 PG_CONFIG = /opt/homebrew/opt/postgresql@12/bin/pg_config
 ```
 
 ## All on host
 Create file `~/.dev-tools/host.mk`, for instance:
 ```bash
-include ~/.dev-tools/vars.mk
+include %abs path to ~/.dev-tools/vars.mk%
 
-# ctx_pg_ctl__ENABLED = yes
+ENABLE_HOST_APPS = yes
+ENABLE_HOST_SERVICES = yes
+ENABLE_INIT = yes
+ENABLE_SCHEMAS = yes
+ENABLE_TESTS = yes
+ENABLE_TMUX = yes
+ENABLE_VENVS = yes
 
-ctx_bar__ENABLED = yes
-ctx_cargo_bar__ENABLED = yes
-ctx_cargo_foo__ENABLED = yes
-ctx_clickhouse__ENABLED = yes
-ctx_clickhouse_cli__ENABLED = yes
-ctx_foo__ENABLED = yes
-ctx_pip_alembic_baz__ENABLED = yes
-ctx_pip_pytest_bar__ENABLED = yes
-ctx_pip_pytest_foo__ENABLED = yes
-ctx_postgresql__ENABLED = yes
-ctx_psql__ENABLED = yes
-ctx_pytest_bar__ENABLED = yes
-ctx_pytest_foo__ENABLED = yes
-ctx_python__ENABLED = yes
-ctx_redis__ENABLED = yes
-ctx_redis_cli__ENABLED = yes
-ctx_rustup__ENABLED = yes
-ctx_sqlx_bar__ENABLED = yes
-ctx_tmux__ENABLED = yes
-ctx_venv_alembic_baz__ENABLED = yes
-ctx_venv_pytest_bar__ENABLED = yes
-ctx_venv_pytest_foo__ENABLED = yes
+ENABLE_pg_ctl = no
 ```
 
 <br>
@@ -120,20 +104,9 @@ Create file `~/.dev-tools/docker.mk`, for instance:
 include %abs path to ~/.dev-tools/vars.mk%
 
 # CTXES
-ctx_docker_bar__ENABLED = yes
-ctx_docker_clickhouse__ENABLED = yes
-ctx_docker_foo__ENABLED = yes
-ctx_docker_pg__ENABLED = yes
-ctx_docker_redis__ENABLED = yes
-ctx_docker_rust__ENABLED = yes
-ctx_example__ENABLED = yes
-ctx_example_bar__ENABLED = yes
-ctx_example_clickhouse__ENABLED = yes
-ctx_example_foo__ENABLED = yes
-ctx_example_pg__ENABLED = yes
-ctx_example_redis__ENABLED = yes
-ctx_example_rust__ENABLED = yes
-ctx_example_yaml__ENABLED = yes
+ENABLE_DOCKER_APPS = yes
+ENABLE_DOCKER_SERVICES = yes
+ENABLE_TESTS = yes
 
 # PUBLISH APPS
 docker_bar__PUBLISH = 8080:80/tcp
@@ -153,40 +126,18 @@ redis_cli__CONFIG_REWRITE = no
 ## Mixed
 Create file `~/.dev-tools/mixed.mk`, for instance:
 ```bash
-include ~/.dev-tools/vars.mk
+include %abs path to ~/.dev-tools/vars.mk%
 
-# CTXES: DOCKER
-ctx_docker_clickhouse__ENABLED = yes
-ctx_docker_pg__ENABLED = yes
-ctx_docker_redis__ENABLED = yes
-ctx_docker_rust__ENABLED = yes
-ctx_example__ENABLED = yes
-ctx_example_clickhouse__ENABLED = yes
-ctx_example_foo__ENABLED = yes
-ctx_example_redis__ENABLED = yes
-ctx_example_rust__ENABLED = yes
-ctx_example_yaml__ENABLED = yes
+# DOCKER
+ENABLE_DOCKER_SERVICES = yes
 
-# CTXES: HOST
-ctx_bar__ENABLED = yes
-ctx_cargo_bar__ENABLED = yes
-ctx_cargo_foo__ENABLED = yes
-ctx_clickhouse_cli__ENABLED = yes
-ctx_foo__ENABLED = yes
-ctx_pip_alembic_baz__ENABLED = yes
-ctx_pip_pytest_bar__ENABLED = yes
-ctx_pip_pytest_foo__ENABLED = yes
-ctx_psql__ENABLED = yes
-ctx_pytest_bar__ENABLED = yes
-ctx_pytest_foo__ENABLED = yes
-ctx_python__ENABLED = yes
-ctx_redis_cli__ENABLED = yes
-ctx_rustup__ENABLED = yes
-ctx_sqlx_bar__ENABLED = yes
-ctx_tmux__ENABLED = yes
-ctx_venv_alembic_baz__ENABLED = yes
-ctx_venv_pytest_bar__ENABLED = yes
-ctx_venv_pytest_foo__ENABLED = yes
+# HOST
+ENABLE_HOST_APPS = yes
+ENABLE_INIT = yes
+ENABLE_SCHEMAS = yes
+ENABLE_TESTS = yes
+ENABLE_TMUX = yes
+ENABLE_VENVS = yes
 
 # PUBLISH SERVICES
 docker_clickhouse__PUBLISH = $(CH_PORT):$(CH_PORT)/tcp
