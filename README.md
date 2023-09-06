@@ -18,6 +18,7 @@ touch ~/.dev-tools/vars.mk
 # ENABLE_bar = yes
 PG_ADMIN = $(USER)
 PG_CONFIG = /opt/homebrew/opt/postgresql@12/bin/pg_config
+STOP_DISABLED = yes
 
 # Docker
 docker_bar__PUBLISH = 8080:80/tcp
@@ -78,6 +79,7 @@ Create file `~/.dev-tools/vars.mk`, for instance:
 ```bash
 PG_ADMIN = $(USER)
 PG_CONFIG = /opt/homebrew/opt/postgresql@12/bin/pg_config
+STOP_DISABLED = yes
 ```
 
 ## All on host
@@ -88,7 +90,8 @@ include %abs path to ~/.dev-tools/vars.mk%
 ENABLE_HOST_APPS = yes
 ENABLE_HOST_SERVICES = yes
 ENABLE_INIT = yes
-ENABLE_SCHEMAS = yes
+ENABLE_sqlx_foo = yes
+ENABLE_sqlx_bar = yes
 ENABLE_TESTS = yes
 ENABLE_TMUX = yes
 ENABLE_VENVS = yes
@@ -106,7 +109,9 @@ include %abs path to ~/.dev-tools/vars.mk%
 # CTXES
 ENABLE_DOCKER_APPS = yes
 ENABLE_DOCKER_SERVICES = yes
-ENABLE_TESTS = yes
+ENABLE_INIT = yes
+ENABLE_docker_sqlx_foo = yes
+ENABLE_docker_sqlx_bar = yes
 
 # PUBLISH APPS
 docker_bar__PUBLISH = 8080:80/tcp
@@ -134,7 +139,8 @@ ENABLE_DOCKER_SERVICES = yes
 # HOST
 ENABLE_HOST_APPS = yes
 ENABLE_INIT = yes
-ENABLE_SCHEMAS = yes
+ENABLE_sqlx_foo = yes
+ENABLE_sqlx_bar = yes
 ENABLE_TESTS = yes
 ENABLE_TMUX = yes
 ENABLE_VENVS = yes

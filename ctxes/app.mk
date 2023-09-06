@@ -11,16 +11,38 @@ sqlx_bar__OUT_DIR = $(OUTDIR)/app/sqlx/bar
 sqlx_bar__OUT = $(sqlx_bar__OUT_DIR)/Makefile
 
 sqlx_bar__BIN_PATH = sqlx migrate run
-# sqlx_bar__OPTS = --source "$(PROJECT_ROOT)/examples/bar/$(SCHEMAS_DIR)"
 sqlx_bar__TMUX = $(tmux__OUT)
 
 # sqlx envs
-sqlx_bar__env_DATABASE_URL = $(PG_DATABASE_URL)
+sqlx_bar__env_DATABASE_URL = $(call pg_db_url,,,,,bar)
 
 # cli opts
 sqlx_bar__opt_SOURCE = --source "$(PROJECT_ROOT)/examples/bar/$(SCHEMAS_DIR)"
 
 CTXES += sqlx_bar
+
+########################################################################################################################
+# sqlx_foo
+########################################################################################################################
+ENABLE_sqlx_foo = $(ENABLE_SCHEMAS)
+sqlx_foo__STAGE = schemas
+
+sqlx_foo__APP = sqlx_foo
+
+sqlx_foo__IN = $(MK)/app.mk
+sqlx_foo__OUT_DIR = $(OUTDIR)/app/sqlx/foo
+sqlx_foo__OUT = $(sqlx_foo__OUT_DIR)/Makefile
+
+sqlx_foo__BIN_PATH = sqlx migrate run
+sqlx_foo__TMUX = $(tmux__OUT)
+
+# sqlx envs
+sqlx_foo__env_DATABASE_URL = $(call pg_db_url,,,,,foo)
+
+# cli opts
+sqlx_foo__opt_SOURCE = --source "$(PROJECT_ROOT)/examples/foo/$(SCHEMAS_DIR)"
+
+CTXES += sqlx_foo
 
 ########################################################################################################################
 # foo

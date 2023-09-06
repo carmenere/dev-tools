@@ -7,7 +7,6 @@ ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default(d['CH_ADMIN_PASSWORD'], true) }}
 MAJOR ?= {{ MAJOR | default('23.5', true) }}
 MINOR ?= {{ MINOR | default('', true) }}
 OS ?= {{ OS | default(d['OS'], true) }}
-OS_CODENAME ?= {{ OS_CODENAME | default(d['OS_CODENAME'], true) }}
 SERVICE ?= {{ SERVICE | default('clickhouse@$(MAJOR)', true) }}
 CMD_PREFIX ?= {{ CMD_PREFIX | default(d['SERVICE_CMD_PREFIX'], true) }}
 START_CMD ?= {{ START_CMD | default('$(CMD_PREFIX) start $(SERVICE)', true) }}

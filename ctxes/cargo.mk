@@ -14,6 +14,7 @@ cargo_foo__CARGO_TOML = $(PROJECT_ROOT)/examples/foo/Cargo.toml
 # cargo envs
 cargo_foo__env_RUSTFLAGS = $(RUSTFLAGS)
 cargo_foo__env_BUILD_VERSION = $(BUILD_VERSION)
+cargo_foo__env_DATABASE_URL = $(call pg_db_url,,,,,foo)
 
 CTXES += cargo_foo
 
@@ -31,7 +32,6 @@ cargo_bar__BINS = bar
 cargo_bar__CARGO_TOML = $(PROJECT_ROOT)/examples/bar/Cargo.toml
 
 $(call copy_ctx,cargo_foo__env_,cargo_bar__env_)
-
-cargo_bar__env_DATABASE_URL = $(PG_DATABASE_URL)
+cargo_bar__env_DATABASE_URL = $(call pg_db_url,,,,,bar)
 
 CTXES += cargo_bar

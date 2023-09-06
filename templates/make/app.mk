@@ -32,7 +32,7 @@ endif
 shell:
 	echo ENVS = $$'$(call escape,$(ENVS))' > $(LOG_FILE)
 ifdef START_BIN
-	bash -c $$'$(call escape,$(START_BIN); exit $${PIPESTATUS[0]})'
+	bash -c $$'$(call escape,$(START_BIN))'
 endif
 
 tmux:

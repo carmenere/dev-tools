@@ -28,6 +28,9 @@ ENABLE_DEPS = no
 ENABLE_INIT = no
 ENABLE_TMUX = no
 
+#
+STOP_DISABLED = no
+
 # DOCKER
 DOCKER_ALPINE_IMAGE = alpine:3.18.3
 DOCKER_DAEMONIZE = yes
@@ -55,18 +58,14 @@ LOCALE_LC_CTYPE = en_US.UTF-8
 #
 OS = ubuntu
 
-ifeq ($(OS),ubuntu)
-OS_CODENAME = $(shell lsb_release -cs)
-else ifeq ($(OS),alpine)
-OS_CODENAME = $(shell cat /etc/os-release)
-else
-OS_CODENAME = unknown
-endif
-
-
 # 
 FIXTURES_DIR = migrations/fixtures
 SCHEMAS_DIR = migrations/schemas
+
+# SERVICE CREDENTIALS
+SERVICE_PASSWORD = 12345
+SERVICE_USER := fizzbuzz
+SERVICE_DB = buzz
 
 # CLICKHOUSE
 CH_ADMIN = admin
@@ -83,7 +82,6 @@ PG_ADMIN_PASSWORD = postgres
 PG_CONFIG = $(shell which pg_config)
 PG_HOST = $(LOCALHOST)
 PG_PORT = 5432
-PG_DATABASE_URL = postgres://$(SERVICE_USER):$(SERVICE_PASSWORD)@$(PG_HOST):$(PG_PORT)/$(SERVICE_DB)
 
 # REDI
 REDIS_ADMIN = default
@@ -102,11 +100,6 @@ SERVICE_CMD_PREFIX = brew services
 SERVICE_START_CMD = $(SERVICE_CMD_PREFIX) start
 SERVICE_STOP_CMD = $(SERVICE_CMD_PREFIX) stop
 
-# OS services credential
-SERVICE_DB = fizzbuzz
-SERVICE_PASSWORD = 12345
-SERVICE_USER = foobar
-
 # C & C++ flags
 CC := $(shell echo ${CC})
 CPPFLAGS := $(shell echo ${CPPFLAGS})
@@ -114,10 +107,10 @@ CXX := $(shell echo ${CXX})
 LDFLAGS := $(shell echo ${LDFLAGS})
 
 # Common shell command
-BASH = $(shell which bash)
+BASH = /usr/bin/env bash
 BUILD_VERSION = $(shell git log -1 --format="%h")
 PWD = $(shell pwd)
-SH = $(shell which sh)
+SH = /usr/bin/env sh
 
 # sud
 SUDO_BIN = $(shell which sudo)
@@ -171,7 +164,6 @@ DEFAULTS += LOCALE_LC_ALL
 DEFAULTS += LOCALE_LC_CTYPE
 DEFAULTS += LOCALHOST
 DEFAULTS += OS
-DEFAULTS += OS_CODENAME
 DEFAULTS += OUTDIR
 DEFAULTS += PG_ADMIN
 DEFAULTS += PG_ADMIN_DB

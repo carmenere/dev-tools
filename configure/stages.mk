@@ -33,7 +33,7 @@ DR =
 endif
 
 .PHONY: deps venvs init stop-disabled services schemas build fixtures upgrade apps stop-apps stop-services \
-tests reports clean distclean
+tests reports clean distclean docker-rm docker-rm-disabled
 
 define runner
 @echo "-------------------------- SUBSTAGE --------------------------"
@@ -62,7 +62,7 @@ deps:
 
 venvs:
 	$(call stage_header,$@)
-	$(call runner,$@,$(YES),init)
+	$(call runner,$@ pip,$(YES),init)
 	$(call runner,pip,$(YES),init)
 	$(call stage_tail,$@)
 
@@ -86,26 +86,25 @@ tmux:
 	$(call runner,$@,$(YES),init)
 	$(call stage_tail,$@)
 
-stop-disabled:
+docker-rm-disabled:
+ifeq ($(STOP_DISABLED),yes)
 	$(call stage_header,$@)
-	$(call runner,services,$(NO),stop)
-	$(call runner,apps,$(NO),stop)
-	$(call runner,docker-services,$(NO),rm)
-	$(call runner,docker-apps,$(NO),rm)
+	$(call runner,docker-rm,$(NO),rm)
 	$(call stage_tail,$@)
+endif
 
-stop-all: stop-disabled
+stop-disabled:
+ifeq ($(STOP_DISABLED),yes)
 	$(call stage_header,$@)
-	$(call runner,services,$(YES),stop)
-	$(call runner,apps,$(YES),stop)
-	$(call runner,docker-services,$(YES),rm)
-	$(call runner,docker-apps,$(YES),rm)
+	$(call runner,apps,$(NO),stop)
+	$(call runner,services,$(NO),stop)
 	$(call stage_tail,$@)
+endif
 
 start-services:
 	$(call stage_header,$@)
 	$(call runner,services,$(YES),start)
-	$(call runner,docker-services,$(YES),run)
+	$(call runner,docker-services,$(YES),start)
 	@echo "Waiting for services' runtime init ..."
 	sleep $(SERVICES_DELAY)
 	@echo Ok
@@ -140,7 +139,7 @@ upgrade:
 start-apps:
 	$(call stage_header,$@)
 	$(call runner,apps,$(YES),start)
-	$(call runner,docker-apps,$(YES),run)
+	$(call runner,docker-apps,$(YES),start)
 	$(call stage_tail,$@)
 
 stop-apps:
@@ -151,8 +150,8 @@ stop-apps:
 
 docker-rm:
 	$(call stage_header,$@)
-	$(call runner,docker-services,$(YES),rm)
-	$(call runner,docker-apps,$(YES),rm)
+	$(call runner,docker-rm,$(YES),rm)
+	$(call runner,docker-rm,$(YES),network-rm)
 	$(call stage_tail,$@)
 
 tests:

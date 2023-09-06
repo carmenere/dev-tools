@@ -6,7 +6,6 @@ AUTH_POLICY ?= {{ AUTH_POLICY | default('host  all  all  0.0.0.0/0  md5', true) 
 MAJOR ?= {{ MAJOR | default('12', true) }}
 MINOR ?= {{ MINOR | default('15_2', true) }}
 OS ?= {{ OS | default(d['OS'], true) }}
-OS_CODENAME ?= {{ OS_CODENAME | default(d['OS_CODENAME'], true) }}
 PG_HBA ?= {{ PG_HBA | default('/opt/homebrew/var/$(SERVICE)/pg_hba.conf', true) }}
 SERVICE ?= {{ SERVICE | default('postgresql@$(MAJOR)', true) }}
 CMD_PREFIX ?= {{ CMD_PREFIX | default(d['SERVICE_CMD_PREFIX'], true) }}
@@ -21,7 +20,7 @@ include $(DEVTOOLS_DIR)/templates/make/common/sudo.mk
 .PHONY: install-ubuntu install-debian install-alpine install-macos install add-auth-policy start stop restart clean distclean
 
 install-ubuntu install-debian:
-	$(SUDO) sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(OS_CODENAME)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+	$(SUDO) sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $$(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 	$(SUDO) wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | $(SUDO) apt-key add -
 	$(SUDO) apt-get update
 	$(SUDO) apt-get -y install \

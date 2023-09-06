@@ -2,7 +2,7 @@
 # docker_pg
 ########################################################################################################################
 ENABLE_docker_pg = $(ENABLE_DOCKER_SERVICES)
-docker_pg__STAGE = docker-services images
+docker_pg__STAGE = docker-services images docker-rm
 
 docker_pg__IN = $(MK)/docker.mk
 docker_pg__OUT_DIR = $(OUTDIR)/docker
@@ -29,7 +29,7 @@ CTXES += docker_pg
 # docker_redis
 ########################################################################################################################
 ENABLE_docker_redis = $(ENABLE_DOCKER_SERVICES)
-docker_redis__STAGE = docker-services images
+docker_redis__STAGE = docker-services images docker-rm
 
 docker_redis__IN = $(MK)/docker.mk
 docker_redis__OUT_DIR = $(OUTDIR)/docker
@@ -51,7 +51,7 @@ CTXES += docker_redis
 # docker_clickhouse
 ########################################################################################################################
 ENABLE_docker_clickhouse = $(ENABLE_DOCKER_SERVICES)
-docker_clickhouse__STAGE = docker-services images
+docker_clickhouse__STAGE = docker-services images docker-rm
 
 docker_clickhouse__IN = $(MK)/docker.mk
 docker_clickhouse__OUT_DIR = $(OUTDIR)/docker

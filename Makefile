@@ -17,7 +17,7 @@ export SEVERITY ?= info
 export DRY_RUN ?= no
 
 .PHONY: toolchain configure deps init stop-disabled start-services stop-services build schemas upgrade \
-start-apps stop-apps tests reports clean-services docker-rm clean distclean kill ctxes envs
+start-apps stop-apps tests reports clean-services docker-rm clean distclean kill ctxes envs stop-all
 
 toolchain:
 	cd $(TOOLCHAIN) && \
@@ -30,7 +30,10 @@ configure:
 deps:
 	make -f $(STAGES) deps
 
-init: configure
+stop-all:
+	make -f $(STAGES) stop-disabled docker-rm-disabled stop-services stop-apps
+
+init: configure stop-all
 	make -f $(STAGES) deps venvs images start-services init-services
 
 start-services:
@@ -61,14 +64,10 @@ start-apps: stop-apps build
 	make -f $(STAGES) fixtures upgrade tmux start-apps
 
 stop-apps:
-	make -f $(STAGES) stop-apps
-	make -f $(STAGES) tmux-kill-server
+	make -f $(STAGES) stop-apps tmux-kill-server
 
 stop-disabled:
 	make -f $(STAGES) stop-disabled
-
-stop-all:
-	make -f $(STAGES) stop-all
 
 tests: start
 	make -f $(STAGES) tests

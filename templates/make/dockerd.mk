@@ -3,7 +3,6 @@ DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 include $(DEVTOOLS_DIR)/lib.mk
 
 OS ?= {{ OS | default('$(OS)', true) }}
-OS_CODENAME ?= {{ OS_CODENAME | default('$(OS_CODENAME)', true) }}
 SERVICE ?= {{ SERVICE | default('docker', true) }}
 CMD_PREFIX ?= {{ CMD_PREFIX | default('$(SERVICE_CMD_PREFIX)', true) }}
 START_CMD ?= {{ START_CMD | default('$(CMD_PREFIX) start $(SERVICE)', true) }}
