@@ -18,7 +18,7 @@ WINDOW_NAME ?=
 init:
 	tmux has-session -t $(SESSION_NAME) || tmux new -s $(SESSION_NAME) -d
 	tmux has-session -t $(SESSION_NAME) && \
-		tmux set-option -t $(SESSION_NAME) -g default-command $(DEFAULT_CMD)
+		tmux set-option -t $(SESSION_NAME) -g default-command '$(DEFAULT_CMD)'
 	tmux has-session -t $(SESSION_NAME) && \
 		tmux set-option -t $(SESSION_NAME) -g default-terminal $(DEFAULT_TERM)
 	tmux has-session -t $(SESSION_NAME) && \

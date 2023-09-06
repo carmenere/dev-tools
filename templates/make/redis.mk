@@ -5,7 +5,6 @@ include $(DEVTOOLS_DIR)/lib.mk
 MAJOR ?= {{ MAJOR | default('7', true) }}
 MINOR ?= {{ MINOR | default('0.1', true) }}
 OS ?= {{ OS | default(d['OS'], true) }}
-OS_CODENAME ?= {{ OS_CODENAME | default(d['OS_CODENAME'], true) }}
 SERVICE ?= {{ SERVICE | default('redis', true) }}
 CMD_PREFIX ?= {{ CMD_PREFIX | default(d['SERVICE_CMD_PREFIX'], true) }}
 START_CMD ?= {{ START_CMD | default('$(CMD_PREFIX) start $(SERVICE)', true) }}

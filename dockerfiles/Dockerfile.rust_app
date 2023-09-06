@@ -19,17 +19,16 @@ RUN cat /etc/version
 WORKDIR /opt/dev-tools
 
 RUN source "$HOME/.cargo/env" && make configure init build install \
-        ENABLE_pg_ctl=yes \
-        ENABLE_psql=yes \
-        ENABLE_SCHEMAS=yes \
         ENABLE_CARGO=yes \
+        ENABLE_pg_ctl=yes \
+        ENABLE_psql_foo=yes \
+        ENABLE_psql_bar=yes \
+        ENABLE_sqlx_foo=yes \
+        ENABLE_sqlx_bar=yes \
         BUILD_PROFILE=${BUILD_PROFILE} \
         BUILD_VERSION=${BUILD_VERSION} \
         TARGET_ARCH=${TARGET_ARCH} \
         PG_CONFIG=/usr/libexec/postgresql12/pg_config
-
-# /root/.cargo/bin/sqlx --source ./examples/bar/migrations
-# /root/.cargo/bin/sqlx --source ./examples/foo/migrations
 
 ########################################################################################################################
 FROM ${BASE_IMAGE} AS runtime

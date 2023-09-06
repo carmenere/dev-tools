@@ -3,6 +3,36 @@ define LF
 
 endef
 
+# $1:USER; $2:PASSWORD, $3:HOST, $4:PORT, $5:DB
+define pg_db_url
+$(eval 
+ifneq ($1,)
+x_USER = $1
+else
+x_USER = $(SERVICE_USER)
+endif
+ifneq ($2,)
+x_PASSWORD = $2
+else
+x_PASSWORD = $(SERVICE_PASSWORD)
+endif
+ifneq ($3,)
+x_HOST = $3
+else
+x_HOST = $(PG_HOST)
+endif
+ifneq ($4,)
+x_PORT = $4
+else
+x_PORT = $(PG_PORT)
+endif
+ifneq ($5,)
+x_DB = $5
+else
+x_DB = $(SERVICE_DB)
+endif)postgres://$(x_USER):$(x_PASSWORD)@$(x_HOST):$(x_PORT)/$(x_DB)
+endef
+
 define uppercase
 $(shell echo $1 | tr '[:lower:]' '[:upper:]')
 endef

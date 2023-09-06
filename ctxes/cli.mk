@@ -1,14 +1,30 @@
 ########################################################################################################################
-# psql
+# psql_foo
 ########################################################################################################################
-ENABLE_psql = $(ENABLE_INIT)
-psql__STAGE = init
+ENABLE_psql_foo = $(ENABLE_INIT)
+psql_foo__STAGE = init
 
-psql__IN = $(MK)/psql.mk
-psql__OUT_DIR = $(OUTDIR)/psql
-psql__OUT = $(psql__OUT_DIR)/Makefile
+psql_foo__IN = $(MK)/psql.mk
+psql_foo__OUT_DIR = $(OUTDIR)/psql
+psql_foo__OUT = $(psql_foo__OUT_DIR)/foo.mk
 
-CTXES += psql
+psql_foo__USER_DB = foo
+
+CTXES += psql_foo
+
+########################################################################################################################
+# psql_bar
+########################################################################################################################
+ENABLE_psql_bar = $(ENABLE_INIT)
+psql_bar__STAGE = init
+
+psql_bar__IN = $(MK)/psql.mk
+psql_bar__OUT_DIR = $(OUTDIR)/psql
+psql_bar__OUT = $(psql_bar__OUT_DIR)/bar.mk
+
+psql_bar__USER_DB = bar
+
+CTXES += psql_bar
 
 ########################################################################################################################
 # redis_cli

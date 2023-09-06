@@ -11,15 +11,19 @@ DRIVER ?= {{ DRIVER | default('bridge', true) }}
 ERR_IF_BRIDGE_EXISTS = {{ ERR_IF_BRIDGE_EXISTS | default('no', true) }}
 IMAGE ?= {{ IMAGE | default('', true) }}
 RESTART_POLICY ?= {{ RESTART_POLICY | default('no', true) }}
-RM_AFTER_STOP ?= {{ RM_AFTER_STOP | default('yes', true) }}
+RM_AFTER_STOP ?= {{ RM_AFTER_STOP | default('no', true) }}
 SUBNET ?= {{ SUBNET | default('192.168.100.0/24', true) }}
 TAG ?= {{ TAG | default('latest', true) }}
 COMMAND ?= {{ COMMAND | default('', true) }}
+SH ?= {{ SH | default(d['SH'], true) }}
 
 CHECK_DOCKER = docker ps 1>/dev/null
 
 # ENVS
 {% include 'common/j2/docker-envs.jinja2' %}
+
+# OPTS
+{% include 'common/j2/opts.jinja2' %}
 
 # BUILD ARGS
 {% include 'common/j2/build_args.jinja2' %}
@@ -36,7 +40,7 @@ else
 endif
 
 ifeq ($(DAEMONIZE),yes)
-RUN_OPTS += -d
+D += -d
 endif
 
 ifeq ($(RM_AFTER_STOP),yes)
@@ -56,13 +60,13 @@ RUN_OPTS += $(PUBLISH_OPT)
 network:
 	$(CHECK_DOCKER)
 ifeq ($(strip $(ERR_IF_BRIDGE_EXISTS)),yes)
-	[ -z "$$(docker network ls -q -f name=$(BRIDGE))" ] || false
+	[ -z "$$(docker network ls -q --filter name='^$(BRIDGE)$$')" ] || false
 endif
-	[ -n "$$(docker network ls -q -f name=$(BRIDGE))" ] || docker network create --driver=$(DRIVER) --subnet=$(SUBNET) $(BRIDGE)
+	[ -n "$$(docker network ls -q --filter name='^$(BRIDGE)$$')" ] || docker network create --driver=$(DRIVER) --subnet=$(SUBNET) $(BRIDGE)
 
 network-rm:
 	$(CHECK_DOCKER)
-	[ -z "$$(docker network ls -q -f name=$(BRIDGE))" ] || docker network rm $(BRIDGE)
+	[ -z "$$(docker network ls -q --filter name='^$(BRIDGE)$$')" ] || docker network rm $(BRIDGE)
 
 build:
 ifdef DOCKERFILE
@@ -75,46 +79,50 @@ endif
 
 run: network
 	$(CHECK_DOCKER)
-	[ -n "$$(docker ps -aq -f status=running -f name=$(CONTAINER))" ] || docker run $(RUN_OPTS) $(ENVS) $(IMG) $(COMMAND)
+	[ -n "$$(docker ps -aq --filter name='^$(CONTAINER)$$')" ] || docker run $(RUN_OPTS) $(D) $(ENVS) $(IMG) $(COMMAND)
 
-start:
+create: network
 	$(CHECK_DOCKER)
-	[ -n "$$(docker ps -aq -f status=running -f name=$(CONTAINER))" ] || docker start $(CONTAINER)
+	[ -n "$$(docker ps -aq --filter name='^$(CONTAINER)$$')" ] || docker create $(RUN_OPTS) $(ENVS) $(IMG) $(COMMAND)
+
+start: create
+	$(CHECK_DOCKER)
+	[ -z "$$(docker ps -aq --filter name='^$(CONTAINER)$$') --filter status=exited --filter status=created" ] || docker start $(CONTAINER)
 
 stop:
 	$(CHECK_DOCKER)
-	[ -z "$$(docker ps -aq -f status=running -f name=$(CONTAINER))" ] || docker stop $(CONTAINER)
+	[ -z "$$(docker ps -aq --filter name='^$(CONTAINER)$$' --filter status=running)" ] || docker stop $(CONTAINER)
 
 rm:
 	$(CHECK_DOCKER)
-	[ -z "$$(docker ps -aq -f name=$(CONTAINER))" ] || docker rm -f $(CONTAINER)
+	[ -z "$$(docker ps -aq --filter name='^$(CONTAINER)$$')" ] || docker rm --force $(CONTAINER)
 
 rm-by-image:
 	$(CHECK_DOCKER)
-	[ -z "$$(docker ps -aq -f ancestor=$(IMG))" ] || docker rm -f "$$(docker ps -aq -f ancestor=$(IMG))"
+	[ -z "$$(docker ps -aq --filter ancestor='^$(IMG)$$')" ] || docker rm --force "$$(docker ps -aq --filter ancestor='^$(IMG)$$')"
 
 rm-all:
 	$(CHECK_DOCKER)
-	[ -z "$$(docker ps -aq)" ] || docker rm -f $$(docker ps -aq)
+	[ -z "$$(docker ps -aq)" ] || docker rm --force $$(docker ps -aq)
 
 prune: rm-all
-	docker system prune -f
-	docker volume prune -f
-	docker network prune -f
+	docker system prune --force
+	docker volume prune --force
+	docker network prune --force
 
 purge: rm-all
-	docker system prune -a -f --volumes
-	docker volume prune -f
-	docker network prune -f
+	docker system prune --force --all --volumes
+	docker volume prune --force
+	docker network prune --force
 	docker builder prune --force --all
 
 status:
 	{% raw %}
-	docker ps --format "table {{.ID}} | {{.Status}}" -f name=$(CONTAINER))"
+	docker ps --format "table {{.ID}} | {{.Status}}" --format name='^$(CONTAINER)$$')"
 	{% endraw %}
 
 connect:
-	docker exec -ti $(CONTAINER) /bin/sh
+	docker exec -ti $(CONTAINER) $(SH)
 
 clean:
 

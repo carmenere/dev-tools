@@ -8,11 +8,13 @@ ARG SQLX_VERSION=
 
 RUN apk update --no-cache && apk add \
     bash \
+    bind-tools \
     bsd-compat-headers \
     build-base \
     curl \
-    git \
     findutils \
+    git \
+    iputils \
     jq \
     libev \
     libffi-dev \
