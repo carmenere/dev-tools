@@ -5,11 +5,9 @@ ARG BASE_IMAGE=alpine:3.18.3
 FROM ${BUILDER} AS core
 ########################################################################################################################
 ARG BASE_IMAGE=${BASE_IMAGE}
-ARG APP=
-ARG BUILD_PROFILE=
-ARG BUILD_VERSION=
+ARG BUILD_PROFILE=dev
+ARG BUILD_VERSION=dev-1.0
 ARG TARGET_ARCH=aarch64-unknown-linux-musl
-ARG PROJECT_DIR="/usr/local/src/${APP}"
 ARG INSTALL_DIR=/usr/local/bin
 
 RUN echo ${BUILD_VERSION} > /etc/version
@@ -19,12 +17,15 @@ RUN cat /etc/version
 WORKDIR /opt/dev-tools
 
 RUN source "$HOME/.cargo/env" && make configure init build install \
-        ENABLE_CARGO=yes \
-        ENABLE_pg_ctl=yes \
-        ENABLE_psql_foo=yes \
-        ENABLE_psql_bar=yes \
-        ENABLE_sqlx_foo=yes \
-        ENABLE_sqlx_bar=yes \
+        ENABLE_ALL_CTXES=no \
+        ENABLE_ALL_TAGS=yes \
+        ENABLE_CTX_pg_ctl=yes \
+        ENABLE_CTX_psql_foo=yes \
+        ENABLE_CTX_psql_bar=yes \
+        ENABLE_CTX_cargo_foo=yes \
+        ENABLE_CTX_cargo_bar=yes \
+        ENABLE_CTX_sqlx_foo=yes \
+        ENABLE_CTX_sqlx_bar=yes \
         BUILD_PROFILE=${BUILD_PROFILE} \
         BUILD_VERSION=${BUILD_VERSION} \
         TARGET_ARCH=${TARGET_ARCH} \

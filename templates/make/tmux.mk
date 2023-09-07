@@ -1,4 +1,5 @@
-SELFDIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+SELF := $(realpath $(lastword $(MAKEFILE_LIST)))
+SELFDIR = $(realpath $(dir $(SELF)))
 DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
 include $(DEVTOOLS_DIR)/lib.mk
@@ -38,6 +39,8 @@ close-window:
 close-session:
 	tmux has-session -t $(SESSION_NAME) && tmux kill-session -t $(SESSION_NAME) || echo "Session $(SESSION_NAME) was not opened."
 
+stop: kill
+
 kill:
 	tmux kill-server || true
 
@@ -48,6 +51,6 @@ else
 	tmux a -t $(SESSION_NAME)
 endif
 
-clean:
+clean: kill
 
-distclean:
+distclean: clean

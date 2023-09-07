@@ -16,8 +16,8 @@ USER_DB ?= {{ USER_DB | default(d['SERVICE_DB'], true) }}
 USER_NAME ?= {{ USER_NAME | default(d['SERVICE_USER'], true) }}
 USER_PASSWORD ?= {{ USER_PASSWORD | default(d['SERVICE_PASSWORD'], true) }}
 
-CONN_URL ?= $(call pg_db_url,$(ADMIN),$(ADMIN_PASSWORD),$(HOST),$(PORT),$(ADMIN_DB))
-USER_CONN_URL ?= $(call pg_db_url,$(USER_NAME),$(USER_PASSWORD),$(HOST),$(PORT),$(USER_DB)) 
+CONN_URL ?= $(call conn_url,,$(ADMIN),$(ADMIN_PASSWORD),$(HOST),$(PORT),$(ADMIN_DB))
+USER_CONN_URL ?= $(call conn_url,postgres,$(USER_NAME),$(USER_PASSWORD),$(HOST),$(PORT),$(USER_DB)) 
 
 # SUDO
 SUDO_BIN ?= {{ SUDO_BIN | default(d['SUDO_BIN'], true) }}

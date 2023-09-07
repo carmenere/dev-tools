@@ -15,8 +15,8 @@ USER_DB ?= {{ USER_DB | default(d['REDIS_ADMIN_DB'], true) }}
 USER_NAME := {{ USER_NAME | default(d['SERVICE_USER'], true) }}
 USER_PASSWORD ?= {{ USER_PASSWORD | default(d['SERVICE_PASSWORD'], true) }}
 
-CONN_URL ?= redis://$(ADMIN):$(ADMIN_PASSWORD)@$(HOST):$(PORT)/$(ADMIN_DB)
-USER_CONN_URL ?= redis://$(USER_NAME):$(USER_PASSWORD)@$(HOST):$(PORT)/$(USER_DB)
+CONN_URL ?= $(call conn_url,redis,$(ADMIN),$(ADMIN_PASSWORD),$(HOST),$(PORT),$(ADMIN_DB))
+USER_CONN_URL ?= $(call conn_url,redis,$(USER_NAME),$(USER_PASSWORD),$(HOST),$(PORT),$(USER_DB)) 
 
 define check_user
 $(REDIS_CLI) ACL DRYRUN $1 PING

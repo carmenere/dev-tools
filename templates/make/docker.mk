@@ -15,7 +15,7 @@ RM_AFTER_STOP ?= {{ RM_AFTER_STOP | default('no', true) }}
 SUBNET ?= {{ SUBNET | default('192.168.100.0/24', true) }}
 TAG ?= {{ TAG | default('latest', true) }}
 COMMAND ?= {{ COMMAND | default('', true) }}
-SH ?= {{ SH | default(d['SH'], true) }}
+SH ?= {{ SH | default(d['DOCKER_SHELL'], true) }}
 
 CHECK_DOCKER = docker ps 1>/dev/null
 
@@ -87,7 +87,7 @@ create: network
 
 start: create
 	$(CHECK_DOCKER)
-	[ -z "$$(docker ps -aq --filter name='^$(CONTAINER)$$') --filter status=exited --filter status=created" ] || docker start $(CONTAINER)
+	[ -z "$$(docker ps -aq --filter name='^$(CONTAINER)$$' --filter status=exited --filter status=created)" ] || docker start $(CONTAINER)
 
 stop:
 	$(CHECK_DOCKER)
