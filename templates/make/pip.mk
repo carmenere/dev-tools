@@ -68,7 +68,7 @@ requirements: $(SITE_PACKAGES)/.requirements
 init: requirements
 
 clean:
-	pip uninstall -r $(REQUIREMENTS) -y
+	$(PIP) uninstall -r $(REQUIREMENTS) -y
 	[ ! -f $(SITE_PACKAGES)/.package-* ] || rm -fv $(SITE_PACKAGES)/.package-*
 	[ ! -f $(SITE_PACKAGES)/.requirements ] || rm -fv $(SITE_PACKAGES)/.requirements
 	[ ! -f $(SITE_PACKAGES)/.upgrade ] || rm -fv $(SITE_PACKAGES)/.upgrade
