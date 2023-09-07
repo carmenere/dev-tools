@@ -18,7 +18,7 @@ touch ~/.dev-tools/vars.mk
 # ENABLE_bar = yes
 PG_ADMIN = $(USER)
 PG_CONFIG = /opt/homebrew/opt/postgresql@12/bin/pg_config
-STOP_DISABLED = yes
+STOP_ALL = yes
 
 # Docker
 docker_bar__PUBLISH = 8080:80/tcp
@@ -79,7 +79,7 @@ Create file `~/.dev-tools/vars.mk`, for instance:
 ```bash
 PG_ADMIN = $(USER)
 PG_CONFIG = /opt/homebrew/opt/postgresql@12/bin/pg_config
-STOP_DISABLED = yes
+STOP_ALL = yes
 ```
 
 ## All on host
@@ -87,16 +87,17 @@ Create file `~/.dev-tools/host.mk`, for instance:
 ```bash
 include %abs path to ~/.dev-tools/vars.mk%
 
-ENABLE_HOST_APPS = yes
-ENABLE_HOST_SERVICES = yes
-ENABLE_INIT = yes
-ENABLE_sqlx_foo = yes
-ENABLE_sqlx_bar = yes
-ENABLE_TESTS = yes
-ENABLE_TMUX = yes
-ENABLE_VENVS = yes
+# CTXES
+ENABLE_ALL_CTXES = yes
+ENABLE_CTX_pg_ctl = no
 
-ENABLE_pg_ctl = no
+# TAGS
+ENABLE_ALL_TAGS = yes
+
+ENABLE_TAG_image = no
+ENABLE_TAG_docker_service = no
+ENABLE_TAG_docker_app = no
+ENABLE_TAG_docker_schema = no
 ```
 
 <br>
@@ -107,11 +108,16 @@ Create file `~/.dev-tools/docker.mk`, for instance:
 include %abs path to ~/.dev-tools/vars.mk%
 
 # CTXES
-ENABLE_DOCKER_APPS = yes
-ENABLE_DOCKER_SERVICES = yes
-ENABLE_INIT = yes
-ENABLE_docker_sqlx_foo = yes
-ENABLE_docker_sqlx_bar = yes
+ENABLE_ALL_CTXES = yes
+
+# TAGS
+ENABLE_ALL_TAGS = no
+
+ENABLE_TAG_image = yes
+ENABLE_TAG_docker_service = yes
+ENABLE_TAG_docker_app = yes
+ENABLE_TAG_docker_schema = yes
+ENABLE_TAG_cli = yes
 
 # PUBLISH APPS
 docker_bar__PUBLISH = 8080:80/tcp
@@ -133,17 +139,17 @@ Create file `~/.dev-tools/mixed.mk`, for instance:
 ```bash
 include %abs path to ~/.dev-tools/vars.mk%
 
-# DOCKER
-ENABLE_DOCKER_SERVICES = yes
+# CTXES
+ENABLE_ALL_CTXES = yes
+ENABLE_CTX_pg_ctl = no
 
-# HOST
-ENABLE_HOST_APPS = yes
-ENABLE_INIT = yes
-ENABLE_sqlx_foo = yes
-ENABLE_sqlx_bar = yes
-ENABLE_TESTS = yes
-ENABLE_TMUX = yes
-ENABLE_VENVS = yes
+# TAGS
+ENABLE_ALL_TAGS = yes
+
+ENABLE_TAG_host_service = no
+ENABLE_TAG_image = no
+ENABLE_TAG_docker_app = no
+ENABLE_TAG_docker_schema = no
 
 # PUBLISH SERVICES
 docker_clickhouse__PUBLISH = $(CH_PORT):$(CH_PORT)/tcp
