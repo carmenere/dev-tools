@@ -11,7 +11,7 @@ docker_rust__OUT = $(docker_rust__OUT_DIR)/rust.mk
 docker_rust__CONTAINER = builder_rust
 docker_rust__CTX = $(PROJECT_ROOT)
 docker_rust__DOCKERFILE = $(DOCKERFILES)/Dockerfile.rust
-docker_rust__TAG = latest
+docker_rust__TAG = 0.1
 docker_rust__IMAGE = $(call docker_image,toolchain,$(docker_rust__TAG))
 
 # docker build_args
@@ -26,7 +26,7 @@ CTXES += docker_rust
 # docker_bar
 ########################################################################################################################
 ENABLE_CTX_docker_bar = $(ENABLE_ALL_CTXES)
-TAG_docker_bar = image docker app
+TAG_docker_bar = image docker docker_app
 
 docker_bar__IN = $(MK)/docker.mk
 docker_bar__OUT_DIR = $(OUTDIR)/docker
@@ -57,7 +57,7 @@ CTXES += docker_bar
 # docker_foo
 ########################################################################################################################
 ENABLE_CTX_docker_foo = $(ENABLE_ALL_CTXES)
-TAG_docker_foo = image docker app
+TAG_docker_foo = image docker docker_app
 
 docker_foo__IN = $(MK)/docker.mk
 docker_foo__OUT_DIR = $(OUTDIR)/docker
@@ -84,7 +84,7 @@ CTXES += docker_foo
 # docker_sqlx_bar
 ########################################################################################################################
 ENABLE_CTX_docker_sqlx_bar = $(ENABLE_ALL_CTXES)
-TAG_docker_sqlx_bar = schema docker
+TAG_docker_sqlx_bar = docker image docker_schema
 
 docker_sqlx_bar__IN = $(MK)/docker.mk
 docker_sqlx_bar__OUT_DIR = $(OUTDIR)/docker/sqlx
@@ -99,7 +99,7 @@ docker_sqlx_bar__COMMAND = $(DOCKER_SHELL) -c $$$$'$(call escape,/$$$${HOME}/.ca
 
 # sqlx envs
 $(call inherit_ctx,bar__env_,docker_sqlx_bar__env_)
-docker_sqlx_bar__env_DATABASE_URL = $(call conn_url,,,,$(docker_pg__CONTAINER),,bar)
+docker_sqlx_bar__env_DATABASE_URL = $(call conn_url,,$(psql_bar__USER_NAME),$(psql_bar__USER_PASSWORD),$(docker_pg__CONTAINER),,$(psql_bar__USER_DB))
 
 # sqlx cli opts
 $(call inherit_ctx,bar__opt_,docker_sqlx_bar__opt_)
@@ -114,7 +114,7 @@ CTXES += docker_sqlx_bar
 # docker_sqlx_foo
 ########################################################################################################################
 ENABLE_CTX_docker_sqlx_foo = $(ENABLE_ALL_CTXES)
-TAG_docker_sqlx_foo = schema docker
+TAG_docker_sqlx_foo = docker image docker_schema
 
 docker_sqlx_foo__APP = docker_sqlx_foo
 
@@ -131,7 +131,7 @@ docker_sqlx_foo__COMMAND = $(DOCKER_SHELL) -c $$$$'$(call escape,/$$$${HOME}/.ca
 
 # sqlx envs
 $(call inherit_ctx,foo__env_,docker_sqlx_foo__env_)
-docker_sqlx_foo__env_DATABASE_URL = $(call conn_url,,,,$(docker_pg__CONTAINER),,foo)
+docker_sqlx_foo__env_DATABASE_URL = $(call conn_url,,$(psql_foo__USER_NAME),$(psql_foo__USER_PASSWORD),$(docker_pg__CONTAINER),,$(psql_foo__USER_DB))
 
 # sqlx cli opts
 $(call inherit_ctx,foo__opt_,docker_sqlx_foo__opt_)

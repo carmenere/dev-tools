@@ -2,7 +2,7 @@
 # docker_pg
 ########################################################################################################################
 ENABLE_CTX_docker_pg = $(ENABLE_ALL_CTXES)
-TAG_docker_pg = docker service image
+TAG_docker_pg = docker docker_service image
 
 docker_pg__IN = $(MK)/docker.mk
 docker_pg__OUT_DIR = $(OUTDIR)/docker
@@ -28,7 +28,7 @@ CTXES += docker_pg
 # docker_redis
 ########################################################################################################################
 ENABLE_CTX_docker_redis = $(ENABLE_ALL_CTXES)
-TAG_docker_redis = docker service image
+TAG_docker_redis = docker docker_service image
 
 docker_redis__IN = $(MK)/docker.mk
 docker_redis__OUT_DIR = $(OUTDIR)/docker
@@ -49,7 +49,7 @@ CTXES += docker_redis
 # docker_clickhouse
 ########################################################################################################################
 ENABLE_CTX_docker_clickhouse = $(ENABLE_ALL_CTXES)
-TAG_docker_clickhouse = docker service image
+TAG_docker_clickhouse = docker docker_service image
 
 docker_clickhouse__IN = $(MK)/docker.mk
 docker_clickhouse__OUT_DIR = $(OUTDIR)/docker

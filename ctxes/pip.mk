@@ -28,6 +28,9 @@ pip_alembic_baz__OUT = $(pip_alembic_baz__OUT_DIR)/Makefile
 pip_alembic_baz__PYTHON = $(venv_alembic_baz__OUT_DIR)/.venv/bin/python
 pip_alembic_baz__REQUIREMENTS = $(PROJECT_ROOT)/examples/baz/migrator/requirements.txt
 
+pip_alembic_baz__CPPFLAGS = -I/opt/homebrew/opt/openssl/include
+pip_alembic_baz__LDFLAGS = -L/opt/homebrew/opt/openssl/lib
+
 CTXES += pip_alembic_baz
 
 ########################################################################################################################

@@ -76,12 +76,12 @@ venvs:
 
 init-services:
 	$(call stage_header,$@)
-	$(call run,init cli,init)
+	$(call run,cli,init)
 	$(call stage_tail,$@)
 
 clean-services:
 	$(call stage_header,$@)
-	$(call run,init cli,clean)
+	$(call run,cli,clean)
 	$(call stage_tail,$@)
 
 images:
@@ -97,16 +97,17 @@ tmux:
 stop-all:
 ifeq ($(STOP_ALL),yes)
 	$(call stage_header,$@)
-	$(call force_run,$(CTXES),host app,stop)
-	$(call force_run,$(CTXES),host service,stop)
+	$(call force_run,$(CTXES),host_app,stop)
+	$(call force_run,$(CTXES),host_service,stop)
 	$(call force_run,$(CTXES),docker,rm)
+	$(call force_run,$(CTXES),tmux,stop)
 	$(call stage_tail,$@)
 endif
 
 start-services:
 	$(call stage_header,$@)
-	$(call run,host service,start)
-	$(call run,docker service,start)
+	$(call run,host_service,start)
+	$(call run,docker_service,start)
 	@echo "Waiting for services' runtime init ..."
 	sleep $(SERVICES_DELAY)
 	@echo Ok
@@ -114,14 +115,14 @@ start-services:
 
 stop-services:
 	$(call stage_header,$@)
-	$(call run,host service,stop)
-	$(call run,docker service,rm)
+	$(call run,host_service,stop)
+	$(call run,docker_service,rm)
 	$(call stage_tail,$@)
 
 schemas:
 	$(call stage_header,$@)
-	$(call run,docker schema,start)
-	$(call run,host schema,start)
+	$(call run,docker_schema,start)
+	$(call run,host_schema,start)
 	$(call stage_tail,$@)
 
 build:
@@ -141,14 +142,14 @@ upgrades:
 
 start-apps:
 	$(call stage_header,$@)
-	$(call run,host app,start)
-	$(call run,docker app,start)
+	$(call run,host_app,start)
+	$(call run,docker_app,start)
 	$(call stage_tail,$@)
 
 stop-apps:
 	$(call stage_header,$@)
-	$(call run,host app,stop)
-	$(call run,docker app,rm)
+	$(call run,host_app,stop)
+	$(call run,docker_app,rm)
 	$(call stage_tail,$@)
 
 docker-rm:
