@@ -1,8 +1,8 @@
 ########################################################################################################################
 # psql_foo
 ########################################################################################################################
-ENABLE_psql_foo = $(ENABLE_INIT)
-psql_foo__STAGE = init
+ENABLE_CTX_psql_foo = $(ENABLE_ALL_CTXES)
+TAG_psql_foo = init clean cli
 
 psql_foo__IN = $(MK)/psql.mk
 psql_foo__OUT_DIR = $(OUTDIR)/psql
@@ -15,8 +15,8 @@ CTXES += psql_foo
 ########################################################################################################################
 # psql_bar
 ########################################################################################################################
-ENABLE_psql_bar = $(ENABLE_INIT)
-psql_bar__STAGE = init
+ENABLE_CTX_psql_bar = $(ENABLE_ALL_CTXES)
+TAG_psql_bar = init clean cli
 
 psql_bar__IN = $(MK)/psql.mk
 psql_bar__OUT_DIR = $(OUTDIR)/psql
@@ -29,8 +29,8 @@ CTXES += psql_bar
 ########################################################################################################################
 # redis_cli
 ########################################################################################################################
-ENABLE_redis_cli = $(ENABLE_INIT)
-redis_cli__STAGE = init
+ENABLE_CTX_redis_cli = $(ENABLE_ALL_CTXES)
+TAG_redis_cli = init clean cli
 
 redis_cli__IN = $(MK)/redis-cli.mk
 redis_cli__OUT_DIR = $(OUTDIR)/redis-cli
@@ -41,8 +41,8 @@ CTXES += redis_cli
 ########################################################################################################################
 # clickhouse_cli
 ########################################################################################################################
-ENABLE_clickhouse_cli = $(ENABLE_INIT)
-clickhouse_cli__STAGE = init
+ENABLE_CTX_clickhouse_cli = $(ENABLE_ALL_CTXES)
+TAG_clickhouse_cli = init clean cli
 
 clickhouse_cli__IN = $(MK)/clickhouse-cli.mk
 clickhouse_cli__OUT_DIR = $(OUTDIR)/clickhouse-cli

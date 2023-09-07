@@ -1,8 +1,8 @@
 ########################################################################################################################
 # venv_alembic_baz
 ########################################################################################################################
-ENABLE_venv_alembic_baz = $(ENABLE_VENVS)
-venv_alembic_baz__STAGE = venvs
+ENABLE_CTX_venv_alembic_baz = $(ENABLE_ALL_CTXES)
+TAG_venv_alembic_baz = venv clean
 
 venv_alembic_baz__IN = $(MK)/venv.mk
 venv_alembic_baz__OUT_DIR = $(OUTDIR)/venv/alembic/baz
@@ -13,8 +13,8 @@ CTXES += venv_alembic_baz
 ########################################################################################################################
 # venv_pytest_bar
 ########################################################################################################################
-ENABLE_venv_pytest_bar = $(ENABLE_VENVS)
-venv_pytest_bar__STAGE = venvs
+ENABLE_CTX_venv_pytest_bar = $(ENABLE_ALL_CTXES)
+TAG_venv_pytest_bar = venv clean
 
 venv_pytest_bar__IN = $(MK)/venv.mk
 venv_pytest_bar__OUT_DIR = $(OUTDIR)/venv/pytest/bar
@@ -25,8 +25,8 @@ CTXES += venv_pytest_bar
 ########################################################################################################################
 # venv_pytest_foo
 ########################################################################################################################
-ENABLE_venv_pytest_foo = $(ENABLE_VENVS)
-venv_pytest_foo__STAGE = venvs
+ENABLE_CTX_venv_pytest_foo = $(ENABLE_ALL_CTXES)
+TAG_venv_pytest_foo = venv clean
 
 venv_pytest_foo__IN = $(MK)/venv.mk
 venv_pytest_foo__OUT_DIR = $(OUTDIR)/venv/pytest/foo

@@ -9,20 +9,6 @@ ifdef SETTINGS
     include $(shell realpath $(SETTINGS))
 endif
 
-CLEANABLE += apps
-CLEANABLE += build
-CLEANABLE += deps
-CLEANABLE += fixtures
-CLEANABLE += init
-CLEANABLE += reports
-CLEANABLE += schemas
-CLEANABLE += services
-CLEANABLE += tests
-CLEANABLE += upgrade
-CLEANABLE += venvs
-
-SERVICES_DELAY = 5
-
 YES = yes
 NO = no
 
@@ -32,17 +18,39 @@ else
 DR =
 endif
 
-.PHONY: deps venvs init stop-disabled services schemas build fixtures upgrade apps stop-apps stop-services \
-tests reports clean distclean docker-rm docker-rm-disabled
+empty =
+space = $(empty) $(empty)
 
-define runner
-@echo "-------------------------- SUBSTAGE --------------------------"
-@echo "SubStage: $1; target: $3."
-@echo "--------------------------- BEGIN  ---------------------------"
-$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ENABLE_$(CTX)),$2),$(CTX)))))
-$(eval ECTXES = $(strip $(foreach CTX,$(ENABLED),$(if $(filter $($(CTX)__STAGE),$1),$(CTX)))))
+.PHONY: deps venvs init start-services schemas build fixtures upgrade start-apps stop-apps stop-services \
+tests reports clean distclean docker-rm stop-all
+
+define force_run
+@echo "--------------- Force run CTXES filtered by TAGS ----------------"
+@echo "Ctxes: $1."
+@echo "Tags: $2. Target: $3."
+@echo "----------------------------- START -----------------------------"
+$(eval ECTXES = $(strip \
+	$(foreach CTX,$1, \
+		$(if $(filter $(subst $(space),_,$(sort $(filter $2,$(TAG_$(CTX))))),$(subst $(space),_,$(sort $2))),$(CTX)) \
+	)) \
+)
 $(foreach CTX,$(ECTXES),$(MAKE) -$(DR)f $($(CTX)__OUT) $3 ${LF})
-@echo "---------------------------  END  ---------------------------"
+@echo "-----------------------------  STOP  ----------------------------"
+endef
+
+define run
+@echo "------------------ Run CTXES filtered by TAGS -------------------"
+@echo "Tags: $1. Target: $2."
+@echo "----------------------------- START -----------------------------"
+$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ENABLE_CTX_$(CTX)),yes),$(CTX)))))
+$(eval EXPECTED = $(subst $(space),_,$(foreach T,$(sort $1),$(T)_yes)))
+$(eval ECTXES = $(strip \
+	$(foreach CTX,$(ENABLED), \
+		$(if $(filter $(subst $(space),_,$(foreach T,$(sort $(filter $1,$(TAG_$(CTX)))),$(T)_$(ENABLE_TAG_$(T)))),$(EXPECTED)),$(CTX)) \
+	)) \
+)
+$(foreach CTX,$(ECTXES),$(MAKE) -$(DR)f $($(CTX)__OUT) $2 ${LF})
+@echo "-----------------------------  STOP  ----------------------------"
 endef
 
 define stage_header
@@ -57,54 +65,48 @@ endef
 
 deps:
 	$(call stage_header,$@)
-	$(call runner,$@,$(YES),install)
+	$(call run,dep,install)
 	$(call stage_tail,$@)
 
 venvs:
 	$(call stage_header,$@)
-	$(call runner,$@ pip,$(YES),init)
-	$(call runner,pip,$(YES),init)
+	$(call run,venv,init)
+	$(call run,pip,init)
 	$(call stage_tail,$@)
 
 init-services:
 	$(call stage_header,$@)
-	$(call runner,init,$(YES),init)
+	$(call run,init cli,init)
 	$(call stage_tail,$@)
 
 clean-services:
 	$(call stage_header,$@)
-	$(call runner,init,$(YES),clean)
+	$(call run,init cli,clean)
 	$(call stage_tail,$@)
 
 images:
 	$(call stage_header,$@)
-	$(call runner,$@,$(YES),build)
+	$(call run,image,build)
 	$(call stage_tail,$@)
 
 tmux:
 	$(call stage_header,$@)
-	$(call runner,$@,$(YES),init)
+	$(call run,tmux,init)
 	$(call stage_tail,$@)
 
-docker-rm-disabled:
-ifeq ($(STOP_DISABLED),yes)
+stop-all:
+ifeq ($(STOP_ALL),yes)
 	$(call stage_header,$@)
-	$(call runner,docker-rm,$(NO),rm)
-	$(call stage_tail,$@)
-endif
-
-stop-disabled:
-ifeq ($(STOP_DISABLED),yes)
-	$(call stage_header,$@)
-	$(call runner,apps,$(NO),stop)
-	$(call runner,services,$(NO),stop)
+	$(call force_run,$(CTXES),host app,stop)
+	$(call force_run,$(CTXES),host service,stop)
+	$(call force_run,$(CTXES),docker,rm)
 	$(call stage_tail,$@)
 endif
 
 start-services:
 	$(call stage_header,$@)
-	$(call runner,services,$(YES),start)
-	$(call runner,docker-services,$(YES),start)
+	$(call run,host service,start)
+	$(call run,docker service,start)
 	@echo "Waiting for services' runtime init ..."
 	sleep $(SERVICES_DELAY)
 	@echo Ok
@@ -112,79 +114,80 @@ start-services:
 
 stop-services:
 	$(call stage_header,$@)
-	$(call runner,services,$(YES),stop)
-	$(call runner,docker-services,$(YES),rm)
+	$(call run,host service,stop)
+	$(call run,docker service,rm)
 	$(call stage_tail,$@)
 
 schemas:
 	$(call stage_header,$@)
-	$(call runner,$@,$(YES),start)
+	$(call run,docker schema,start)
+	$(call run,host schema,start)
 	$(call stage_tail,$@)
 
 build:
 	$(call stage_header,$@)
-	$(call runner,cargo,$(YES),$@)
+	$(call run,build,build)
 	$(call stage_tail,$@)
 
 fixtures:
 	$(call stage_header,$@)
-	$(call runner,$@,$(YES),start)
+	$(call run,fixture,start)
 	$(call stage_tail,$@)
 
-upgrade:
+upgrades:
 	$(call stage_header,$@)
-	$(call runner,$@,$(YES),start)
+	$(call run,upgrade,start)
 	$(call stage_tail,$@)
 
 start-apps:
 	$(call stage_header,$@)
-	$(call runner,apps,$(YES),start)
-	$(call runner,docker-apps,$(YES),start)
+	$(call run,host app,start)
+	$(call run,docker app,start)
 	$(call stage_tail,$@)
 
 stop-apps:
 	$(call stage_header,$@)
-	$(call runner,apps,$(YES),stop)
-	$(call runner,docker-apps,$(YES),rm)
+	$(call run,host app,stop)
+	$(call run,docker app,rm)
 	$(call stage_tail,$@)
 
 docker-rm:
 	$(call stage_header,$@)
-	$(call runner,docker-rm,$(YES),rm)
-	$(call runner,docker-rm,$(YES),network-rm)
+	$(call run,docker,rm)
+	$(call run,docker,network-rm)
 	$(call stage_tail,$@)
 
 tests:
 	$(call stage_header,$@)
-	$(call runner,$@,$(YES),start)
+	$(call run,test,start)
 	$(call stage_tail,$@)
 
 reports:
 	$(call stage_header,$@)
-	$(call runner,$@,$(YES),upload)
+	$(call run,report,upload)
 	$(call stage_tail,$@)
 
 clean:
 	$(call stage_header,$@)
-	$(call runner,$(CLEANABLE),$(YES),clean)
+	$(call run,clean,clean)
 	$(call stage_tail,$@)
 
 distclean:
 	$(call stage_header,$@)
-	$(call runner,$(CLEANABLE),$(YES),distclean)
+	$(call run,clean,distclean)
 	$(call stage_tail,$@)
 
 tmux-kill-server:
 	$(call stage_header,$@)
-	$(call runner,tmux,$(YES),kill)
+	$(call run,tmux,kill)
 	$(call stage_tail,$@)
 
 install:
 	$(call stage_header,$@)
-	$(call runner,$@,$(YES),install)
+	$(call run,install,install)
 	$(call stage_tail,$@)
 
 uninstall:
 	$(call stage_header,$@)
-	$(call runner,$@,$(YES),uninstall)
+	$(call run,install,uninstall)
 	$(call stage_tail,$@)

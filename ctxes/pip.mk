@@ -1,8 +1,8 @@
 ########################################################################################################################
 # pip_pytest_bar
 ########################################################################################################################
-ENABLE_pip_pytest_bar = $(ENABLE_VENVS)
-pip_pytest_bar__STAGE = pip
+ENABLE_CTX_pip_pytest_bar = $(ENABLE_ALL_CTXES)
+TAG_pip_pytest_bar = pip clean
 
 pip_pytest_bar__APP = tests_bar
 
@@ -18,8 +18,8 @@ CTXES += pip_pytest_bar
 ########################################################################################################################
 # pip_alembic_baz
 ########################################################################################################################
-ENABLE_pip_alembic_baz = $(ENABLE_VENVS)
-pip_alembic_baz__STAGE = pip
+ENABLE_CTX_pip_alembic_baz = $(ENABLE_ALL_CTXES)
+TAG_pip_alembic_baz = pip clean
 
 pip_alembic_baz__IN = $(MK)/pip.mk
 pip_alembic_baz__OUT_DIR = $(OUTDIR)/pip/alembic/baz
@@ -33,8 +33,8 @@ CTXES += pip_alembic_baz
 ########################################################################################################################
 # pip_pytest_foo
 ########################################################################################################################
-ENABLE_pip_pytest_foo = $(ENABLE_VENVS)
-pip_pytest_foo__STAGE = pip
+ENABLE_CTX_pip_pytest_foo = $(ENABLE_ALL_CTXES)
+TAG_pip_pytest_foo = pip clean
 
 pip_pytest_foo__IN = $(MK)/pip.mk
 pip_pytest_foo__OUT_DIR = $(OUTDIR)/pip/pytest/foo

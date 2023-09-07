@@ -49,6 +49,3 @@ envs:
 	@echo SETTINGS = $(SETTINGS)
 	@$(foreach CTX,$(CTXES),echo "$(CTX): enabled = $(ENABLE_$(CTX)); stage = $($(CTX)__STAGE)" $(LF) \
 	$(foreach V,$(filter $(CTX)__%,$(.VARIABLES)),echo "    $(subst $(CTX)__,,$(V))='$($(V))'" $(LF)))
-
-a:
-	@echo $(call pg_db_url,1,2,3,,bar)

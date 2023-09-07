@@ -1,4 +1,5 @@
-SELFDIR := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
+SELF = $(realpath $(lastword $(MAKEFILE_LIST)))
+SELFDIR = $(dir $(SELF))
 DEVTOOLS_DIR ?= {{ DEVTOOLS_DIR }}
 
 include $(DEVTOOLS_DIR)/lib.mk

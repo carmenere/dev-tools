@@ -3,34 +3,39 @@ define LF
 
 endef
 
-# $1:USER; $2:PASSWORD, $3:HOST, $4:PORT, $5:DB
-define pg_db_url
+# $1:SCHEMA $2:USER; $3:PASSWORD, $4:HOST, $5:PORT, $6:DB
+define conn_url
 $(eval 
 ifneq ($1,)
-x_USER = $1
+x_SCHEMA = $1
+else
+x_SCHEMA = postgres
+endif
+ifneq ($2,)
+x_USER = $2
 else
 x_USER = $(SERVICE_USER)
 endif
-ifneq ($2,)
-x_PASSWORD = $2
+ifneq ($3,)
+x_PASSWORD = $3
 else
 x_PASSWORD = $(SERVICE_PASSWORD)
 endif
-ifneq ($3,)
-x_HOST = $3
+ifneq ($4,)
+x_HOST = $4
 else
 x_HOST = $(PG_HOST)
 endif
-ifneq ($4,)
-x_PORT = $4
+ifneq ($5,)
+x_PORT = $5
 else
 x_PORT = $(PG_PORT)
 endif
-ifneq ($5,)
-x_DB = $5
+ifneq ($6,)
+x_DB = $6
 else
 x_DB = $(SERVICE_DB)
-endif)postgres://$(x_USER):$(x_PASSWORD)@$(x_HOST):$(x_PORT)/$(x_DB)
+endif)$(x_SCHEMA)://$(x_USER):$(x_PASSWORD)@$(x_HOST):$(x_PORT)/$(x_DB)
 endef
 
 define uppercase

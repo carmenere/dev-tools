@@ -1,8 +1,8 @@
 ########################################################################################################################
 # sqlx_bar
 ########################################################################################################################
-ENABLE_sqlx_bar = $(ENABLE_SCHEMAS)
-sqlx_bar__STAGE = schemas
+ENABLE_CTX_sqlx_bar = $(ENABLE_ALL_CTXES)
+TAG_sqlx_bar = schema clean host
 
 sqlx_bar__APP = sqlx_bar
 
@@ -14,7 +14,7 @@ sqlx_bar__BIN_PATH = sqlx migrate run
 sqlx_bar__TMUX = $(tmux__OUT)
 
 # sqlx envs
-sqlx_bar__env_DATABASE_URL = $(call pg_db_url,,,,,bar)
+sqlx_bar__env_DATABASE_URL = $(call conn_url,,,,,,bar)
 
 # cli opts
 sqlx_bar__opt_SOURCE = --source "$(PROJECT_ROOT)/examples/bar/$(SCHEMAS_DIR)"
@@ -24,8 +24,8 @@ CTXES += sqlx_bar
 ########################################################################################################################
 # sqlx_foo
 ########################################################################################################################
-ENABLE_sqlx_foo = $(ENABLE_SCHEMAS)
-sqlx_foo__STAGE = schemas
+ENABLE_CTX_sqlx_foo = $(ENABLE_ALL_CTXES)
+TAG_sqlx_foo = schema clean host
 
 sqlx_foo__APP = sqlx_foo
 
@@ -37,7 +37,7 @@ sqlx_foo__BIN_PATH = sqlx migrate run
 sqlx_foo__TMUX = $(tmux__OUT)
 
 # sqlx envs
-sqlx_foo__env_DATABASE_URL = $(call pg_db_url,,,,,foo)
+sqlx_foo__env_DATABASE_URL = $(call conn_url,,,,,,foo)
 
 # cli opts
 sqlx_foo__opt_SOURCE = --source "$(PROJECT_ROOT)/examples/foo/$(SCHEMAS_DIR)"
@@ -47,8 +47,8 @@ CTXES += sqlx_foo
 ########################################################################################################################
 # foo
 ########################################################################################################################
-ENABLE_foo = $(ENABLE_HOST_APPS)
-foo__STAGE = apps
+ENABLE_CTX_foo = $(ENABLE_ALL_CTXES)
+TAG_foo = app clean host
 
 foo__APP = foo
 
@@ -68,8 +68,8 @@ CTXES += foo
 ########################################################################################################################
 # bar
 ########################################################################################################################
-ENABLE_bar = $(ENABLE_HOST_APPS)
-bar__STAGE = apps
+ENABLE_CTX_bar = $(ENABLE_ALL_CTXES)
+TAG_bar = app clean host
 
 bar__APP = bar
 

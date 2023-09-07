@@ -1,8 +1,8 @@
 ########################################################################################################################
 # pytest_bar
 ########################################################################################################################
-ENABLE_pytest_bar = $(ENABLE_TESTS)
-pytest_bar__STAGE = tests
+ENABLE_CTX_pytest_bar = $(ENABLE_ALL_CTXES)
+TAG_pytest_bar = test clean
 
 pytest_bar__IN = $(MK)/pytest.mk
 pytest_bar__OUT_DIR = $(OUTDIR)/pytest/bar
@@ -19,8 +19,8 @@ CTXES += pytest_bar
 ########################################################################################################################
 # pytest_foo
 ########################################################################################################################
-ENABLE_pytest_foo = $(ENABLE_TESTS)
-pytest_foo__STAGE = tests
+ENABLE_CTX_pytest_foo = $(ENABLE_ALL_CTXES)
+TAG_pytest_foo = test clean
 
 pytest_foo__IN = $(MK)/pytest.mk
 pytest_foo__OUT_DIR = $(OUTDIR)/pytest/foo
