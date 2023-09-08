@@ -74,9 +74,9 @@ fmt-check:
 	$(CMD_FMT) -- --check
 
 clean:
-
-distclean: 
 	$(CMD_CLEAN)
+
+distclean: clean
 
 install:
 ifdef BINS

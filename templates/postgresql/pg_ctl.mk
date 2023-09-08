@@ -26,7 +26,7 @@ export LC_CTYPE = {{ LC_CTYPE | default(d['LOCALE_LC_CTYPE'], true) }}
 # SUDO
 SUDO_BIN ?= {{ SUDO_BIN | default(d['SUDO_BIN'], true) }}
 SUDO_USER = $(OS_USER)
-include $(DEVTOOLS_DIR)/templates/make/common/sudo.mk
+include $(DEVTOOLS_DIR)/templates/common/sudo.mk
 
 PG_BINDIR ?= $(shell $(PG_CONFIG) --bindir)
 PG_CONF = $(DATADIR)/postgresql.conf
@@ -78,3 +78,5 @@ clean: stop
 	[ ! -d $(DATADIR) ] || rm -Rf $(DATADIR)
 
 distclean: clean
+
+include $(DEVTOOLS_DIR)/templates/common/lsof.mk

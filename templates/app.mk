@@ -9,8 +9,8 @@ OUT := {{ OUT }}
 
 APP ?= {{ APP }}
 BIN_PATH ?= {{ BIN_PATH }}
-LOG_FILE ?= {{ LOG_FILE | default('$(SELFDIR)/.logs', true) }}
-PID_FILE ?= {{ PID_FILE | default('$(SELFDIR)/.pid', true) }}
+LOG_FILE ?= {{ LOG_FILE | default('$(SELFDIR)/.logs-$(APP)', true) }}
+PID_FILE ?= {{ PID_FILE | default('$(SELFDIR)/.pid-$(APP)', true) }}
 PKILL_PATTERN ?= {{ PKILL_PATTERN | default('$(BIN_PATH)', true) }}
 TMUX ?= {{ TMUX }}
 MODE ?= {{ MODE | default('tee', true) }}

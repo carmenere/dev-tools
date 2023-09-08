@@ -6,8 +6,6 @@ ADMIN ?= {{ ADMIN | default(d['CH_ADMIN'], true) }}
 ADMIN_DB ?= {{ ADMIN_DB | default(d['CH_ADMIN_DB'], true) }}
 ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default(d['CH_ADMIN_PASSWORD'], true) }}
 CNT = {{ CNT | default('', true) }}
-EXIT_IF_CREATE_EXISTED_DB = {{ EXIT_IF_CREATE_EXISTED_DB | default(d['EXIT_IF_CREATE_EXISTED_DB'], true) }}
-EXIT_IF_CREATE_EXISTED_USER = {{ EXIT_IF_CREATE_EXISTED_USER | default(d['EXIT_IF_CREATE_EXISTED_USER'], true) }}
 HOST ?= {{ HOST | default(d['CH_HOST'], true) }}
 PORT ?= {{ PORT | default(d['CH_PORT'], true) }}
 USER_DB ?= {{ USER_DB | default(d['SERVICE_DB'], true) }}
@@ -60,11 +58,4 @@ clean:
 
 distclean: clean
 
-lsof:
-ifneq ($(HOST),0.0.0.0)
-	sudo lsof -nP -i4TCP@0.0.0.0:$(PORT) || true
-endif
-ifneq ($(HOST),localhost)
-	sudo lsof -nP -i4TCP@localhost:$(PORT) || true
-endif
-	sudo lsof -nP -i4TCP@$(HOST):$(PORT) || true
+include $(DEVTOOLS_DIR)/templates/common/lsof.mk
