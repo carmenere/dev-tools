@@ -3,7 +3,7 @@ TOOLCHAIN := $(DEVTOOLS_DIR)/toolchain
 CONF = $(DEVTOOLS_DIR)/configure/configure.mk
 STAGES = $(DEVTOOLS_DIR)/configure/stages.mk
 
-WITH ?= --with-python-defaults
+WITH += --with-python-defaults
 
 # If VARS is undefined $(shell realpath ) returns current directory (.)
 ifdef VARS
