@@ -26,7 +26,7 @@ def create_dir(dir):
 class Template:
     def __init__(self, tmpl: str):
         self.path: Path = Path(tmpl)
-        self.jenv = Environment(loader=FileSystemLoader(searchpath=self.path.parent), undefined=StrictUndefined, extensions=['jinja2.ext.do'])
+        self.jenv = Environment(loader=FileSystemLoader(searchpath=[self.path.parent, self.path.parent.parent]), undefined=StrictUndefined, extensions=['jinja2.ext.do'])
         self.tmpl  = self.jenv.get_template(self.path.name)
         self.vars: list = get_tvars(self.jenv, self.path.name)
         LOG.debug(f"self.vars: {self.vars}")

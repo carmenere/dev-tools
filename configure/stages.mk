@@ -21,8 +21,8 @@ endif
 empty =
 space = $(empty) $(empty)
 
-.PHONY: deps venvs init start-services schemas build fixtures upgrade start-apps stop-apps stop-services \
-tests reports clean distclean docker-rm stop-all
+.PHONY: deps venvs init-services clean-services images start-services schemas build fixtures upgrades start-apps stop-apps stop-services \
+tests reports clean distclean docker-rm stop-all tmux tmux-kill-server install uninstall
 
 define force_run
 @echo "--------------- Force run CTXES filtered by TAGS ----------------"

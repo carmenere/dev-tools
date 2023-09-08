@@ -4,9 +4,9 @@
 ENABLE_CTX_docker_rust = $(ENABLE_ALL_CTXES)
 TAG_docker_rust = image
 
-docker_rust__IN = $(MK)/docker.mk
+docker_rust__IN = $(TMPL_DIR)/docker/docker.mk
 docker_rust__OUT_DIR = $(OUTDIR)/docker
-docker_rust__OUT = $(docker_rust__OUT_DIR)/rust.mk
+docker_rust__OUT = $(docker_rust__OUT_DIR)/rust-builder.mk
 
 docker_rust__CONTAINER = builder_rust
 docker_rust__CTX = $(PROJECT_ROOT)
@@ -28,7 +28,7 @@ CTXES += docker_rust
 ENABLE_CTX_docker_bar = $(ENABLE_ALL_CTXES)
 TAG_docker_bar = image docker docker_app
 
-docker_bar__IN = $(MK)/docker.mk
+docker_bar__IN = $(TMPL_DIR)/docker/docker.mk
 docker_bar__OUT_DIR = $(OUTDIR)/docker
 docker_bar__OUT = $(docker_bar__OUT_DIR)/bar.mk
 
@@ -59,7 +59,7 @@ CTXES += docker_bar
 ENABLE_CTX_docker_foo = $(ENABLE_ALL_CTXES)
 TAG_docker_foo = image docker docker_app
 
-docker_foo__IN = $(MK)/docker.mk
+docker_foo__IN = $(TMPL_DIR)/docker/docker.mk
 docker_foo__OUT_DIR = $(OUTDIR)/docker
 docker_foo__OUT = $(docker_foo__OUT_DIR)/foo.mk
 
@@ -86,7 +86,7 @@ CTXES += docker_foo
 ENABLE_CTX_docker_sqlx_bar = $(ENABLE_ALL_CTXES)
 TAG_docker_sqlx_bar = docker image docker_schema
 
-docker_sqlx_bar__IN = $(MK)/docker.mk
+docker_sqlx_bar__IN = $(TMPL_DIR)/docker/docker.mk
 docker_sqlx_bar__OUT_DIR = $(OUTDIR)/docker/sqlx
 docker_sqlx_bar__OUT = $(docker_sqlx_bar__OUT_DIR)/bar.mk
 
@@ -118,7 +118,7 @@ TAG_docker_sqlx_foo = docker image docker_schema
 
 docker_sqlx_foo__APP = docker_sqlx_foo
 
-docker_sqlx_foo__IN = $(MK)/docker.mk
+docker_sqlx_foo__IN = $(TMPL_DIR)/docker/docker.mk
 docker_sqlx_foo__OUT_DIR = $(OUTDIR)/docker/sqlx
 docker_sqlx_foo__OUT = $(docker_sqlx_foo__OUT_DIR)/foo.mk
 

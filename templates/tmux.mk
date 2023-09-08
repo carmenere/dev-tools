@@ -7,7 +7,7 @@ include $(DEVTOOLS_DIR)/lib.mk
 DEFAULT_CMD ?= {{ DEFAULT_CMD | default(d['SH'], true)}}
 DEFAULT_TERM ?= {{ DEFAULT_TERM | default('xterm-256color', true)}}
 HISTORY_LIMIT ?= {{ HISTORY_LIMIT | default('1000000', true)}}
-LOGS_DIR ?= {{ LOGS_DIR | default('$(SELFDIR)/.logs', true)}}
+LOGS_DIR ?= {{ LOGS_DIR | default('$(SELFDIR)/.logs-$(SESSION_NAME)', true)}}
 SESSION_NAME ?= {{ SESSION_NAME | default('DEV-TOOLS', true)}}
 TERM_SIZE ?= {{ TERM_SIZE | default('240x32', true)}}
 

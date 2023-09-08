@@ -12,11 +12,20 @@ else
 SETTINGS =
 endif
 
+# Default vars
+include $(DEVTOOLS_DIR)/configure/defaults.mk
+
+# Customized vars
+ifdef SETTINGS
+    # Use '$(shell realpath ...)' because make's $(realpath ...) doesn't expand tilde '~'.
+    include $(shell realpath $(SETTINGS))
+endif
+
 export SETTINGS
 export SEVERITY ?= info
 export DRY_RUN ?= no
 
-.PHONY: toolchain configure deps init start-services stop-services build schemas upgrade \
+.PHONY: toolchain configure deps init start-services stop-services images build install uninstall schemas fixtures upgrade \
 start-apps stop-apps tests reports clean-services docker-rm clean distclean kill ctxes envs stop-all
 
 toolchain:
@@ -25,73 +34,74 @@ toolchain:
 		$(MAKE) -f Makefile init
 
 configure:
-	make -f $(CONF) all
+	$(MAKE) -f $(CONF) all
 
 deps:
-	make -f $(STAGES) deps
+	$(MAKE) -f $(STAGES) deps
 
 stop-all:
-	make -f $(STAGES) stop-all
+	$(MAKE) -f $(STAGES) stop-all
 
 init: configure
-	make -f $(STAGES) stop-all deps venvs images start-services init-services
+	$(MAKE) -f $(STAGES) stop-all deps venvs images start-services init-services
 
 start-services:
-	make -f $(STAGES) start-services
+	$(MAKE) -f $(STAGES) start-services
 
 stop-services:
-	make -f $(STAGES) stop-services
+	$(MAKE) -f $(STAGES) stop-services
 
 images: configure
-	make -f $(STAGES) images
+	$(MAKE) -f $(STAGES) images
 
 build:
-	make -f $(STAGES) schemas build
+	$(MAKE) -f $(STAGES) schemas build
 
 install:
-	make -f $(STAGES) install
+	$(MAKE) -f $(STAGES) install
 
 uninstall:
-	make -f $(STAGES) uninstall
+	$(MAKE) -f $(STAGES) uninstall
 
 schemas: stop-apps
-	make -f $(STAGES) schemas
+	$(MAKE) -f $(STAGES) schemas
 
 fixtures: stop-apps
-	make -f $(STAGES) schemas build fixtures
+	$(MAKE) -f $(STAGES) schemas build fixtures
 
 upgrade: stop-apps
-	make -f $(STAGES) schemas build fixtures upgrade
+	$(MAKE) -f $(STAGES) schemas build fixtures upgrades
 
 start-apps: stop-apps build
-	make -f $(STAGES) fixtures upgrade tmux start-apps
+	$(MAKE) -f $(STAGES) fixtures upgrades tmux start-apps
 
 stop-apps:
-	make -f $(STAGES) stop-apps tmux-kill-server
+	$(MAKE) -f $(STAGES) stop-apps tmux-kill-server
 
 tests: start
-	make -f $(STAGES) tests
+	$(MAKE) -f $(STAGES) tests
 
 reports: tests
-	make -f $(STAGES) reports
+	$(MAKE) -f $(STAGES) reports
 
 clean-services: stop-apps
-	make -f $(STAGES) clean-services
+	$(MAKE) -f $(STAGES) clean-services
 
 docker-rm:
-	make -f $(STAGES) docker-rm
+	$(MAKE) -f $(STAGES) docker-rm
 
 clean: stop-apps
-	make -f $(STAGES) clean
+	$(MAKE) -f $(STAGES) clean docker-rm
 
 distclean: stop-apps
-	make -f $(STAGES) distclean
+	$(MAKE) -f $(STAGES) distclean docker-rm
+	[ ! -d $(OUTDIR) ] || rm -rf $(OUTDIR)
 
 kill:
-	make -f $(STAGES) tmux-kill-server
+	$(MAKE) -f $(STAGES) tmux-kill-server
 
 ctxes:
-	make -f $(CONF) ctxes
+	$(MAKE) -f $(CONF) ctxes
 
 envs:
-	make -f $(CONF) envs
+	$(MAKE) -f $(CONF) envs

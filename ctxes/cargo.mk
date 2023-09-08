@@ -4,9 +4,9 @@
 ENABLE_CTX_cargo_foo = $(ENABLE_ALL_CTXES)
 TAG_cargo_foo = build clean install
 
-cargo_foo__IN = $(MK)/cargo.mk
-cargo_foo__OUT_DIR = $(OUTDIR)/cargo/foo
-cargo_foo__OUT = $(cargo_foo__OUT_DIR)/Makefile
+cargo_foo__IN = $(TMPL_DIR)/rust/cargo.mk
+cargo_foo__OUT_DIR = $(OUTDIR)/cargo
+cargo_foo__OUT = $(cargo_foo__OUT_DIR)/foo.mk
 
 cargo_foo__BINS = foo
 cargo_foo__CARGO_TOML = $(PROJECT_ROOT)/examples/foo/Cargo.toml
@@ -24,9 +24,9 @@ CTXES += cargo_foo
 ENABLE_CTX_cargo_bar = $(ENABLE_ALL_CTXES)
 TAG_cargo_bar = build clean install
 
-cargo_bar__IN = $(MK)/cargo.mk
-cargo_bar__OUT_DIR = $(OUTDIR)/cargo/bar
-cargo_bar__OUT = $(cargo_bar__OUT_DIR)/Makefile
+cargo_bar__IN = $(TMPL_DIR)/rust/cargo.mk
+cargo_bar__OUT_DIR = $(OUTDIR)/cargo
+cargo_bar__OUT = $(cargo_bar__OUT_DIR)/bar.mk
 
 cargo_bar__BINS = bar
 cargo_bar__CARGO_TOML = $(PROJECT_ROOT)/examples/bar/Cargo.toml

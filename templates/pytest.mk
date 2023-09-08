@@ -4,8 +4,8 @@ DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
 include $(DEVTOOLS_DIR)/lib.mk
 
-LOG_FILE ?= {{ LOG_FILE | default('$(SELFDIR)/.logs', true) }}
-REPORTS_DIR ?= {{ REPORTS_DIR | default('$(SELFDIR)/.reports', true) }}
+LOG_FILE ?= {{ LOG_FILE | default('$(SELFDIR)/.logs-$(notdir $(SELF))', true) }}
+REPORTS_DIR ?= {{ REPORTS_DIR | default('$(SELFDIR)/.reports-$(notdir $(SELF))', true) }}
 TEST_CASES ?= {{ TEST_CASES | default('', true) }}
 TEST_CASES_DIR ?= {{ TEST_CASES_DIR | default('tests', true) }}
 PYTHON ?= {{ PYTHON | default(d['PYTHON'], true) }}
@@ -42,6 +42,5 @@ start: $(MODE)
 clean:
 	[ ! -d $(REPORTS_DIR) ] || rm -Rf $(REPORTS_DIR)
 	[ ! -f $(LOG_FILE) ] || rm -vf $(LOG_FILE)
-
 
 distclean: clean

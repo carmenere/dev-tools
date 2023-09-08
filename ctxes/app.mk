@@ -6,9 +6,9 @@ TAG_alembic_baz = clean host_schema
 
 alembic_baz__APP = alembic_baz
 
-alembic_baz__IN = $(MK)/app.mk
-alembic_baz__OUT_DIR = $(OUTDIR)/app/alembic/baz
-alembic_baz__OUT = $(alembic_baz__OUT_DIR)/Makefile
+alembic_baz__IN = $(TMPL_DIR)/app.mk
+alembic_baz__OUT_DIR = $(OUTDIR)/app/alembic
+alembic_baz__OUT = $(alembic_baz__OUT_DIR)/baz.mk
 
 alembic_baz__BIN_PATH = $(BASH) -c 'echo "just for test"'
 alembic_baz__TMUX = $(tmux__OUT)
@@ -27,9 +27,9 @@ TAG_sqlx_bar = clean host_schema
 
 sqlx_bar__APP = sqlx_bar
 
-sqlx_bar__IN = $(MK)/app.mk
-sqlx_bar__OUT_DIR = $(OUTDIR)/app/sqlx/bar
-sqlx_bar__OUT = $(sqlx_bar__OUT_DIR)/Makefile
+sqlx_bar__IN = $(TMPL_DIR)/app.mk
+sqlx_bar__OUT_DIR = $(OUTDIR)/app/sqlx
+sqlx_bar__OUT = $(sqlx_bar__OUT_DIR)/bar.mk
 
 sqlx_bar__BIN_PATH = sqlx migrate run
 sqlx_bar__TMUX = $(tmux__OUT)
@@ -50,9 +50,9 @@ TAG_sqlx_foo = clean host_schema
 
 sqlx_foo__APP = sqlx_foo
 
-sqlx_foo__IN = $(MK)/app.mk
-sqlx_foo__OUT_DIR = $(OUTDIR)/app/sqlx/foo
-sqlx_foo__OUT = $(sqlx_foo__OUT_DIR)/Makefile
+sqlx_foo__IN = $(TMPL_DIR)/app.mk
+sqlx_foo__OUT_DIR = $(OUTDIR)/app/sqlx
+sqlx_foo__OUT = $(sqlx_foo__OUT_DIR)/foo.mk
 
 sqlx_foo__BIN_PATH = sqlx migrate run
 sqlx_foo__TMUX = $(tmux__OUT)
@@ -73,9 +73,9 @@ TAG_foo = clean host_app
 
 foo__APP = foo
 
-foo__IN = $(MK)/app.mk
-foo__OUT_DIR = $(OUTDIR)/app/$(foo__APP)
-foo__OUT = $(foo__OUT_DIR)/Makefile
+foo__IN = $(TMPL_DIR)/app.mk
+foo__OUT_DIR = $(OUTDIR)/app
+foo__OUT = $(foo__OUT_DIR)/$(foo__APP).mk
 
 foo__BIN_PATH = $(call cargo_bins,dev,$(CARGO_TARGET_DIR),$(RUST_TARGET_ARCH))/foo
 foo__MODE = tmux
@@ -94,9 +94,9 @@ TAG_bar = clean host_app
 
 bar__APP = bar
 
-bar__IN = $(MK)/app.mk
-bar__OUT_DIR = $(OUTDIR)/app/$(bar__APP)
-bar__OUT = $(bar__OUT_DIR)/Makefile
+bar__IN = $(TMPL_DIR)/app.mk
+bar__OUT_DIR = $(OUTDIR)/app
+bar__OUT = $(bar__OUT_DIR)/$(bar__APP).mk
 
 bar__BIN_PATH = $(call cargo_bins,dev,$(CARGO_TARGET_DIR),$(RUST_TARGET_ARCH))/bar
 bar__MODE = tee

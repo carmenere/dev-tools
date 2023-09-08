@@ -7,8 +7,8 @@ ADMIN_DB ?= {{ ADMIN_DB | default(d['PG_ADMIN_DB'], true) }}
 ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default(d['PG_ADMIN_PASSWORD'], true) }}
 AUTH_METHOD ?= {{ AUTH_METHOD | default('remote', true) }}
 CNT = {{ CNT | default('', true) }}
-EXIT_IF_CREATE_EXISTED_DB = {{ EXIT_IF_CREATE_EXISTED_DB | default(d['EXIT_IF_CREATE_EXISTED_DB'], true) }}
-EXIT_IF_CREATE_EXISTED_USER = {{ EXIT_IF_CREATE_EXISTED_USER | default(d['EXIT_IF_CREATE_EXISTED_USER'], true) }}
+EXIT_IF_DB_EXISTS = {{ EXIT_IF_DB_EXISTS | default(d['EXIT_IF_DB_EXISTS'], true) }}
+EXIT_IF_USER_EXISTS = {{ EXIT_IF_USER_EXISTS | default(d['EXIT_IF_USER_EXISTS'], true) }}
 HOST ?= {{ HOST | default(d['PG_HOST'], true) }}
 PORT ?= {{ PORT | default(d['PG_PORT'], true) }}
 USER_ATTRIBUTES ?= {{ USER_ATTRIBUTES | default('SUPERUSER CREATEDB', true) }}
@@ -22,7 +22,7 @@ USER_CONN_URL ?= $(call conn_url,postgres,$(USER_NAME),$(USER_PASSWORD),$(HOST),
 # SUDO
 SUDO_BIN ?= {{ SUDO_BIN | default(d['SUDO_BIN'], true) }}
 SUDO_USER ?= {{ SUDO_USER | default(d['SUDO_USER'], true) }}
-include $(DEVTOOLS_DIR)/templates/make/common/sudo.mk
+include $(DEVTOOLS_DIR)/templates/common/sudo.mk
 
 define select_user
 SELECT '$1' FROM pg_roles WHERE rolname = '$1'
@@ -58,11 +58,15 @@ endif
 .PHONY: init create-user create-db grant revoke connect connect-admin clear clean dump distclean import
 
 create-user:
-	if [[ "$(EXIT_IF_CREATE_EXISTED_USER)" == yes && -n "$(call check,user,$(USER_NAME))" ]]; then false; fi
+ifeq ($(EXIT_IF_USER_EXISTS),yes)
+	[ -z "$(call check,user,$(USER_NAME))" ] || false
+endif
 	[ -n "$(call check,user,$(USER_NAME))" ] || $(PSQL) -c "CREATE USER $(USER_NAME) WITH ENCRYPTED PASSWORD '$(USER_PASSWORD)' $(USER_ATTRIBUTES);"
 
 create-db: create-user
-	if [[ "$(EXIT_IF_CREATE_EXISTED_DB)" == yes && -n "$(call check,db,$(USER_DB))" ]]; then false; fi
+ifeq ($(EXIT_IF_DB_EXISTS),yes)
+	[ -z "$(call check,db,$(USER_DB))" ] || false
+endif
 	[ -n "$(call check,db,$(USER_DB))" ] || $(PSQL) -c "CREATE DATABASE $(USER_DB) WITH OWNER=$(USER_NAME);"
 
 grant: create-db
@@ -99,12 +103,4 @@ clean:
 
 distclean: clean
 
-lsof:
-ifneq ($(HOST),0.0.0.0)
-	sudo lsof -nP -i4TCP@0.0.0.0:$(PORT) || true
-endif
-ifneq ($(HOST),localhost)
-	sudo lsof -nP -i4TCP@localhost:$(PORT) || true
-endif
-	sudo lsof -nP -i4TCP@$(HOST):$(PORT) || true
-
+include $(DEVTOOLS_DIR)/templates/common/lsof.mk

@@ -4,9 +4,9 @@
 ENABLE_CTX_pytest_bar = $(ENABLE_ALL_CTXES)
 TAG_pytest_bar = test clean
 
-pytest_bar__IN = $(MK)/pytest.mk
-pytest_bar__OUT_DIR = $(OUTDIR)/pytest/bar
-pytest_bar__OUT = $(pytest_bar__OUT_DIR)/Makefile
+pytest_bar__IN = $(TMPL_DIR)/pytest.mk
+pytest_bar__OUT_DIR = $(OUTDIR)/pytest
+pytest_bar__OUT = $(pytest_bar__OUT_DIR)/bar.mk
 
 pytest_bar__TEST_CASES_DIR = $(PROJECT_ROOT)/examples/bar/tests
 pytest_bar__PYTHON = $(venv_pytest_bar__OUT_DIR)/.venv/bin/python
@@ -22,9 +22,9 @@ CTXES += pytest_bar
 ENABLE_CTX_pytest_foo = $(ENABLE_ALL_CTXES)
 TAG_pytest_foo = test clean
 
-pytest_foo__IN = $(MK)/pytest.mk
-pytest_foo__OUT_DIR = $(OUTDIR)/pytest/foo
-pytest_foo__OUT = $(pytest_foo__OUT_DIR)/Makefile
+pytest_foo__IN = $(TMPL_DIR)/pytest.mk
+pytest_foo__OUT_DIR = $(OUTDIR)/pytest
+pytest_foo__OUT = $(pytest_foo__OUT_DIR)/foo.mk
 
 pytest_foo__TEST_CASES_DIR = $(PROJECT_ROOT)/examples/foo/tests
 pytest_foo__PYTHON = $(venv_pytest_foo__OUT_DIR)/.venv/bin/python

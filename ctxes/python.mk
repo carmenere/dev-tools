@@ -1,8 +1,8 @@
 ########################################################################################################################
 # python
 ########################################################################################################################
-python__IN = $(MK)/python.mk
+python__IN = $(TMPL_DIR)/python/python.mk
 python__OUT_DIR = $(OUTDIR)/python
-python__OUT = $(python__OUT_DIR)/Makefile
+python__OUT = $(python__OUT_DIR)/python.mk
 
 CTXES += python

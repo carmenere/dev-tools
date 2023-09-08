@@ -28,9 +28,8 @@
 **/*.py[cod]
 **/*$py.class
 
-# Jinja2
-templates/make/common/defaults.j2
-
 # Toolchain
 toolchain/**/defaults.mk
-templates/compose/.tmp/**/*
+
+# .tmp
+**/.tmp/

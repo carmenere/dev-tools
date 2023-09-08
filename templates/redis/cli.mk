@@ -7,7 +7,7 @@ ADMIN_DB ?= {{ ADMIN_DB | default(d['REDIS_ADMIN_DB'], true) }}
 ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default(d['REDIS_ADMIN_PASSWORD'], true) }}
 CNT = {{ CNT | default('', true) }}
 CONFIG_REWRITE ?= {{ CONFIG_REWRITE | default('yes', true) }}
-EXIT_IF_CREATE_EXISTED_USER = {{ EXIT_IF_CREATE_EXISTED_USER | default(d['EXIT_IF_CREATE_EXISTED_USER'], true) }}
+EXIT_IF_USER_EXISTS = {{ EXIT_IF_USER_EXISTS | default(d['EXIT_IF_USER_EXISTS'], true) }}
 HOST ?= {{ HOST | default(d['REDIS_HOST'], true) }}
 PORT ?= {{ PORT | default(d['REDIS_PORT'], true) }}
 REQUIREPASS ?= {{ REQUIREPASS | default('yes', true) }}
@@ -40,7 +40,7 @@ ifeq ($(REQUIREPASS),yes)
 endif
 
 create-user:
-	$(call check_user,$(USER_NAME)); if [ "$$?" = 0 ] && [ "$(EXIT_IF_CREATE_EXISTED_USER)" = yes ]; then false; fi
+	$(call check_user,$(USER_NAME)); if [ "$$?" = 0 ] && [ "$(EXIT_IF_USER_EXISTS)" = yes ]; then false; fi
 	$(call check_user,$(USER_NAME)); if [ "$$?" != 0 ]; then $(REDIS_CLI) ACL SETUSER $(USER_NAME) \>$(USER_PASSWORD) on allkeys allcommands; fi
 
 rm-user:
@@ -69,11 +69,4 @@ clean: rm-user flush save
 
 distclean: clean
 
-lsof:
-ifneq ($(HOST),0.0.0.0)
-	sudo lsof -nP -i4TCP@0.0.0.0:$(PORT) || true
-endif
-ifneq ($(HOST),localhost)
-	sudo lsof -nP -i4TCP@localhost:$(PORT) || true
-endif
-	sudo lsof -nP -i4TCP@$(HOST):$(PORT) || true
+include $(DEVTOOLS_DIR)/templates/common/lsof.mk

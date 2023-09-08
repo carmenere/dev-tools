@@ -55,6 +55,6 @@ RUN make configure \
         OS=alpine \
         rustup__CRATES=sqlx-cli__0.7.1
 
-RUN make -f .output/rustup/Makefile all
+RUN make -f .output/rust/rustup.mk all
 
-RUN make -f .output/postgresql/Makefile install
+RUN make -f .output/postgresql/postgresql.mk install

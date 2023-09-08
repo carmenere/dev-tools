@@ -43,9 +43,9 @@ all: defaults
 
 ctxes:
 	@echo SETTINGS = $(SETTINGS)
-	@$(foreach CTX,$(CTXES),echo "ENABLE_$(CTX) = $(ENABLE_$(CTX)); $(CTX)__STAGE = $($(CTX)__STAGE)" $(LF))
+	@$(foreach CTX,$(CTXES),echo "ENABLE_CTX_$(CTX) = $(ENABLE_CTX_$(CTX)); $(CTX)__TAG = $($(CTX)__TAG)" $(LF))
 
 envs:
 	@echo SETTINGS = $(SETTINGS)
-	@$(foreach CTX,$(CTXES),echo "$(CTX): enabled = $(ENABLE_$(CTX)); stage = $($(CTX)__STAGE)" $(LF) \
+	@$(foreach CTX,$(CTXES),echo "$(CTX): enabled = $(ENABLE_CTX_$(CTX)); stage = $($(CTX)__TAG)" $(LF) \
 	$(foreach V,$(filter $(CTX)__%,$(.VARIABLES)),echo "    $(subst $(CTX)__,,$(V))='$($(V))'" $(LF)))
