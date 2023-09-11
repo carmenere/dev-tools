@@ -13,7 +13,7 @@ clickhouse__STOP_CMD ?= $(clickhouse__CMD_PREFIX) stop $(clickhouse__SERVICE)
 clickhouse__SUDO_BIN ?= $(SUDO_BIN)
 clickhouse__SUDO_USER ?= $(SUDO_USER)
 clickhouse__USER_XML = /opt/homebrew/etc/clickhouse-server/users.d/$(clickhouse__ADMIN).xml
-clickhouse__TAGS = service
+clickhouse__TAGS = $(service__TAGS)
 
 # cli
 clickhouse_cli__ADMIN ?= $(clickhouse__ADMIN)

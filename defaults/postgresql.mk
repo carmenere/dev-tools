@@ -11,7 +11,7 @@ postgresql__START_CMD ?= $(postgresql__CMD_PREFIX) start $(postgresql__SERVICE)
 postgresql__STOP_CMD ?= $(postgresql__CMD_PREFIX) stop $(postgresql__SERVICE)
 postgresql__SUDO_BIN ?= $(SUDO_BIN)
 postgresql__SUDO_USER ?= $(SUDO_USER)
-postgresql__TAGS = service
+postgresql__TAGS = $(service__TAGS)
 
 # cli
 psql__ADMIN ?= postgres
@@ -54,4 +54,4 @@ pg_ctl__PG_CTL_LOGGING_COLLECTOR ?= on
 pg_ctl__PORT ?= $(psql__PORT)
 pg_ctl__SUDO_BIN ?= $(SUDO_BIN)
 pg_ctl__SUDO_USER = $(pg_ctl__OS_USER)
-pg_ctl__TAGS = service
+pg_ctl__TAGS = $(service__TAGS)

@@ -1,5 +1,5 @@
 # server
-redis__TAGS = service
+redis__TAGS = $(service__TAGS)
 redis__ENABLE = $(service__ENABLE)
 redis__CMD_PREFIX ?= $(SERVICE_CMD_PREFIX)
 redis__MAJOR ?= 7
