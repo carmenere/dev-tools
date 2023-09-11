@@ -1,126 +1,144 @@
-# ########################################################################################################################
-# # INHERIT_VARS
-# ########################################################################################################################
-# INHERIT_VARS += CONTAINER
-# INHERIT_VARS += CTX
-# INHERIT_VARS += DOCKERFILE
-# INHERIT_VARS += IMAGE
-# INHERIT_VARS += PUBLISH
-# INHERIT_VARS += BRIDGE
+########################################################################################################################
+# INHERIT_VARS
+########################################################################################################################
+INHERIT_VARS += CONTAINER
+INHERIT_VARS += CTX
+INHERIT_VARS += DOCKERFILE
+INHERIT_VARS += IMAGE
+INHERIT_VARS += PUBLISH
+INHERIT_VARS += BRIDGE
 
-# ########################################################################################################################
-# # example
-# ########################################################################################################################
-# example__IN = $(TMPL_DIR)/docker/compose.mk
-# example__OUT_DIR = $(OUTDIR)/docker/compose
-# example__OUT = $(example__OUT_DIR)/example.mk
-# example__BRIDGE = $(DOCKER_NETWORK_NAME)
-# example__DRIVER = $(DOCKER_NETWORK_DRIVER)
-# example__SUBNET = $(DOCKER_NETWORK_SUBNET)
+########################################################################################################################
+# example
+########################################################################################################################
+$(call inherit_ctx,compose__,example__)
 
-# CTXES += example
+example__IN = $(TMPL_DIR)/docker/compose.mk
+example__OUT_DIR = $(OUTDIR)/docker/compose
+example__OUT = $(example__OUT_DIR)/example.mk
 
-# ########################################################################################################################
-# # example_redis
-# ########################################################################################################################
-# example_redis__IN = $(TMPL_DIR)/docker/yamls/service.yaml
-# example_redis__OUT_DIR = $(TMPL_DIR)/docker/yamls/.tmp
-# example_redis__OUT = $(example_redis__OUT_DIR)/redis.yaml
+example__PROJECT = example
+example__YAML = $(example_yaml__OUT_DIR)/example.yaml
 
-# $(call inherit_vars,docker_redis__,$(INHERIT_VARS),example_redis__)
-# $(foreach P,env_ arg_,$(call inherit_ctx,docker_redis__$(P),example_redis__$(P)))
+example__BRIDGE = $(DOCKER_NETWORK_NAME)
+example__DRIVER = $(DOCKER_NETWORK_DRIVER)
+example__SUBNET = $(DOCKER_NETWORK_SUBNET)
 
-# example_redis__SERVICE = redis
+CTXES += example
 
-# CTXES += example_redis
+########################################################################################################################
+# example_redis
+########################################################################################################################
+example_redis__IN = $(TMPL_DIR)/docker/yamls/service.yaml
+example_redis__OUT_DIR = $(TMPL_DIR)/docker/yamls/.tmp
+example_redis__OUT = $(example_redis__OUT_DIR)/redis.yaml
 
-# example_yaml__SERVICES += .tmp/redis.yaml
+$(call inherit_vars,docker_redis__,$(INHERIT_VARS),example_redis__)
+$(foreach P,env_ arg_,$(call inherit_ctx,docker_redis__$(P),example_redis__$(P)))
 
-# ########################################################################################################################
-# # example_pg
-# ########################################################################################################################
-# example_pg__IN = $(TMPL_DIR)/docker/yamls/service.yaml
-# example_pg__OUT_DIR = $(TMPL_DIR)/docker/yamls/.tmp
-# example_pg__OUT = $(example_pg__OUT_DIR)/pg.yaml
+example_redis__SERVICE = redis
 
-# $(call inherit_vars,docker_pg__,$(INHERIT_VARS),example_pg__)
-# $(foreach P,env_ arg_,$(call inherit_ctx,docker_pg__$(P),example_pg__$(P)))
+CTXES += example_redis
 
-# example_pg__SERVICE = pg
+example_yaml__SERVICES += .tmp/redis.yaml
 
-# CTXES += example_pg
+########################################################################################################################
+# example_pg
+########################################################################################################################
+example_pg__IN = $(TMPL_DIR)/docker/yamls/service.yaml
+example_pg__OUT_DIR = $(TMPL_DIR)/docker/yamls/.tmp
+example_pg__OUT = $(example_pg__OUT_DIR)/pg.yaml
 
-# example_yaml__SERVICES += .tmp/pg.yaml
+$(call inherit_vars,docker_pg__,$(INHERIT_VARS),example_pg__)
+$(foreach P,env_ arg_,$(call inherit_ctx,docker_pg__$(P),example_pg__$(P)))
 
-# ########################################################################################################################
-# # example_clickhouse
-# ########################################################################################################################
-# example_clickhouse__IN = $(TMPL_DIR)/docker/yamls/service.yaml
-# example_clickhouse__OUT_DIR = $(TMPL_DIR)/docker/yamls/.tmp
-# example_clickhouse__OUT = $(example_clickhouse__OUT_DIR)/clickhouse.yaml
+example_pg__SERVICE = pg
 
-# $(call inherit_vars,docker_clickhouse__,$(INHERIT_VARS),example_clickhouse__)
-# $(foreach P,env_ arg_,$(call inherit_ctx,docker_clickhouse__$(P),example_clickhouse__$(P)))
+CTXES += example_pg
 
-# example_clickhouse__SERVICE = clickhouse
+example_yaml__SERVICES += .tmp/pg.yaml
 
-# CTXES += example_clickhouse
+########################################################################################################################
+# example_clickhouse
+########################################################################################################################
+example_clickhouse__IN = $(TMPL_DIR)/docker/yamls/service.yaml
+example_clickhouse__OUT_DIR = $(TMPL_DIR)/docker/yamls/.tmp
+example_clickhouse__OUT = $(example_clickhouse__OUT_DIR)/clickhouse.yaml
 
-# example_yaml__SERVICES += .tmp/clickhouse.yaml
+$(call inherit_vars,docker_clickhouse__,$(INHERIT_VARS),example_clickhouse__)
+$(foreach P,env_ arg_,$(call inherit_ctx,docker_clickhouse__$(P),example_clickhouse__$(P)))
 
-# ########################################################################################################################
-# # example_rust
-# ########################################################################################################################
-# example_rust__IN = $(TMPL_DIR)/docker/yamls/service.yaml
-# example_rust__OUT_DIR = $(TMPL_DIR)/docker/yamls/.tmp
-# example_rust__OUT = $(example_rust__OUT_DIR)/rust.yaml
+example_clickhouse__SERVICE = clickhouse
 
-# $(call inherit_vars,docker_rust__,$(INHERIT_VARS),example_rust__)
-# $(foreach P,env_ arg_,$(call inherit_ctx,docker_rust__$(P),example_rust__$(P)))
+CTXES += example_clickhouse
 
-# example_rust__SERVICE = rust
+example_yaml__SERVICES += .tmp/clickhouse.yaml
 
-# CTXES += example_rust
+########################################################################################################################
+# example_rust
+########################################################################################################################
+example_rust__IN = $(TMPL_DIR)/docker/yamls/service.yaml
+example_rust__OUT_DIR = $(TMPL_DIR)/docker/yamls/.tmp
+example_rust__OUT = $(example_rust__OUT_DIR)/rust.yaml
 
-# example_yaml__SERVICES += .tmp/rust.yaml
+$(call inherit_vars,docker_rust__,$(INHERIT_VARS),example_rust__)
+$(foreach P,env_ arg_,$(call inherit_ctx,docker_rust__$(P),example_rust__$(P)))
 
-# ########################################################################################################################
-# # example_foo
-# ########################################################################################################################
-# example_foo__IN = $(TMPL_DIR)/docker/yamls/service.yaml
-# example_foo__OUT_DIR = $(TMPL_DIR)/docker/yamls/.tmp
-# example_foo__OUT = $(example_foo__OUT_DIR)/foo.yaml
+example_rust__SERVICE = rust
 
-# $(call inherit_vars,docker_foo__,$(INHERIT_VARS),example_foo__)
-# $(foreach P,env_ arg_,$(call inherit_ctx,docker_foo__$(P),example_foo__$(P)))
+CTXES += example_rust
 
-# example_foo__SERVICE = foo
+example_yaml__SERVICES += .tmp/rust.yaml
 
-# CTXES += example_foo
+########################################################################################################################
+# example_foo
+########################################################################################################################
+example_foo__IN = $(TMPL_DIR)/docker/yamls/service.yaml
+example_foo__OUT_DIR = $(TMPL_DIR)/docker/yamls/.tmp
+example_foo__OUT = $(example_foo__OUT_DIR)/foo.yaml
 
-# example_yaml__SERVICES += .tmp/foo.yaml
+$(call inherit_vars,docker_foo__,$(INHERIT_VARS),example_foo__)
+$(foreach P,env_ arg_,$(call inherit_ctx,docker_foo__$(P),example_foo__$(P)))
 
-# ########################################################################################################################
-# # example_bar
-# ########################################################################################################################
-# example_bar__IN = $(TMPL_DIR)/docker/yamls/service.yaml
-# example_bar__OUT_DIR = $(TMPL_DIR)/docker/yamls/.tmp
-# example_bar__OUT = $(example_bar__OUT_DIR)/bar.yaml
+example_foo__SERVICE = foo
 
-# $(call inherit_vars,docker_bar__,$(INHERIT_VARS),example_bar__)
-# $(foreach P,env_ arg_,$(call inherit_ctx,docker_bar__$(P),example_bar__$(P)))
+CTXES += example_foo
 
-# example_bar__SERVICE = bar
+example_yaml__SERVICES += .tmp/foo.yaml
 
-# CTXES += example_bar
+########################################################################################################################
+# example_bar
+########################################################################################################################
 
-# example_yaml__SERVICES += .tmp/bar.yaml
+# compose__ENABLE = $(ENABLE_DOCKER)
+# compose__DAEMONIZE ?= yes
+# compose__FORCE_RECREATE ?= no
+# compose__NO_CACHE ?= yes
+# compose__RM_ALL ?= yes
+# compose__RM_FORCE ?= yes
+# compose__RM_ON_UP ?= no
+# compose__RM_STOP ?= yes
+# compose__RM_VOLUMES ?= no
+# compose__TIMEOUT ?= 10
 
-# ########################################################################################################################
-# # example_yaml
-# ########################################################################################################################
-# example_yaml__IN = $(TMPL_DIR)/docker/yamls/stand.yaml
-# example_yaml__OUT_DIR = $(OUTDIR)/docker/compose/yamls
-# example_yaml__OUT = $(example_yaml__OUT_DIR)/example.yaml
+example_bar__IN = $(TMPL_DIR)/docker/yamls/service.yaml
+example_bar__OUT_DIR = $(TMPL_DIR)/docker/yamls/.tmp
+example_bar__OUT = $(example_bar__OUT_DIR)/bar.yaml
 
-# CTXES += example_yaml
+$(call inherit_vars,docker_bar__,$(INHERIT_VARS),example_bar__)
+$(foreach P,env_ arg_,$(call inherit_ctx,docker_bar__$(P),example_bar__$(P)))
+
+example_bar__SERVICE = bar
+
+CTXES += example_bar
+
+example_yaml__SERVICES += .tmp/bar.yaml
+
+########################################################################################################################
+# example_yaml
+########################################################################################################################
+example_yaml__IN = $(TMPL_DIR)/docker/yamls/stand.yaml
+example_yaml__OUT_DIR = $(OUTDIR)/docker/compose
+example_yaml__OUT = $(example_yaml__OUT_DIR)/example.yaml
+
+CTXES += example_yaml
