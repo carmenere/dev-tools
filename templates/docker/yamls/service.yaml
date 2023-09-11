@@ -1,16 +1,16 @@
   {{ SERVICE }}:
 
 {% include 'common/build.jinja2' %}
-    image: {{ IMAGE | default('', true) }}
+    image: {{ IMAGE }}
     container_name: {{ CONTAINER }}
     networks:
-      - {{ BRIDGE | default('dev-tools', true) }}
+      - {{ BRIDGE }}
 {% include 'common/command.jinja2' %}
     logging:
       driver: "json-file"
       options:
         max-size: "100m"
         max-file: "2"
-    restart: {{ RESTART_POLICY | default('no', true) }}
+    restart: {{ RESTART_POLICY }}
 {% include 'common/publish.jinja2' %}
 {% include 'common/envs.jinja2' %}
