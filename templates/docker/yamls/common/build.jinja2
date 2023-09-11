@@ -1,11 +1,8 @@
-{% if DOCKERFILE is not defined or DOCKERFILE.replace('"', '').replace("'",'') == '' -%}
-{% set DOCKERFILE = '' -%}
-{% endif -%}
 
 {% if DOCKERFILE %}
     build:
-      context: {{ CTX | default('.', true) }}
-      dockerfile: {{ DOCKERFILE | default('', true) }}
+      context: {{ CTX }}
+      dockerfile: {{ DOCKERFILE }}
 {% if BUILD_ARGS is not defined or BUILD_ARGS.replace('"', '').replace("'",'') == '' -%}
 {% set BUILD_ARGS = [] -%}
 {% else -%}

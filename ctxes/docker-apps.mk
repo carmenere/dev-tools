@@ -96,7 +96,7 @@ docker_sqlx_bar__CTX = $(PROJECT_ROOT)
 docker_sqlx_bar__DOCKERFILE = $(DOCKERFILES)/Dockerfile.rust
 docker_sqlx_bar__IMAGE = $(docker_rust__IMAGE)
 
-docker_sqlx_bar__COMMAND = $(DOCKER_SHELL) -c $$$$'$(call escape,/$$$${HOME}/.cargo/bin/sqlx migrate run $$(OPTS))'
+docker_sqlx_bar__COMMAND = $(docker__SH) -c $$$$'$(call escape,/$$$${HOME}/.cargo/bin/sqlx migrate run $$(OPTS))'
 
 # sqlx envs
 $(call inherit_ctx,bar__env_,docker_sqlx_bar__env_)
@@ -128,7 +128,7 @@ docker_sqlx_foo__CTX = $(PROJECT_ROOT)
 docker_sqlx_foo__DOCKERFILE = $(DOCKERFILES)/Dockerfile.rust
 docker_sqlx_foo__IMAGE = $(docker_rust__IMAGE)
 
-docker_sqlx_foo__COMMAND = $(DOCKER_SHELL) -c $$$$'$(call escape,/$$$${HOME}/.cargo/bin/sqlx migrate run $$(OPTS))'
+docker_sqlx_foo__COMMAND = $(docker__SH) -c $$$$'$(call escape,/$$$${HOME}/.cargo/bin/sqlx migrate run $$(OPTS))'
 
 # sqlx envs
 $(call inherit_ctx,foo__env_,docker_sqlx_foo__env_)

@@ -17,7 +17,7 @@ docker__ERR_IF_BRIDGE_EXISTS = no
 docker__RESTART_POLICY ?= no
 docker__RM_AFTER_STOP ?= no
 docker__SUBNET ?= 192.168.100.0/24
-docker__SH ?= $(DOCKER_SHELL)
+docker__SH ?= /usr/bin/env bash
 docker__CHECK_DOCKER = docker ps 1>/dev/null
 docker__COMMAND = 
 docker__DOCKERFILE = 
@@ -42,6 +42,13 @@ compose__RM_STOP ?= yes
 compose__RM_VOLUMES ?= no
 compose__TIMEOUT ?= 10
 
+# yaml
+yaml__SERVICE = foo
+yaml__IMAGE = foo:bar
+yaml__CONTAINER = $(yaml__SERVICE)
+yaml__BRIDGE = $(docker__BRIDGE)
+yaml__RESTART_POLICY = no
+
 # BASE IMAGES
 DOCKER_ALPINE_IMAGE = alpine:3.18.3
 DOCKER_PG_IMAGE = postgres:12.15-alpine3.18
@@ -51,4 +58,3 @@ DOCKER_REDIS_IMAGE = redis:7.2.0-alpine3.18
 # DOCKER RUST
 DOCKER_RUST_TARGET_ARCH = aarch64-unknown-linux-musl
 DOCKER_RUST_VERSION = $(RUST_VERSION)
-DOCKER_SHELL = /usr/bin/env bash

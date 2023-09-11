@@ -15,14 +15,14 @@ services:
 {% endif %}
 
 networks:
-  {{ BRIDGE | default('dev-tools', true) }}:
-    name: {{ BRIDGE | default('dev-tools', true) }}
-    driver: {{ DRIVER | default('bridge', true) }}
+  {{ BRIDGE }}:
+    name: {{ BRIDGE }}
+    driver: {{ DRIVER }}
     attachable: true
     ipam:
       driver: default
       config:
-        - subnet: {{ SUBNET | default('192.168.100.0/24', true) }}
+        - subnet: {{ SUBNET }}
   
 volumes:
   postgres:
