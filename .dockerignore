@@ -5,3 +5,5 @@
 **/.vscode
 **/pg_data
 **/target
+**/toolchain/**/Makefile
+**/toolchain/**/defaults.mk

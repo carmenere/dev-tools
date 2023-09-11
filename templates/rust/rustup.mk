@@ -3,11 +3,11 @@ DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
 include $(DEVTOOLS_DIR)/lib.mk
 
-CRATES ?= {{ CRATES | default('cargo-cache__0.8.3 sqlx-cli__0.7.1', true) }}
-RUST_VERSION ?= {{ RUST_VERSION | default(d['RUST_VERSION'], true) }}
-RUSTFLAGS ?= {{ RUSTFLAGS | default(d['RUSTFLAGS'], true) }}
-SOURCE_ENV ?= {{ SOURCE_ENV | default('source "$${HOME}/.cargo/env"', true) }}
-TARGET_ARCH ?= {{ TARGET_ARCH | default(d['RUST_TARGET_ARCH'], true) }}
+CRATES ?= {{ CRATES }}
+RUST_VERSION ?= {{ RUST_VERSION }}
+RUSTFLAGS ?= {{ RUSTFLAGS }}
+SOURCE_ENV ?= {{ SOURCE_ENV }}
+TARGET_ARCH ?= {{ TARGET_ARCH }}
 
 COMPONENTS += clippy
 COMPONENTS += rustfmt

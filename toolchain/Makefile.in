@@ -24,13 +24,9 @@ clean:
 	rm -Rf $(TOOLCHAIN)/config.status
 	rm -Rf $(TOOLCHAIN)/configure~
 	rm -Rf $(TOOLCHAIN)/autom4te.cache
-ifeq ($(WITH_PYTHON),yes)
-	cd $(PYTHON_DIR) && make clean
-endif
+	if [[ -f $(PYTHON_DIR)/Makefile ]]; then cd $(PYTHON_DIR) && make clean; fi
 	rm -Rf $(TOOLCHAIN)/Makefile
 
 distclean:
-ifeq ($(WITH_PYTHON),yes)
-	cd $(PYTHON_DIR) && make clean-dl
-endif
+	if [[ -f $(PYTHON_DIR)/Makefile ]]; then cd $(PYTHON_DIR) && make clean-dl; fi
 	$(MAKE) clean

@@ -3,38 +3,38 @@ define LF
 
 endef
 
-# $1:SCHEMA $2:USER; $3:PASSWORD, $4:HOST, $5:PORT, $6:DB
+# $1:ctx; $2:SCHEMA $3:USER; $4:PASSWORD, $5:HOST, $6:PORT, $7:DB
 define conn_url
 $(eval 
-ifneq ($1,)
-x_SCHEMA = $1
+ifeq ($2,)
+x_SCHEMA = example
 else
-x_SCHEMA = postgres
+x_SCHEMA = $2
 endif
-ifneq ($2,)
-x_USER = $2
+ifeq ($3,)
+x_USER = $($(1)__USER_NAME)
 else
-x_USER = $(SERVICE_USER)
+x_USER = $3
 endif
-ifneq ($3,)
-x_PASSWORD = $3
+ifeq ($4,)
+x_PASSWORD = $($(1)__USER_PASSWORD)
 else
-x_PASSWORD = $(SERVICE_PASSWORD)
+x_PASSWORD = $4
 endif
-ifneq ($4,)
-x_HOST = $4
+ifeq ($5,)
+x_HOST = $($(1)__HOST)
 else
-x_HOST = $(PG_HOST)
+x_HOST = $5
 endif
-ifneq ($5,)
-x_PORT = $5
+ifeq ($6,)
+x_PORT = $($(1)__PORT)
 else
-x_PORT = $(PG_PORT)
+x_PORT = $6
 endif
-ifneq ($6,)
-x_DB = $6
+ifeq ($7,)
+x_DB = $($(1)__USER_DB)
 else
-x_DB = $(SERVICE_DB)
+x_DB = $7
 endif)$(x_SCHEMA)://$(x_USER):$(x_PASSWORD)@$(x_HOST):$(x_PORT)/$(x_DB)
 endef
 

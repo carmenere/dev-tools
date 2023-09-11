@@ -1,8 +1,9 @@
 ########################################################################################################################
 # docker_rust
 ########################################################################################################################
-ENABLE_CTX_docker_rust = $(ENABLE_ALL_CTXES)
-TAG_docker_rust = image
+$(call inherit_ctx,docker__,docker_rust__)
+$(call inherit_ctx,docker_app__,docker_rust__)
+docker_rust__TAGS = image
 
 docker_rust__IN = $(TMPL_DIR)/docker/docker.mk
 docker_rust__OUT_DIR = $(OUTDIR)/docker
@@ -25,8 +26,8 @@ CTXES += docker_rust
 ########################################################################################################################
 # docker_bar
 ########################################################################################################################
-ENABLE_CTX_docker_bar = $(ENABLE_ALL_CTXES)
-TAG_docker_bar = image docker docker_app
+$(call inherit_ctx,docker__,docker_bar__)
+$(call inherit_ctx,docker_app__,docker_bar__)
 
 docker_bar__IN = $(TMPL_DIR)/docker/docker.mk
 docker_bar__OUT_DIR = $(OUTDIR)/docker
@@ -43,7 +44,7 @@ docker_bar__COMMAND = $(INSTALL_DIR)/bar $$(OPTS)
 
 # docker build_args
 docker_bar__arg_BUILDER = $(docker_rust__IMAGE)
-docker_bar__arg_BUILD_PROFILE = $(CARGO_PROFILE)
+docker_bar__arg_BUILD_PROFILE = $(cargo__PROFILE)
 docker_bar__arg_BUILD_VERSION = $(BUILD_VERSION)
 docker_bar__arg_TARGET_ARCH = $(DOCKER_RUST_TARGET_ARCH)
 docker_bar__arg_BASE_IMAGE = $(DOCKER_ALPINE_IMAGE)
@@ -56,8 +57,8 @@ CTXES += docker_bar
 ########################################################################################################################
 # docker_foo
 ########################################################################################################################
-ENABLE_CTX_docker_foo = $(ENABLE_ALL_CTXES)
-TAG_docker_foo = image docker docker_app
+$(call inherit_ctx,docker__,docker_foo__)
+$(call inherit_ctx,docker_app__,docker_foo__)
 
 docker_foo__IN = $(TMPL_DIR)/docker/docker.mk
 docker_foo__OUT_DIR = $(OUTDIR)/docker
@@ -83,8 +84,8 @@ CTXES += docker_foo
 ########################################################################################################################
 # docker_sqlx_bar
 ########################################################################################################################
-ENABLE_CTX_docker_sqlx_bar = $(ENABLE_ALL_CTXES)
-TAG_docker_sqlx_bar = docker image docker_schema
+$(call inherit_ctx,docker__,docker_sqlx_bar__)
+$(call inherit_ctx,docker_app__,docker_sqlx_bar__)
 
 docker_sqlx_bar__IN = $(TMPL_DIR)/docker/docker.mk
 docker_sqlx_bar__OUT_DIR = $(OUTDIR)/docker/sqlx
@@ -99,7 +100,7 @@ docker_sqlx_bar__COMMAND = $(DOCKER_SHELL) -c $$$$'$(call escape,/$$$${HOME}/.ca
 
 # sqlx envs
 $(call inherit_ctx,bar__env_,docker_sqlx_bar__env_)
-docker_sqlx_bar__env_DATABASE_URL = $(call conn_url,,$(psql_bar__USER_NAME),$(psql_bar__USER_PASSWORD),$(docker_pg__CONTAINER),,$(psql_bar__USER_DB))
+docker_sqlx_bar__env_DATABASE_URL = $(call conn_url,psql_bar,postgres,$(psql_bar__USER_NAME),$(psql_bar__USER_PASSWORD),$(docker_pg__CONTAINER),$(psql_bar__PORT),$(psql_bar__USER_DB))
 
 # sqlx cli opts
 $(call inherit_ctx,bar__opt_,docker_sqlx_bar__opt_)
@@ -113,8 +114,8 @@ CTXES += docker_sqlx_bar
 ########################################################################################################################
 # docker_sqlx_foo
 ########################################################################################################################
-ENABLE_CTX_docker_sqlx_foo = $(ENABLE_ALL_CTXES)
-TAG_docker_sqlx_foo = docker image docker_schema
+$(call inherit_ctx,docker__,docker_sqlx_foo__)
+$(call inherit_ctx,docker_app__,docker_sqlx_foo__)
 
 docker_sqlx_foo__APP = docker_sqlx_foo
 
@@ -131,7 +132,7 @@ docker_sqlx_foo__COMMAND = $(DOCKER_SHELL) -c $$$$'$(call escape,/$$$${HOME}/.ca
 
 # sqlx envs
 $(call inherit_ctx,foo__env_,docker_sqlx_foo__env_)
-docker_sqlx_foo__env_DATABASE_URL = $(call conn_url,,$(psql_foo__USER_NAME),$(psql_foo__USER_PASSWORD),$(docker_pg__CONTAINER),,$(psql_foo__USER_DB))
+docker_sqlx_foo__env_DATABASE_URL = $(call conn_url,psql_foo,postgres,$(psql_foo__USER_NAME),$(psql_foo__USER_PASSWORD),$(docker_pg__CONTAINER),$(psql_foo__PORT),$(psql_foo__USER_DB))
 
 # sqlx cli opts
 $(call inherit_ctx,foo__opt_,docker_sqlx_foo__opt_)

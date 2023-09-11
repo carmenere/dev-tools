@@ -36,6 +36,7 @@ RUN apk update --no-cache && apk add \
 
 WORKDIR /opt/dev-tools
 
+COPY ./defaults ./defaults
 COPY ./configure ./configure
 COPY ./ctxes ./ctxes
 COPY ./examples ./examples
@@ -46,13 +47,13 @@ COPY ./toolchain ./toolchain
 COPY ./lib.mk ./lib.mk
 COPY ./Makefile ./Makefile
 
-RUN cd ./toolchain && make distclean && ./configure --with-python && make python
+RUN cd ./toolchain && ./configure --with-python && make python
 
 RUN make configure \
-        BUILD_PROFILE=${BUILD_PROFILE} \
+        DEFAULT_OS=alpine \
         BUILD_VERSION=${BUILD_VERSION} \
-        TARGET_ARCH=${TARGET_ARCH} \
-        OS=alpine \
+        cargo__BUILD_PROFILE=${BUILD_PROFILE} \
+        cargo__TARGET_ARCH=${TARGET_ARCH} \
         rustup__CRATES=sqlx-cli__0.7.1
 
 RUN make -f .output/rust/rustup.mk all

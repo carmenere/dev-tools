@@ -105,3 +105,14 @@ ctxes:
 
 envs:
 	$(MAKE) -f $(CONF) envs
+
+prune:
+	docker system prune --force
+	docker volume prune --force
+	docker network prune --force
+
+purge:
+	docker system prune --force --all --volumes
+	docker volume prune --force
+	docker network prune --force
+	docker builder prune --force --all

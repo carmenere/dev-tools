@@ -2,19 +2,19 @@ DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
 include $(DEVTOOLS_DIR)/lib.mk
 
-AUTH_POLICY ?= {{ AUTH_POLICY | default('host  all  all  0.0.0.0/0  md5', true) }}
-MAJOR ?= {{ MAJOR | default('12', true) }}
-MINOR ?= {{ MINOR | default('15_2', true) }}
-OS ?= {{ OS | default(d['OS'], true) }}
-PG_HBA ?= {{ PG_HBA | default('/opt/homebrew/var/$(SERVICE)/pg_hba.conf', true) }}
-SERVICE ?= {{ SERVICE | default('postgresql@$(MAJOR)', true) }}
-CMD_PREFIX ?= {{ CMD_PREFIX | default(d['SERVICE_CMD_PREFIX'], true) }}
-START_CMD ?= {{ START_CMD | default('$(CMD_PREFIX) start $(SERVICE)', true) }}
-STOP_CMD ?= {{ STOP_CMD | default('$(CMD_PREFIX) stop $(SERVICE)', true) }}
+AUTH_POLICY ?= {{ AUTH_POLICY }}
+MAJOR ?= {{ MAJOR }}
+MINOR ?= {{ MINOR }}
+OS ?= {{ OS }}
+PG_HBA ?= {{ PG_HBA }}
+SERVICE ?= {{ SERVICE }}
+CMD_PREFIX ?= {{ CMD_PREFIX }}
+START_CMD ?= {{ START_CMD }}
+STOP_CMD ?= {{ STOP_CMD }}
 
 # SUDO
-SUDO_BIN ?= {{ SUDO_BIN | default(d['SUDO_BIN'], true) }}
-SUDO_USER ?= {{ SUDO_USER | default(d['SUDO_USER'], true) }}
+SUDO_BIN ?= {{ SUDO_BIN }}
+SUDO_USER ?= {{ SUDO_USER }}
 include $(DEVTOOLS_DIR)/templates/common/sudo.mk
 
 .PHONY: install-ubuntu install-debian install-alpine install-macos install add-auth-policy start stop restart clean distclean

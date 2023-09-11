@@ -1,8 +1,7 @@
 ########################################################################################################################
 # venv_alembic_baz
 ########################################################################################################################
-ENABLE_CTX_venv_alembic_baz = $(ENABLE_ALL_CTXES)
-TAG_venv_alembic_baz = venv clean
+$(call inherit_ctx,venv__,venv_alembic_baz__)
 
 venv_alembic_baz__IN = $(TMPL_DIR)/python/venv.mk
 venv_alembic_baz__OUT_DIR = $(OUTDIR)/python/venv/alembic
@@ -14,8 +13,7 @@ CTXES += venv_alembic_baz
 ########################################################################################################################
 # venv_pytest_bar
 ########################################################################################################################
-ENABLE_CTX_venv_pytest_bar = $(ENABLE_ALL_CTXES)
-TAG_venv_pytest_bar = venv clean
+$(call inherit_ctx,venv__,venv_pytest_bar__)
 
 venv_pytest_bar__IN = $(TMPL_DIR)/python/venv.mk
 venv_pytest_bar__OUT_DIR = $(OUTDIR)/python/venv/pytest
@@ -27,8 +25,7 @@ CTXES += venv_pytest_bar
 ########################################################################################################################
 # venv_pytest_foo
 ########################################################################################################################
-ENABLE_CTX_venv_pytest_foo = $(ENABLE_ALL_CTXES)
-TAG_venv_pytest_foo = venv clean
+$(call inherit_ctx,venv__,venv_pytest_foo__)
 
 venv_pytest_foo__IN = $(TMPL_DIR)/python/venv.mk
 venv_pytest_foo__OUT_DIR = $(OUTDIR)/python/venv/pytest

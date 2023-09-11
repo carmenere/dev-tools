@@ -11,9 +11,15 @@ INHERIT_VARS += BRIDGE
 ########################################################################################################################
 # example
 ########################################################################################################################
+$(call inherit_ctx,compose__,example__)
+
 example__IN = $(TMPL_DIR)/docker/compose.mk
 example__OUT_DIR = $(OUTDIR)/docker/compose
 example__OUT = $(example__OUT_DIR)/example.mk
+
+example__PROJECT = example
+example__YAML = $(example_yaml__OUT_DIR)/example.yaml
+
 example__BRIDGE = $(DOCKER_NETWORK_NAME)
 example__DRIVER = $(DOCKER_NETWORK_DRIVER)
 example__SUBNET = $(DOCKER_NETWORK_SUBNET)
@@ -103,6 +109,18 @@ example_yaml__SERVICES += .tmp/foo.yaml
 ########################################################################################################################
 # example_bar
 ########################################################################################################################
+
+# compose__ENABLE = $(ENABLE_DOCKER)
+# compose__DAEMONIZE ?= yes
+# compose__FORCE_RECREATE ?= no
+# compose__NO_CACHE ?= yes
+# compose__RM_ALL ?= yes
+# compose__RM_FORCE ?= yes
+# compose__RM_ON_UP ?= no
+# compose__RM_STOP ?= yes
+# compose__RM_VOLUMES ?= no
+# compose__TIMEOUT ?= 10
+
 example_bar__IN = $(TMPL_DIR)/docker/yamls/service.yaml
 example_bar__OUT_DIR = $(TMPL_DIR)/docker/yamls/.tmp
 example_bar__OUT = $(example_bar__OUT_DIR)/bar.yaml
@@ -120,7 +138,7 @@ example_yaml__SERVICES += .tmp/bar.yaml
 # example_yaml
 ########################################################################################################################
 example_yaml__IN = $(TMPL_DIR)/docker/yamls/stand.yaml
-example_yaml__OUT_DIR = $(OUTDIR)/docker/compose/yamls
+example_yaml__OUT_DIR = $(OUTDIR)/docker/compose
 example_yaml__OUT = $(example_yaml__OUT_DIR)/example.yaml
 
 CTXES += example_yaml

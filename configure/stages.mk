@@ -31,7 +31,7 @@ define force_run
 @echo "----------------------------- START -----------------------------"
 $(eval ECTXES = $(strip \
 	$(foreach CTX,$1, \
-		$(if $(filter $(subst $(space),_,$(sort $(filter $2,$(TAG_$(CTX))))),$(subst $(space),_,$(sort $2))),$(CTX)) \
+		$(if $(filter $(subst $(space),_,$(sort $(filter $2,$($(CTX)__TAGS)))),$(subst $(space),_,$(sort $2))),$(CTX)) \
 	)) \
 )
 $(foreach CTX,$(ECTXES),$(MAKE) -$(DR)f $($(CTX)__OUT) $3 ${LF})
@@ -42,11 +42,10 @@ define run
 @echo "------------------ Run CTXES filtered by TAGS -------------------"
 @echo "Tags: $1. Target: $2."
 @echo "----------------------------- START -----------------------------"
-$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $(ENABLE_CTX_$(CTX)),yes),$(CTX)))))
-$(eval EXPECTED = $(subst $(space),_,$(foreach T,$(sort $1),$(T)_yes)))
+$(eval ENABLED = $(strip $(foreach CTX,$(CTXES),$(if $(filter $($(CTX)__ENABLE),yes),$(CTX)))))
 $(eval ECTXES = $(strip \
 	$(foreach CTX,$(ENABLED), \
-		$(if $(filter $(subst $(space),_,$(foreach T,$(sort $(filter $1,$(TAG_$(CTX)))),$(T)_$(ENABLE_TAG_$(T)))),$(EXPECTED)),$(CTX)) \
+		$(if $(filter $(subst $(space),_,$(sort $(filter $1,$($(CTX)__TAGS)))),$(subst $(space),_,$(sort $1))),$(CTX)) \
 	)) \
 )
 $(foreach CTX,$(ECTXES),$(MAKE) -$(DR)f $($(CTX)__OUT) $2 ${LF})
@@ -97,8 +96,8 @@ tmux:
 stop-all:
 ifeq ($(STOP_ALL),yes)
 	$(call stage_header,$@)
-	$(call force_run,$(CTXES),host_app,stop)
-	$(call force_run,$(CTXES),host_service,stop)
+	$(call force_run,$(CTXES),app,stop)
+	$(call force_run,$(CTXES),service,stop)
 	$(call force_run,$(CTXES),docker,rm)
 	$(call force_run,$(CTXES),tmux,stop)
 	$(call stage_tail,$@)
@@ -106,8 +105,8 @@ endif
 
 start-services:
 	$(call stage_header,$@)
-	$(call run,host_service,start)
-	$(call run,docker_service,start)
+	$(call run,service,start)
+	$(call run,service,start)
 	@echo "Waiting for services' runtime init ..."
 	sleep $(SERVICES_DELAY)
 	@echo Ok
@@ -115,14 +114,13 @@ start-services:
 
 stop-services:
 	$(call stage_header,$@)
-	$(call run,host_service,stop)
-	$(call run,docker_service,rm)
+	$(call run,service,stop)
+	$(call run,service docker,rm)
 	$(call stage_tail,$@)
 
 schemas:
 	$(call stage_header,$@)
-	$(call run,docker_schema,start)
-	$(call run,host_schema,start)
+	$(call run,schema,start)
 	$(call stage_tail,$@)
 
 build:
@@ -142,14 +140,13 @@ upgrades:
 
 start-apps:
 	$(call stage_header,$@)
-	$(call run,host_app,start)
-	$(call run,docker_app,start)
+	$(call run,app,start)
 	$(call stage_tail,$@)
 
 stop-apps:
 	$(call stage_header,$@)
-	$(call run,host_app,stop)
-	$(call run,docker_app,rm)
+	$(call run,app,stop)
+	$(call run,docker app,rm)
 	$(call stage_tail,$@)
 
 docker-rm:

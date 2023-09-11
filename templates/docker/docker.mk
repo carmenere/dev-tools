@@ -2,19 +2,19 @@ DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
 include $(DEVTOOLS_DIR)/lib.mk
 
-BRIDGE ?= {{ BRIDGE | default('dev-tools', true) }}
+BRIDGE ?= {{ BRIDGE }}
 CONTAINER ?= {{ CONTAINER }}
-CTX ?= {{ CTX | default('.', true) }}
-DAEMONIZE ?= {{ DAEMONIZE | default('yes', true) }}
-DOCKERFILE ?= {{ DOCKERFILE | default('', true) }}
-DRIVER ?= {{ DRIVER | default('bridge', true) }}
-ERR_IF_BRIDGE_EXISTS = {{ ERR_IF_BRIDGE_EXISTS | default('no', true) }}
-IMAGE ?= {{ IMAGE | default('', true) }}
-RESTART_POLICY ?= {{ RESTART_POLICY | default('no', true) }}
-RM_AFTER_STOP ?= {{ RM_AFTER_STOP | default('no', true) }}
-SUBNET ?= {{ SUBNET | default('192.168.100.0/24', true) }}
-COMMAND ?= {{ COMMAND | default('', true) }}
-SH ?= {{ SH | default(d['DOCKER_SHELL'], true) }}
+CTX ?= {{ CTX }}
+DAEMONIZE ?= {{ DAEMONIZE }}
+DOCKERFILE ?= {{ DOCKERFILE }}
+DRIVER ?= {{ DRIVER }}
+ERR_IF_BRIDGE_EXISTS = {{ ERR_IF_BRIDGE_EXISTS }}
+IMAGE ?= {{ IMAGE }}
+RESTART_POLICY ?= {{ RESTART_POLICY }}
+RM_AFTER_STOP ?= {{ RM_AFTER_STOP }}
+SUBNET ?= {{ SUBNET }}
+COMMAND ?= {{ COMMAND }}
+SH ?= {{ SH }}
 
 CHECK_DOCKER = docker ps 1>/dev/null
 

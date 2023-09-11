@@ -4,27 +4,27 @@ DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
 include $(DEVTOOLS_DIR)/lib.mk
 
-ADMIN ?= {{ ADMIN | default(d['PG_ADMIN'], true) }}
-ADMIN_DB ?= {{ ADMIN_DB | default(d['PG_ADMIN_DB'], true) }}
-ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default(d['PG_ADMIN_PASSWORD'], true) }}
-DATADIR ?= {{ DATADIR | default('$(SELFDIR)/pg_data', true) }}
-HOST ?= {{ HOST | default(d['PG_HOST'], true) }}
-INITDB_AUTH_HOST ?= {{ INITDB_AUTH_HOST | default('md5', true) }}
-INITDB_AUTH_LOCAL ?= {{ INITDB_AUTH_LOCAL | default('peer', true) }}
-INITDB_PWFILE ?= {{ INITDB_PWFILE | default('/tmp/passwd.tmp', true) }}
-OS_USER ?= {{ OS_USER | default(d['PG_ADMIN'], true) }}
-PG_CONFIG ?= {{ PG_CONFIG | default(d['PG_CONFIG'], true) }}
-PG_CTL_CONF ?= {{ PG_CTL_CONF | default('$(DATADIR)/postgresql.conf', true) }}
-PG_CTL_LOG ?= {{ PG_CTL_LOG | default('$(DATADIR)/pg_ctl.logs', true) }}
-PG_CTL_LOGGING_COLLECTOR ?= {{ PG_CTL_LOGGING_COLLECTOR | default('on', true) }}
-PORT ?= {{ PORT | default(d['PG_PORT'], true) }}
+ADMIN ?= {{ ADMIN }}
+ADMIN_DB ?= {{ ADMIN_DB }}
+ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD }}
+DATADIR ?= {{ DATADIR }}
+HOST ?= {{ HOST }}
+INITDB_AUTH_HOST ?= {{ INITDB_AUTH_HOST }}
+INITDB_AUTH_LOCAL ?= {{ INITDB_AUTH_LOCAL }}
+INITDB_PWFILE ?= {{ INITDB_PWFILE }}
+OS_USER ?= {{ OS_USER }}
+PG_CONFIG ?= {{ PG_CONFIG }}
+PG_CTL_CONF ?= {{ PG_CTL_CONF }}
+PG_CTL_LOG ?= {{ PG_CTL_LOG }}
+PG_CTL_LOGGING_COLLECTOR ?= {{ PG_CTL_LOGGING_COLLECTOR }}
+PORT ?= {{ PORT }}
 
-export LANG = {{ LANG | default(d['LOCALE_LANG'], true) }}
-export LC_ALL = {{ LC_ALL | default(d['LOCALE_LC_ALL'], true) }}
-export LC_CTYPE = {{ LC_CTYPE | default(d['LOCALE_LC_CTYPE'], true) }}
+export LANG = {{ LANG }}
+export LC_ALL = {{ LC_ALL }}
+export LC_CTYPE = {{ LC_CTYPE }}
 
 # SUDO
-SUDO_BIN ?= {{ SUDO_BIN | default(d['SUDO_BIN'], true) }}
+SUDO_BIN ?= {{ SUDO_BIN }}
 SUDO_USER = $(OS_USER)
 include $(DEVTOOLS_DIR)/templates/common/sudo.mk
 

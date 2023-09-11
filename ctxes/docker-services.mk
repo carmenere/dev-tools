@@ -1,8 +1,8 @@
 ########################################################################################################################
 # docker_pg
 ########################################################################################################################
-ENABLE_CTX_docker_pg = $(ENABLE_ALL_CTXES)
-TAG_docker_pg = docker docker_service image
+$(call inherit_ctx,docker__,docker_pg__)
+$(call inherit_ctx,docker_service__,docker_pg__)
 
 docker_pg__IN = $(TMPL_DIR)/docker/docker.mk
 docker_pg__OUT_DIR = $(OUTDIR)/docker
@@ -18,17 +18,17 @@ docker_pg__IMAGE = $(call docker_image,$(docker_pg__arg_BASE_IMAGE))
 docker_pg__arg_BASE_IMAGE = $(DOCKER_PG_IMAGE)
 
 # envs for docker run
-docker_pg__env_POSTGRES_PASSWORD = $(PG_ADMIN_PASSWORD)
-docker_pg__env_POSTGRES_DB = $(PG_ADMIN_DB)
-docker_pg__env_POSTGRES_USER = $(PG_ADMIN)
+docker_pg__env_POSTGRES_PASSWORD = $(psql__ADMIN_PASSWORD)
+docker_pg__env_POSTGRES_DB = $(psql__ADMIN_DB)
+docker_pg__env_POSTGRES_USER = $(psql__ADMIN)
 
 CTXES += docker_pg
 
 ########################################################################################################################
 # docker_redis
 ########################################################################################################################
-ENABLE_CTX_docker_redis = $(ENABLE_ALL_CTXES)
-TAG_docker_redis = docker docker_service image
+$(call inherit_ctx,docker__,docker_redis__)
+$(call inherit_ctx,docker_service__,docker_redis__)
 
 docker_redis__IN = $(TMPL_DIR)/docker/docker.mk
 docker_redis__OUT_DIR = $(OUTDIR)/docker
@@ -48,8 +48,8 @@ CTXES += docker_redis
 ########################################################################################################################
 # docker_clickhouse
 ########################################################################################################################
-ENABLE_CTX_docker_clickhouse = $(ENABLE_ALL_CTXES)
-TAG_docker_clickhouse = docker docker_service image
+$(call inherit_ctx,docker__,docker_clickhouse__)
+$(call inherit_ctx,docker_service__,docker_clickhouse__)
 
 docker_clickhouse__IN = $(TMPL_DIR)/docker/docker.mk
 docker_clickhouse__OUT_DIR = $(OUTDIR)/docker
@@ -65,9 +65,9 @@ docker_clickhouse__IMAGE = $(call docker_image,$(docker_clickhouse__arg_BASE_IMA
 docker_clickhouse__arg_BASE_IMAGE = $(DOCKER_CLICKHOUSE_IMAGE)
 
 # envs for docker run
-docker_clickhouse__env_CLICKHOUSE_DB = $(CH_ADMIN_DB)
+docker_clickhouse__env_CLICKHOUSE_DB = $(clickhouse__ADMIN_DB)
 docker_clickhouse__env_CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT = 1
-docker_clickhouse__env_CLICKHOUSE_PASSWORD = $(CH_ADMIN_PASSWORD)
-docker_clickhouse__env_CLICKHOUSE_USER = $(CH_ADMIN)
+docker_clickhouse__env_CLICKHOUSE_PASSWORD = $(clickhouse__ADMIN_PASSWORD)
+docker_clickhouse__env_CLICKHOUSE_USER = $(clickhouse__ADMIN)
 
 CTXES += docker_clickhouse

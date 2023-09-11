@@ -17,18 +17,4 @@ tvars = get_tvars(tmpl.vars)
 
 LOG.debug(f"tvars = {tvars}")
 
-DEFAULTS = os.environ.get('DEFAULTS', [])
-if DEFAULTS:
-    DEFAULTS = DEFAULTS.split(' ')
-
-LOG.debug(f"DEFAULTS = {DEFAULTS}")
-
-defaults = {}
-for k in DEFAULTS:
-    val = os.environ.get(k)
-    if val is not None:
-        defaults[k] = val
-
-LOG.debug(f"defaults = {defaults}")
-
-tmpl.render(out=Path(settings.get('out')), tvars=tvars, defaults=defaults, all_envs=dict(os.environ))
+tmpl.render(out=Path(settings.get('out')), tvars=tvars, all_envs=dict(os.environ))

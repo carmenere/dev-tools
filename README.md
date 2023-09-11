@@ -16,8 +16,8 @@ touch ~/.dev-tools/vars.mk
 3. Example of `~/.dev-tools/vars.mk`:
 ```bash
 # ENABLE_bar = yes
-PG_ADMIN = $(USER)
-PG_CONFIG = /opt/homebrew/opt/postgresql@12/bin/pg_config
+psql__ADMIN = $(USER)
+pg_ctl__PG_CONFIG = /opt/homebrew/opt/postgresql@12/bin/pg_config
 STOP_ALL = yes
 
 # Docker
@@ -77,8 +77,8 @@ make -f .output/psql/Makefile connect
 ## ~/.dev-tools/vars.mk
 Create file `~/.dev-tools/vars.mk`, for instance:
 ```bash
-PG_ADMIN = $(USER)
-PG_CONFIG = /opt/homebrew/opt/postgresql@12/bin/pg_config
+psql__ADMIN = $(USER)
+pg_ctl__PG_CONFIG = /opt/homebrew/opt/postgresql@12/bin/pg_config
 STOP_ALL = yes
 ```
 
@@ -88,16 +88,8 @@ Create file `~/.dev-tools/host.mk`, for instance:
 include %abs path to ~/.dev-tools/vars.mk%
 
 # CTXES
-ENABLE_ALL_CTXES = yes
-ENABLE_CTX_pg_ctl = no
-
-# TAGS
-ENABLE_ALL_TAGS = yes
-
-ENABLE_TAG_image = no
-ENABLE_TAG_docker_service = no
-ENABLE_TAG_docker_app = no
-ENABLE_TAG_docker_schema = no
+ENABLE_HOST = yes
+pg_ctl__ENABLE = no
 ```
 
 <br>
@@ -108,25 +100,21 @@ Create file `~/.dev-tools/docker.mk`, for instance:
 include %abs path to ~/.dev-tools/vars.mk%
 
 # CTXES
-ENABLE_ALL_CTXES = yes
+ENABLE_HOST = no
+ENABLE_DOCKER = yes
 
-# TAGS
-ENABLE_ALL_TAGS = no
-
-ENABLE_TAG_image = yes
-ENABLE_TAG_docker_service = yes
-ENABLE_TAG_docker_app = yes
-ENABLE_TAG_docker_schema = yes
-ENABLE_TAG_cli = yes
+psql__ENABLE = yes
+redis_cli__ENABLE = yes
+clickhouse_cli__ENABLE = yes
 
 # PUBLISH APPS
 docker_bar__PUBLISH = 8080:80/tcp
 docker_foo__PUBLISH = 9081:80/tcp
 
 # PUBLISH SERVICES
-docker_clickhouse__PUBLISH = $(CH_PORT):$(CH_PORT)/tcp
-docker_pg__PUBLISH = $(PG_PORT):$(PG_PORT)/tcp
-docker_redis__PUBLISH = $(REDIS_PORT):$(REDIS_PORT)/tcp
+docker_clickhouse__PUBLISH = $(clickhouse_cli__PORT):$(clickhouse_cli__PORT)/tcp
+docker_pg__PUBLISH = $(psql__PORT):$(psql__PORT)/tcp
+docker_redis__PUBLISH = $(redis_cli__PORT):$(redis_cli__PORT)/tcp
 
 # Clients
 redis_cli__CONFIG_REWRITE = no
@@ -140,21 +128,17 @@ Create file `~/.dev-tools/mixed.mk`, for instance:
 include %abs path to ~/.dev-tools/vars.mk%
 
 # CTXES
-ENABLE_ALL_CTXES = yes
-ENABLE_CTX_pg_ctl = no
+ENABLE_HOST = yes
+ENABLE_DOCKER = yes
 
-# TAGS
-ENABLE_ALL_TAGS = yes
-
-ENABLE_TAG_host_service = no
-ENABLE_TAG_image = no
-ENABLE_TAG_docker_app = no
-ENABLE_TAG_docker_schema = no
+pg_ctl__ENABLE = no
+service__ENABLE = no
+docker_app__ENABLE = no
 
 # PUBLISH SERVICES
-docker_clickhouse__PUBLISH = $(CH_PORT):$(CH_PORT)/tcp
-docker_pg__PUBLISH = $(PG_PORT):$(PG_PORT)/tcp
-docker_redis__PUBLISH = $(REDIS_PORT):$(REDIS_PORT)/tcp
+docker_clickhouse__PUBLISH = $(clickhouse_cli__PORT):$(clickhouse_cli__PORT)/tcp
+docker_pg__PUBLISH = $(psql__PORT):$(psql__PORT)/tcp
+docker_redis__PUBLISH = $(redis_cli__PORT):$(redis_cli__PORT)/tcp
 
 # Clients
 redis_cli__CONFIG_REWRITE = no
