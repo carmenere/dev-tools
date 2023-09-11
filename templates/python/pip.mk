@@ -3,15 +3,15 @@ DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
 include $(DEVTOOLS_DIR)/lib.mk
 
-PYTHON ?= {{ PYTHON | default(d['PYTHON'], true) }}
-INSTALL_SCHEMA ?= {{ INSTALL_SCHEMA | default('', true)}}
-USERBASE ?= {{ USERBASE | default('', true)}}
-REQUIREMENTS ?= {{ REQUIREMENTS | default('requirements.txt', true)}}
+PYTHON ?= {{ PYTHON }}
+INSTALL_SCHEMA ?= {{ INSTALL_SCHEMA }}
+USERBASE ?= {{ USERBASE }}
+REQUIREMENTS ?= {{ REQUIREMENTS }}
 
-export CC = {{ CC | default(d['CC'], true)}}
-export CPPFLAGS = {{ CPPFLAGS | default(d['CPPFLAGS'], true)}}
-export CXX = {{ CXX | default(d['CXX'], true)}}
-export LDFLAGS = {{ LDFLAGS | default(d['LDFLAGS'], true)}}
+export CC = {{ CC }}
+export CPPFLAGS = {{ CPPFLAGS }}
+export CXX = {{ CXX }}
+export LDFLAGS = {{ LDFLAGS }}
 
 SITE_PACKAGES = $(shell $(PYTHON) -m pip show pip | grep Location | cut -d':' -f 2)
 PIP ?= $(PYTHON) -m pip

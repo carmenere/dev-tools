@@ -17,19 +17,18 @@ RUN cat /etc/version
 WORKDIR /opt/dev-tools
 
 RUN source "$HOME/.cargo/env" && make configure init build install \
-        ENABLE_ALL_CTXES=no \
-        ENABLE_ALL_TAGS=yes \
-        ENABLE_CTX_pg_ctl=yes \
-        ENABLE_CTX_psql_foo=yes \
-        ENABLE_CTX_psql_bar=yes \
-        ENABLE_CTX_cargo_foo=yes \
-        ENABLE_CTX_cargo_bar=yes \
-        ENABLE_CTX_sqlx_foo=yes \
-        ENABLE_CTX_sqlx_bar=yes \
-        BUILD_PROFILE=${BUILD_PROFILE} \
         BUILD_VERSION=${BUILD_VERSION} \
-        TARGET_ARCH=${TARGET_ARCH} \
-        PG_CONFIG=/usr/libexec/postgresql12/pg_config
+        ENABLE_HOST=no \
+        ENABLE_DOCKER=no \
+        ENABLE_ALL_TAGS=yes \
+        pg_ctl__ENABLE=yes \
+        pg_ctl__PG_CONFIG=/usr/libexec/postgresql12/pg_config \
+        psql__ENABLE=yes \
+        sqlx_foo__ENABLE=yes \
+        sqlx_bar__ENABLE=yes \
+        cargo__ENABLE=yes \
+        cargo__BUILD_PROFILE=${BUILD_PROFILE} \
+        cargo__TARGET_ARCH=${TARGET_ARCH}
 
 ########################################################################################################################
 FROM ${BASE_IMAGE} AS runtime

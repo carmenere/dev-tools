@@ -1,8 +1,7 @@
 ########################################################################################################################
 # pip_pytest_bar
 ########################################################################################################################
-ENABLE_CTX_pip_pytest_bar = $(ENABLE_ALL_CTXES)
-TAG_pip_pytest_bar = pip
+$(call inherit_ctx,pip__,pip_pytest_bar__)
 
 pip_pytest_bar__APP = tests_bar
 
@@ -18,8 +17,7 @@ CTXES += pip_pytest_bar
 ########################################################################################################################
 # pip_alembic_baz
 ########################################################################################################################
-ENABLE_CTX_pip_alembic_baz = $(ENABLE_ALL_CTXES)
-TAG_pip_alembic_baz = pip
+$(call inherit_ctx,pip__,pip_alembic_baz__)
 
 pip_alembic_baz__IN = $(TMPL_DIR)/python/pip.mk
 pip_alembic_baz__OUT_DIR = $(OUTDIR)/python/pip/alembic
@@ -36,8 +34,7 @@ CTXES += pip_alembic_baz
 ########################################################################################################################
 # pip_pytest_foo
 ########################################################################################################################
-ENABLE_CTX_pip_pytest_foo = $(ENABLE_ALL_CTXES)
-TAG_pip_pytest_foo = pip
+$(call inherit_ctx,pip__,pip_pytest_foo__)
 
 pip_pytest_foo__IN = $(TMPL_DIR)/python/pip.mk
 pip_pytest_foo__OUT_DIR = $(OUTDIR)/python/pip/pytest

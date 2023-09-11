@@ -2,15 +2,15 @@ DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
 include $(DEVTOOLS_DIR)/lib.mk
 
-ADMIN ?= {{ ADMIN | default(d['CH_ADMIN'], true) }}
-ADMIN_DB ?= {{ ADMIN_DB | default(d['CH_ADMIN_DB'], true) }}
-ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default(d['CH_ADMIN_PASSWORD'], true) }}
-CNT = {{ CNT | default('', true) }}
-HOST ?= {{ HOST | default(d['CH_HOST'], true) }}
-PORT ?= {{ PORT | default(d['CH_PORT'], true) }}
-USER_DB ?= {{ USER_DB | default(d['SERVICE_DB'], true) }}
-USER_NAME ?= {{ USER_NAME | default(d['SERVICE_USER'], true) }}
-USER_PASSWORD ?= {{ USER_PASSWORD | default(d['SERVICE_PASSWORD'], true) }}
+ADMIN ?= {{ ADMIN }}
+ADMIN_DB ?= {{ ADMIN_DB }}
+ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD }}
+CNT = {{ CNT }}
+HOST ?= {{ HOST }}
+PORT ?= {{ PORT }}
+USER_DB ?= {{ USER_DB }}
+USER_NAME ?= {{ USER_NAME }}
+USER_PASSWORD ?= {{ USER_PASSWORD }}
 
 # 
 ifdef CNT

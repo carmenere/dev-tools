@@ -2,26 +2,27 @@ DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
 include $(DEVTOOLS_DIR)/lib.mk
 
-ADMIN ?= {{ ADMIN | default(d['PG_ADMIN'], true) }}
-ADMIN_DB ?= {{ ADMIN_DB | default(d['PG_ADMIN_DB'], true) }}
-ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default(d['PG_ADMIN_PASSWORD'], true) }}
-AUTH_METHOD ?= {{ AUTH_METHOD | default('remote', true) }}
-CNT = {{ CNT | default('', true) }}
-EXIT_IF_DB_EXISTS = {{ EXIT_IF_DB_EXISTS | default(d['EXIT_IF_DB_EXISTS'], true) }}
-EXIT_IF_USER_EXISTS = {{ EXIT_IF_USER_EXISTS | default(d['EXIT_IF_USER_EXISTS'], true) }}
-HOST ?= {{ HOST | default(d['PG_HOST'], true) }}
-PORT ?= {{ PORT | default(d['PG_PORT'], true) }}
-USER_ATTRIBUTES ?= {{ USER_ATTRIBUTES | default('SUPERUSER CREATEDB', true) }}
-USER_DB ?= {{ USER_DB | default(d['SERVICE_DB'], true) }}
-USER_NAME ?= {{ USER_NAME | default(d['SERVICE_USER'], true) }}
-USER_PASSWORD ?= {{ USER_PASSWORD | default(d['SERVICE_PASSWORD'], true) }}
+ADMIN ?= {{ ADMIN }}
+ADMIN_DB ?= {{ ADMIN_DB }}
+ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD }}
+AUTH_METHOD ?= {{ AUTH_METHOD }}
+CNT = {{ CNT }}
+EXIT_IF_DB_EXISTS = {{ EXIT_IF_DB_EXISTS }}
+EXIT_IF_USER_EXISTS = {{ EXIT_IF_USER_EXISTS }}
+HOST ?= {{ HOST }}
+PORT ?= {{ PORT }}
+USER_ATTRIBUTES ?= {{ USER_ATTRIBUTES }}
+USER_DB ?= {{ USER_DB }}
+USER_NAME ?= {{ USER_NAME }}
+USER_PASSWORD ?= {{ USER_PASSWORD }}
 
-CONN_URL ?= $(call conn_url,,$(ADMIN),$(ADMIN_PASSWORD),$(HOST),$(PORT),$(ADMIN_DB))
-USER_CONN_URL ?= $(call conn_url,postgres,$(USER_NAME),$(USER_PASSWORD),$(HOST),$(PORT),$(USER_DB)) 
+CONN_URL ?= {{ CONN_URL }}
+USER_CONN_URL ?= {{ USER_CONN_URL }}
+ 
 
 # SUDO
-SUDO_BIN ?= {{ SUDO_BIN | default(d['SUDO_BIN'], true) }}
-SUDO_USER ?= {{ SUDO_USER | default(d['SUDO_USER'], true) }}
+SUDO_BIN ?= {{ SUDO_BIN }}
+SUDO_USER ?= {{ SUDO_USER }}
 include $(DEVTOOLS_DIR)/templates/common/sudo.mk
 
 define select_user

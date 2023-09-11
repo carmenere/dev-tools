@@ -31,11 +31,11 @@ class Template:
         self.vars: list = get_tvars(self.jenv, self.path.name)
         LOG.debug(f"self.vars: {self.vars}")
 
-    def render(self, out: Path, tvars: dict, defaults: dict, all_envs: dict):
+    def render(self, out: Path, tvars: dict, all_envs: dict):
         LOG.debug(f"out = {out}")
         LOG.debug("TVARS:\n{}".format("\n".join(f"{k} = {tvars[k]}" for k in sorted(tvars.keys()))))
         LOG.debug("os.environ:\n{}".format("\n".join(f"{k} = {all_envs[k]}" for k in sorted(all_envs.keys()))))
-        content = self.tmpl.render(**{k.upper():v for k,v in tvars.items()}, env=all_envs, d=defaults)
+        content = self.tmpl.render(**{k.upper():v for k,v in tvars.items()}, env=all_envs)
 
         create_dir(out.parent)
         

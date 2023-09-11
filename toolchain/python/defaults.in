@@ -1,8 +1,8 @@
-PY_MAJOR = @MAJOR@
-PY_MINOR = @MINOR@
-PY_OWNER = @OWNER@
-PY_DIR = @PREFIX@
-PYTHON = @PYTHON@
+python__MAJOR = @MAJOR@
+python__MINOR = @MINOR@
+python__OWNER = @OWNER@
+python__DIR = @PREFIX@
+python__PYTHON = @PYTHON@
 
 # toolchain's vpython
 TPYTHON = @VPYTHON@

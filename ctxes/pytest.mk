@@ -1,8 +1,7 @@
 ########################################################################################################################
 # pytest_bar
 ########################################################################################################################
-ENABLE_CTX_pytest_bar = $(ENABLE_ALL_CTXES)
-TAG_pytest_bar = test clean
+$(call inherit_ctx,pytest__,pytest_bar__)
 
 pytest_bar__IN = $(TMPL_DIR)/pytest.mk
 pytest_bar__OUT_DIR = $(OUTDIR)/pytest
@@ -19,8 +18,7 @@ CTXES += pytest_bar
 ########################################################################################################################
 # pytest_foo
 ########################################################################################################################
-ENABLE_CTX_pytest_foo = $(ENABLE_ALL_CTXES)
-TAG_pytest_foo = test clean
+$(call inherit_ctx,pytest__,pytest_foo__)
 
 pytest_foo__IN = $(TMPL_DIR)/pytest.mk
 pytest_foo__OUT_DIR = $(OUTDIR)/pytest

@@ -4,20 +4,20 @@ DEVTOOLS_DIR ?= {{ DEVTOOLS_DIR }}
 
 include $(DEVTOOLS_DIR)/lib.mk
 
-DL ?= {{ DL | default('.dl', true)}}
-MAJOR ?= {{ MAJOR | default(d['PY_MAJOR'], true)}}
-MINOR ?= {{ MINOR | default(d['PY_MINOR'], true)}}
-RC ?= {{ RC | default('', true)}}
-OWNER ?= {{ OWNER | default(d['PY_OWNER'], true)}}
-PREFIX ?= {{ PREFIX | default('$(SELFDIR)/.python', true)}}
+DL ?= {{ DL }}
+MAJOR ?= {{ MAJOR }}
+MINOR ?= {{ MINOR }}
+RC ?= {{ RC }}
+OWNER ?= {{ OWNER }}
+PREFIX ?= {{ PREFIX }}
 
 DOWNLOAD_URL = https://www.python.org/ftp/python/$(MAJOR).$(MINOR)/Python-$(VERSION).tgz 
 VERSION ?= $(MAJOR).$(MINOR)$(RC)
 PYTHON ?= $(PREFIX)/bin/python$(MAJOR)
 
 # SUDO
-SUDO_BIN ?= {{ SUDO_BIN | default(d['SUDO_BIN'], true) }}
-SUDO_USER ?= {{ SUDO_USER | default(d['SUDO_USER'], true) }}
+SUDO_BIN ?= {{ SUDO_BIN }}
+SUDO_USER ?= {{ SUDO_USER }}
 include $(DEVTOOLS_DIR)/templates/common/sudo.mk
 
 ifdef VARS

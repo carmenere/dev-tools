@@ -1,8 +1,8 @@
 ########################################################################################################################
 # alembic_baz
 ########################################################################################################################
-ENABLE_CTX_alembic_baz = $(ENABLE_ALL_CTXES)
-TAG_alembic_baz = clean host_schema
+$(call inherit_ctx,app__,alembic_baz__)
+alembic_baz__TAGS = clean schema
 
 alembic_baz__APP = alembic_baz
 
@@ -11,19 +11,18 @@ alembic_baz__OUT_DIR = $(OUTDIR)/app/alembic
 alembic_baz__OUT = $(alembic_baz__OUT_DIR)/baz.mk
 
 alembic_baz__BIN_PATH = $(BASH) -c 'echo "just for test"'
-alembic_baz__TMUX = $(tmux__OUT)
 
 # alembic envs
 # $1:SCHEMA $2:USER; $3:PASSWORD, $4:HOST, $5:PORT, $6:DB
-alembic_baz__env_DATABASE_URL = $(call conn_url,,$(psql_baz__USER_NAME),$(psql_baz__USER_PASSWORD),,,$(psql_baz__USER_DB))
+alembic_baz__env_DATABASE_URL = $(call conn_url,psql_baz,postgres,,,,)
 
 CTXES += alembic_baz
 
 ########################################################################################################################
 # sqlx_bar
 ########################################################################################################################
-ENABLE_CTX_sqlx_bar = $(ENABLE_ALL_CTXES)
-TAG_sqlx_bar = clean host_schema
+$(call inherit_ctx,app__,sqlx_bar__)
+sqlx_bar__TAGS = clean schema
 
 sqlx_bar__APP = sqlx_bar
 
@@ -32,10 +31,9 @@ sqlx_bar__OUT_DIR = $(OUTDIR)/app/sqlx
 sqlx_bar__OUT = $(sqlx_bar__OUT_DIR)/bar.mk
 
 sqlx_bar__BIN_PATH = sqlx migrate run
-sqlx_bar__TMUX = $(tmux__OUT)
 
 # sqlx envs
-sqlx_bar__env_DATABASE_URL = $(call conn_url,,$(psql_bar__USER_NAME),$(psql_bar__USER_PASSWORD),,,$(psql_bar__USER_DB))
+sqlx_bar__env_DATABASE_URL = $(call conn_url,psql_bar,postgres,,,,)
 
 # cli opts
 sqlx_bar__opt_SOURCE = --source "$(PROJECT_ROOT)/examples/bar/$(SCHEMAS_DIR)"
@@ -45,8 +43,8 @@ CTXES += sqlx_bar
 ########################################################################################################################
 # sqlx_foo
 ########################################################################################################################
-ENABLE_CTX_sqlx_foo = $(ENABLE_ALL_CTXES)
-TAG_sqlx_foo = clean host_schema
+$(call inherit_ctx,app__,sqlx_foo__)
+sqlx_foo__TAGS = clean schema
 
 sqlx_foo__APP = sqlx_foo
 
@@ -55,10 +53,9 @@ sqlx_foo__OUT_DIR = $(OUTDIR)/app/sqlx
 sqlx_foo__OUT = $(sqlx_foo__OUT_DIR)/foo.mk
 
 sqlx_foo__BIN_PATH = sqlx migrate run
-sqlx_foo__TMUX = $(tmux__OUT)
 
 # sqlx envs
-sqlx_foo__env_DATABASE_URL = $(call conn_url,,$(psql_foo__USER_NAME),$(psql_foo__USER_PASSWORD),,,$(psql_foo__USER_DB))
+sqlx_foo__env_DATABASE_URL = $(call conn_url,psql_foo,postgres,,,,)
 
 # cli opts
 sqlx_foo__opt_SOURCE = --source "$(PROJECT_ROOT)/examples/foo/$(SCHEMAS_DIR)"
@@ -68,8 +65,7 @@ CTXES += sqlx_foo
 ########################################################################################################################
 # foo
 ########################################################################################################################
-ENABLE_CTX_foo = $(ENABLE_ALL_CTXES)
-TAG_foo = clean host_app
+$(call inherit_ctx,app__,foo__)
 
 foo__APP = foo
 
@@ -77,9 +73,8 @@ foo__IN = $(TMPL_DIR)/app.mk
 foo__OUT_DIR = $(OUTDIR)/app
 foo__OUT = $(foo__OUT_DIR)/$(foo__APP).mk
 
-foo__BIN_PATH = $(call cargo_bins,dev,$(CARGO_TARGET_DIR),$(RUST_TARGET_ARCH))/foo
+foo__BIN_PATH = $(call cargo_bins,dev,$(cargo__TARGET_DIR),$(cargo__TARGET_ARCH))/foo
 foo__MODE = tmux
-foo__TMUX = $(tmux__OUT)
 
 # foo envs
 foo__env_RUST_LOG = $(foo__APP)=debug
@@ -89,8 +84,7 @@ CTXES += foo
 ########################################################################################################################
 # bar
 ########################################################################################################################
-ENABLE_CTX_bar = $(ENABLE_ALL_CTXES)
-TAG_bar = clean host_app
+$(call inherit_ctx,app__,bar__)
 
 bar__APP = bar
 
@@ -98,9 +92,8 @@ bar__IN = $(TMPL_DIR)/app.mk
 bar__OUT_DIR = $(OUTDIR)/app
 bar__OUT = $(bar__OUT_DIR)/$(bar__APP).mk
 
-bar__BIN_PATH = $(call cargo_bins,dev,$(CARGO_TARGET_DIR),$(RUST_TARGET_ARCH))/bar
+bar__BIN_PATH = $(call cargo_bins,dev,$(cargo__TARGET_DIR),$(cargo__TARGET_ARCH))/bar
 bar__MODE = tee
-bar__TMUX = $(tmux__OUT)
 
 # bar envs
 bar__env_RUST_LOG = $(bar__APP)=debug

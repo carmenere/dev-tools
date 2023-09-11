@@ -4,9 +4,9 @@ DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
 include $(DEVTOOLS_DIR)/lib.mk
 
-PYTHON ?= {{ PYTHON | default(d['PYTHON'], true) }}
-VENV_DIR ?= {{ VENV_DIR | default('$(SELFDIR)/.venv/$(notdir $(SELF))', true) }}
-VENV_PROMT ?= {{ VENV_PROMT | default('[VENV]', true) }}
+PYTHON ?= {{ PYTHON }}
+VENV_DIR ?= {{ VENV_DIR }}
+VENV_PROMT ?= {{ VENV_PROMT }}
 
 .PHONY: init clean distclean
 

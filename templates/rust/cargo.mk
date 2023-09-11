@@ -3,21 +3,16 @@ DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
 include $(DEVTOOLS_DIR)/lib.mk
 
-{% if CARGO_TOML is defined and CARGO_TOML.replace('"', '').replace("'",'') != '' -%}
 CARGO_TOML ?= {{ CARGO_TOML }}
-{% else %}
-{% include 'CARGO_TOML is required and cannot be empty string.' %}
-{% endif -%}
-
-BINS ?= {{ BINS | default('', true) }}
-CLIPPY_FORMAT ?= {{ CLIPPY_FORMAT | default('human', true) }}
-CLIPPY_REPORT ?= {{ CLIPPY_REPORT | default('&1', true) }}
-FEATURES ?= {{ FEATURES | default('', true) }}
-LINTS ?= {{ LINTS | default('', true) }}
-PROFILE ?= {{ PROFILE | default(d['CARGO_PROFILE'], true) }}
-TARGET_ARCH ?= {{ TARGET_ARCH | default(d['RUST_TARGET_ARCH'], true) }}
-TARGET_DIR ?= {{ TARGET_DIR | default(d['CARGO_TARGET_DIR'], true) }}
-INSTALL_DIR ?= {{ INSTALL_DIR | default(d['INSTALL_DIR'], true) }}
+BINS ?= {{ BINS }}
+CLIPPY_FORMAT ?= {{ CLIPPY_FORMAT }}
+CLIPPY_REPORT ?= {{ CLIPPY_REPORT }}
+FEATURES ?= {{ FEATURES }}
+LINTS ?= {{ LINTS }}
+PROFILE ?= {{ PROFILE }}
+TARGET_ARCH ?= {{ TARGET_ARCH }}
+TARGET_DIR ?= {{ TARGET_DIR }}
+INSTALL_DIR ?= {{ INSTALL_DIR }}
 
 # ENVS
 {% include 'common/j2/envs.jinja2' %}

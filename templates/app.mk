@@ -9,13 +9,13 @@ OUT := {{ OUT }}
 
 APP ?= {{ APP }}
 BIN_PATH ?= {{ BIN_PATH }}
-LOG_FILE ?= {{ LOG_FILE | default('$(SELFDIR)/.logs-$(APP)', true) }}
-PID_FILE ?= {{ PID_FILE | default('$(SELFDIR)/.pid-$(APP)', true) }}
-PKILL_PATTERN ?= {{ PKILL_PATTERN | default('$(BIN_PATH)', true) }}
+LOG_FILE ?= {{ LOG_FILE }}
+PID_FILE ?= {{ PID_FILE }}
+PKILL_PATTERN ?= {{ PKILL_PATTERN }}
 TMUX ?= {{ TMUX }}
-MODE ?= {{ MODE | default('tee', true) }}
+MODE ?= {{ MODE }}
+TMUX_START_CMD ?= {{ TMUX_START_CMD }}
 
-TMUX_START_CMD = $(MAKE) -f $(TMUX) exec CMD='$(MAKE) -f $(OUT) tee' WINDOW_NAME=$(APP)
 
 # ENVS
 {% include 'common/j2/envs.jinja2' %}
@@ -34,7 +34,7 @@ endif
 shell:
 	echo ENVS = $$'$(call escape,$(ENVS))' > $(LOG_FILE)
 ifdef START_BIN
-	bash -c $$'$(call escape,$(START_BIN))'
+	$(START_BIN)
 endif
 
 tmux:

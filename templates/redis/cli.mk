@@ -2,21 +2,21 @@ DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
 include $(DEVTOOLS_DIR)/lib.mk
 
-ADMIN ?= {{ ADMIN | default(d['REDIS_ADMIN'], true) }}
-ADMIN_DB ?= {{ ADMIN_DB | default(d['REDIS_ADMIN_DB'], true) }}
-ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD | default(d['REDIS_ADMIN_PASSWORD'], true) }}
-CNT = {{ CNT | default('', true) }}
-CONFIG_REWRITE ?= {{ CONFIG_REWRITE | default('yes', true) }}
-EXIT_IF_USER_EXISTS = {{ EXIT_IF_USER_EXISTS | default(d['EXIT_IF_USER_EXISTS'], true) }}
-HOST ?= {{ HOST | default(d['REDIS_HOST'], true) }}
-PORT ?= {{ PORT | default(d['REDIS_PORT'], true) }}
-REQUIREPASS ?= {{ REQUIREPASS | default('yes', true) }}
-USER_DB ?= {{ USER_DB | default(d['REDIS_ADMIN_DB'], true) }}
-USER_NAME := {{ USER_NAME | default(d['SERVICE_USER'], true) }}
-USER_PASSWORD ?= {{ USER_PASSWORD | default(d['SERVICE_PASSWORD'], true) }}
+ADMIN ?= {{ ADMIN }}
+ADMIN_DB ?= {{ ADMIN_DB }}
+ADMIN_PASSWORD ?= {{ ADMIN_PASSWORD }}
+CNT = {{ CNT }}
+CONFIG_REWRITE ?= {{ CONFIG_REWRITE }}
+EXIT_IF_USER_EXISTS = {{ EXIT_IF_USER_EXISTS }}
+HOST ?= {{ HOST }}
+PORT ?= {{ PORT }}
+REQUIREPASS ?= {{ REQUIREPASS }}
+USER_DB ?= {{ USER_DB }}
+USER_NAME := {{ USER_NAME }}
+USER_PASSWORD ?= {{ USER_PASSWORD }}
 
-CONN_URL ?= $(call conn_url,redis,$(ADMIN),$(ADMIN_PASSWORD),$(HOST),$(PORT),$(ADMIN_DB))
-USER_CONN_URL ?= $(call conn_url,redis,$(USER_NAME),$(USER_PASSWORD),$(HOST),$(PORT),$(USER_DB)) 
+CONN_URL ?= {{ CONN_URL }}
+USER_CONN_URL ?= {{ USER_CONN_URL }}
 
 define check_user
 $(REDIS_CLI) ACL DRYRUN $1 PING

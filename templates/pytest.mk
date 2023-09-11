@@ -4,13 +4,21 @@ DEVTOOLS_DIR := {{ DEVTOOLS_DIR }}
 
 include $(DEVTOOLS_DIR)/lib.mk
 
-LOG_FILE ?= {{ LOG_FILE | default('$(SELFDIR)/.logs-$(notdir $(SELF))', true) }}
-REPORTS_DIR ?= {{ REPORTS_DIR | default('$(SELFDIR)/.reports-$(notdir $(SELF))', true) }}
-TEST_CASES ?= {{ TEST_CASES | default('', true) }}
-TEST_CASES_DIR ?= {{ TEST_CASES_DIR | default('tests', true) }}
-PYTHON ?= {{ PYTHON | default(d['PYTHON'], true) }}
-TMUX_START_CMD ?= {{ TMUX_START_CMD | default('', true) }}
-MODE ?= {{ MODE | default('tee', true) }}
+LOG_FILE ?= {{ LOG_FILE }}
+REPORTS_DIR ?= {{ REPORTS_DIR }}
+TEST_CASES ?= {{ TEST_CASES }}
+TEST_CASES_DIR ?= {{ TEST_CASES_DIR }}
+PYTHON ?= {{ PYTHON }}
+TMUX_START_CMD ?= {{ TMUX_START_CMD }}
+MODE ?= {{ MODE }}
+
+CMD = $(ENVS) $(PYTHON) \
+		-m pytest -v "$(TCASES)" \
+		--color=yes \
+		--junitxml=$(REPORTS_DIR)/junit_report.xml \
+		--alluredir=$(REPORTS_DIR) \
+		--allure-no-capture \
+		--timeout=300
 
 {% include 'common/j2/envs.jinja2' %}
 
@@ -27,17 +35,13 @@ init:
 tmux:
 	$(TMUX_START_CMD)
 
-run: init
-	bash -c '$(ENVS) $(PYTHON) \
-		-m pytest -v "$(TCASES)" \
-		--color=yes \
-		--junitxml=$(REPORTS_DIR)/junit_report.xml \
-		--alluredir=$(REPORTS_DIR) \
-		--allure-no-capture \
-		--timeout=300 \
-	2>&1 | tee $(LOG_FILE); exit $${PIPESTATUS[0]}'
+shell:
+	$(CMD)
 
-start: $(MODE)
+tee: 
+	bash -c '$(CMD) 2>&1 | tee $(LOG_FILE); exit $${PIPESTATUS[0]}'
+
+start: init $(MODE)
 
 clean:
 	[ ! -d $(REPORTS_DIR) ] || rm -Rf $(REPORTS_DIR)
